@@ -1,18 +1,36 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+    <RoomCard v-for="room in rooms" :key="room.id" :room="room" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import RoomCard from '@/components/RoomCard.vue'
+import RoomService from '@/services/RoomService.js'
 
 export default {
-  name: "Home",
+  //name: 'RoomList',
   components: {
-    HelloWorld,
+    RoomCard,
   },
-};
+  data() {
+    return {
+      rooms: [],
+    }
+  },
+  created() {
+    RoomService.getRooms()
+      .then((response) => {
+        this.rooms = response.data
+      })
+      .catch((error) => {
+        console.log(
+          '[debug] There is an error occurred in Home.vue:',
+          error.response
+        )
+      })
+  },
+}
 </script>
