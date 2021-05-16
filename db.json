@@ -2,32 +2,13 @@
   "rooms": [
     {
       "id": 1,
-      "title": "Title 1 from DB",
-      "date": "Aug 28 2018",
-      "capacity": 10,
-      "time": "10:00",
-      "location": "Daytona Beach",
-      "description": "Let's clean up this beach.",
-      "organizer": "Adam Jahr",
-      "category": "sustainability",
-      "attendees": [
-        {
-          "id": "abc123",
-          "name": "Adam Jahr"
-        },
-        {
-          "id": "def456",
-          "name": "Gregg Pollack"
-        },
-        {
-          "id": "ghi789",
-          "name": "Beth Swanson"
-        },
-        {
-          "id": "jkl101",
-          "name": "Mary Gordon"
-        }
-      ]
+      "title": "5/13",
+      "description": " = introduction in DB",
+      "createTime": "2021-05-13T13:45:00.000Z",
+      "roomCategory": "food",
+      "peopleLimit": 10,
+      "roomType": "public",
+      "ownerId": "9921119"
     },
     {
       "id": 2,
@@ -91,6 +72,15 @@
       "date": "",
       "time": "",
       "attendees": []
+    },
+    {
+      "id": 456465,
+      "title": "5/13",
+      "description": " = introduction in DB",
+      "createTime": "2021-05-13T13:45:00.000Z",
+      "roomCategory": "food",
+      "peopleLimit": 10,
+      "roomType": "public"
     }
   ],
   "users":[
