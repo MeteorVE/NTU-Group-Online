@@ -92,5 +92,20 @@
       "time": "",
       "attendees": []
     }
+  ],
+  "users":[
+    {
+      "id": "0",
+      "name": "TA",
+      "email": "abc@gmail.com"
+    },
+    {
+      "name": "TA2",
+      "email": "wfjlkjfekl@gmail.com"
+    },
+    {
+      "name": "TA3",
+      "email": "wfjlkjfekl@gmail.com"
+    }
   ]
 }

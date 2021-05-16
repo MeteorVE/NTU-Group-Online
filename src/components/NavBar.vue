@@ -3,6 +3,7 @@
     <router-link to="/">Homepage</router-link>
     <router-link :to="{ name: 'room-create' }">Create</router-link>
     <router-link :to="{ name: 'about' }">About</router-link>
+    <router-link :to="{ name: 'about' }">Navbar</router-link>
     <!-- <router-link :to="{ name: 'room-show' }">LinkTitle</router-link> -->
   </div>
 </template>
