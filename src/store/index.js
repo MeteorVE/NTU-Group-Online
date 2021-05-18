@@ -1,4 +1,4 @@
-import { createStore } from "vuex"
+import { createStore } from 'vuex'
 import RoomService from '@/services/RoomService.js'
 
 export default createStore({

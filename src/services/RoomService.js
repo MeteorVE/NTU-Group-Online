@@ -9,8 +9,8 @@ const apiClient = axios.create({
   withCredentials: false, // This is the default
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 })
 
 const apiDjango = axios.create({
@@ -28,6 +28,9 @@ export default {
     return apiClient.get('/users/' + name)
   },
   getRooms() {
+    return apiClient.get('/rooms/')
+  },
+  getRooms_for_django() {
     return apiDjango.get('/room/')
   },
   getRoom(id) {
