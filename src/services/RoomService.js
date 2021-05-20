@@ -1,5 +1,5 @@
 import axios from 'axios'
-import createStore from '@/store/index.js'
+import store from '@/store/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -19,22 +19,40 @@ const apiDjango = axios.create({
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + createStore.state.token,
   },
 })
 
+apiDjango.interceptors.request.use(
+  (request) => {
+    let token = store.state.token
+    token && (request.headers.Authorization = 'Bearer ' + token)
+    return request
+  },
+  (e) => Promise.reject(e)
+)
+
+apiDjango.interceptors.response.use(undefined, function (err) {
+  return new Promise(function () {
+    if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+      this.$store.dispatch('logout')
+      this.$router.push('/')
+    }
+    throw err
+  })
+})
+
 export default {
+  getRooms() {
+    return apiDjango.get('/room/')
+  },
   getUsers(name) {
     return apiClient.get('/users/' + name)
   },
-  getRooms() {
+  getRooms_js() {
     return apiClient.get('/rooms/')
   },
-  getRooms_for_django() {
-    return apiDjango.get('/room/')
-  },
   getRoom(id) {
-    return apiClient.get('/rooms/' + id)
+    return apiDjango.get('/rooms/' + id)
   },
   postRoom(room) {
     return apiClient.post('/rooms', room)

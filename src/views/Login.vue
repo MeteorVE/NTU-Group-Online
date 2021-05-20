@@ -41,13 +41,11 @@
 </template>
 
 <script>
+// import TokenService from '@/services/TokenService.js'
+
 export default {
   data() {
     return {
-      validCredentials: {
-        username: 'meteor',
-        password: 'meteor',
-      },
       model: {
         username: '',
         password: '',
@@ -69,7 +67,7 @@ export default {
         password: [
           { required: true, message: 'Password is required', trigger: 'blur' },
           {
-            min: 5,
+            min: 4,
             message: 'Password length should be at least 5 characters',
             trigger: 'blur',
           },
@@ -78,6 +76,18 @@ export default {
     }
   },
   methods: {
+    Login() {
+      this.$store
+        .dispatch('login', this.model)
+        .then(() => {
+          this.$message.success('Login successfull')
+          //console.log(this.$store.getters.getToken)
+        })
+        .catch((res) => {
+          console.log('Login Failed:', res)
+          this.$message.error('Username or password is invalid')
+        })
+    },
     simulateLogin() {
       return new Promise((resolve) => {
         setTimeout(resolve, 800)
@@ -89,16 +99,8 @@ export default {
         return
       }
       this.loading = true
-      await this.simulateLogin()
+      await this.Login()
       this.loading = false
-      if (
-        this.model.username === this.validCredentials.username &&
-        this.model.password === this.validCredentials.password
-      ) {
-        this.$message.success('Login successfull')
-      } else {
-        this.$message.error('Username or password is invalid')
-      }
     },
   },
 }

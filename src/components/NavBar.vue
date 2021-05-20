@@ -1,16 +1,15 @@
 <template>
   <div id="nav" class="nav">
     <el-menu
-      :default-active="activeIndex"
+      :default-active="$route.path"
       class="el-menu-nav"
       mode="horizontal"
-      @select="handleSelect"
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b"
       router
     >
-      <el-menu-item route="/" index="1">Homepage</el-menu-item>
+      <el-menu-item route="/" index="/">Homepage</el-menu-item>
       <el-submenu index="4">
         <template #title>Demo 用選項</template>
         <el-menu-item index="2-1">選項 1</el-menu-item>
@@ -20,16 +19,47 @@
           <el-menu-item index="2-4-2">選項2</el-menu-item>
         </el-submenu>
       </el-submenu>
-      <el-menu-item route="/room/create" index="2">Create</el-menu-item>
-      <el-menu-item route="/about" index="3"> About </el-menu-item>
-      <el-menu-item route="/login" index="4"> Login </el-menu-item>
+      <el-menu-item route="/room/create" index="/room/create"
+        >Create</el-menu-item
+      >
+      <el-menu-item route="/about" index="/about"> About </el-menu-item>
+      <el-menu-item v-if="!isAuth" route="/login" index="/login">
+        Login
+      </el-menu-item>
+      <el-menu-item @click="logout"> Logout </el-menu-item>
     </el-menu>
     <!-- <router-link :to="{ name: 'room-show' }">LinkTitle</router-link> -->
   </div>
 </template>
 
 <script>
-export default {}
+import { mapGetters } from 'vuex'
+export default {
+  data() {
+    return {}
+  },
+  watch: {},
+  created() {
+    //this.routerIndex = this.$router.path
+  },
+  computed: {
+    ...mapGetters(['isAuth']),
+  },
+  methods: {
+    logout() {
+      this.$store
+        .dispatch('logout', {})
+        .then(() => {
+          this.$router.push({
+            name: 'home',
+          })
+        })
+        .catch(() => {
+          console.log('There was a problem when logout')
+        })
+    },
+  },
+}
 </script>
 
 <style scoped>

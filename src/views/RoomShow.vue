@@ -15,6 +15,7 @@
 
 <script>
 import RoomService from '@/services/RoomService.js'
+
 export default {
   props: ['id'],
   data() {
@@ -26,6 +27,7 @@ export default {
     RoomService.getRoom(this.id)
       .then((response) => {
         this.room = response.data
+        console.log(this.room)
       })
       .catch((error) => {
         console.log('There was an error:', error.response)

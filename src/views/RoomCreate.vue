@@ -1,4 +1,7 @@
 <template>
+  <!-- id, title, introduction, create_time, valid_time, room_type, room_category,
+  people_limit -->
+
   <div>
     <el-container class="create-form">
       <el-form ref="form" :model="room" label-width="80px">
@@ -99,7 +102,26 @@ export default {
       },
     }
   },
+  created() {
+    this.checkAuth()
+  },
   methods: {
+    checkAuth() {
+      this.$store.state.token &&
+        this.$store
+          .dispatch('verifyToken', this.event)
+          .then((resVerify) => {
+            console.log('verifyToken Result：' + resVerify)
+            return this.init()
+          })
+          .catch((err) => {
+            console.log('[RoomCreate.vue]', err)
+            window.location.href = '/login'
+          })
+    },
+    init() {
+      console.log('exec init')
+    },
     createEvent() {
       this.$store
         .dispatch('createEvent', this.event)

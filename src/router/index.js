@@ -5,6 +5,7 @@ import RoomCreate from '@/views/RoomCreate.vue'
 //import RoomList from './views/RoomList.vue'
 import RoomShow from '@/views/RoomShow.vue'
 import LoginPage from '@/views/Login.vue'
+import UserPage from '@/views/UserPage.vue'
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginPage,
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: UserPage,
   },
 ]
 
