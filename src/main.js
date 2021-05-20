@@ -5,8 +5,23 @@ import router from "./router";
 import store from "./store";
 import ElementPlus from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
+import { VueMasonryPlugin } from 'vue-masonry/src/masonry-vue3.plugin'
+import mitt from 'mitt' // VueMasonryPlugin Dependencies
 
+import { createApp } from 'vue'
 const app = createApp({})
+
+const emitter = mitt()
+app.config.globalProperties.emitter = emitter
+
+createApp(App)
+  .use(store)
+  .use(router)
+  .use(ElementPlus)
+  .use(VueMasonryPlugin)
+  .mount('#app')
+
+
 // for auto register component with "Base..." prefix name.
 const requireComponent = require.context(
   './components',
@@ -23,9 +38,6 @@ requireComponent.keys().forEach(fileName => {
   app.component(componentName, componentConfig.default || componentConfig)
 })
 
-import { createApp } from "vue";
-
-createApp(App).use(store).use(router).use(ElementPlus).mount('#app')
 /*new Vue({
   router,
   store,
