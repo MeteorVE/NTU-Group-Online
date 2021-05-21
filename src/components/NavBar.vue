@@ -27,6 +27,7 @@
         Login
       </el-menu-item>
       <el-menu-item @click="logout"> Logout </el-menu-item>
+      <el-menu-item route="/profile" index="/profile"> User </el-menu-item>
     </el-menu>
     <!-- <router-link :to="{ name: 'room-show' }">LinkTitle</router-link> -->
   </div>
