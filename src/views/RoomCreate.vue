@@ -15,12 +15,21 @@
         </el-alert>
         <h1>Create an Room</h1>
         <el-form-item label="Title">
-          <el-input v-model="room.title"></el-input>
+          <el-input
+            v-model="room.title"
+            placeholder="請填入房間標題"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="Department">
-          <el-select v-model="room.department" placeholder="choose department">
+        <el-form-item label="NickName">
+          <el-input
+            v-model="room.roomOwnerNickname"
+            placeholder="請填入暱稱"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Category">
+          <el-select v-model="room.category" placeholder="choose category">
             <el-option
-              v-for="dep in department"
+              v-for="dep in categoryList"
               :label="dep"
               :key="dep"
               :value="dep"
@@ -76,7 +85,7 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="createEvent">Create Room</el-button>
+          <el-button type="primary" @click="createRoom">Create Room</el-button>
           <!-- @submit.prevent="createEvent" -->
           <el-button>Cancel</el-button>
         </el-form-item>
@@ -86,78 +95,103 @@
 </template>
 
 <script>
+import RoomService from '@/services/RoomService.js'
 import { mapGetters } from 'vuex'
+import { ElMessage } from 'element-plus'
 
 export default {
   components: null,
   data() {
-    const department = ['CSIE', 'EE']
+    const categoryList = ['閒聊', '糾吃飯']
     const roomType = ['public', 'private', 'lesson']
     return {
-      department,
+      categoryList,
       roomType,
-      //categories: this.$store.state.categories,
-      old_room: this.createFreshRoomObject(),
       room: {
-        organizer: '1',
-        capacity: 0,
-        title: '2',
-        region: '3',
-        date1: '4',
-        date2: '5',
+        title: '',
+        roomOwnerNickname: '我是房主',
+        capacity: 10,
+        category: '',
+        date1: '',
+        date2: '',
         invite: false,
         tag: [],
-        type: '6',
-        description: '7',
+        type: 'Public',
+        description: '',
       },
     }
   },
-  created() {
-    this.checkAuth()
-  },
+  created() {},
   methods: {
-    checkAuth() {
-      this.$store.state.token &&
+    createRoom() {
+      if (this.$store.state.token) {
         this.$store
-          .dispatch('verifyToken', this.event)
-          .then((resVerify) => {
-            console.log('verifyToken Result：' + resVerify)
-            return this.init()
+          .dispatch('refreshToken', this.event)
+          .then((resRefresh) => {
+            console.log(resRefresh)
+            'status' in resRefresh &&
+              console.log(
+                '[RoomCreate.vue.createRoom.then] refreshToken then：' +
+                  '\nstatus code: ' +
+                  resRefresh.status +
+                  '\naccess token: ' +
+                  JSON.stringify(resRefresh.data.access)
+                // 通常到這邊是有正確拿到 token
+              )
+          })
+          .then(() => {
+            RoomService.postRoom(this.room)
+              .then((response) => {
+                console.log(JSON.stringify(response))
+                // 說實話我還不知道這會是啥，不過應該會是 200+room.data
+              })
+              .catch((error) => {
+                console.log(
+                  '[RoomCreate.vue] error: createRoom(), RoomService.postRoom():',
+                  JSON.stringify(error)
+                )
+                ElMessage.error(error.response)
+              })
           })
           .catch((err) => {
-            console.log('[RoomCreate.vue]', err)
-            window.location.href = '/login'
+            console.log(
+              '[RoomCreate.vue.created.catch], token exist but:',
+              '\nstatus code: ',
+              err.response.status,
+              '\nerror message: ',
+              JSON.stringify(err.response.data)
+            )
+            if (
+              'code' in err.response.data &&
+              err.response.data['code'] == 'token_not_valid'
+            ) {
+              console.log('[RoomCreate.vue.createRoom.catch] delete token')
+              this.$store.dispatch('resetToken')
+            }
+            this.$router.push({
+              name: 'login',
+            })
           })
-    },
-    init() {
-      console.log('exec init')
-    },
-    createEvent() {
-      this.$store
-        .dispatch('createEvent', this.event)
-        .then(() => {
-          this.$router.push({
-            name: 'event-show',
-            params: { id: this.event.id },
-          })
-          this.event = this.createFreshEventObject()
+      } else {
+        console.log('plz login !')
+        // window.location.href = '/login'
+        this.$router.push({
+          name: 'login',
         })
-        .catch(() => {
-          console.log('There was a problem creating your event')
-        })
-    },
-    createFreshRoomObject() {
-      const user = this.$store.state.user
-
-      return {
-        user: user,
-        department: '',
-        organizer: user, // owner
-        title: '',
-        description: '',
-        capacity: 10,
-        type: 'public',
       }
+
+      // this.$store
+      //   .dispatch('createEvent', this.event)
+      //   .then(() => {
+      //     this.$router.push({
+      //       name: 'event-show',
+      //       params: { id: this.event.id },
+      //     })
+      //     this.event = this.createFreshEventObject()
+      //   })
+      //   .catch(() => {
+      //     console.log('There was a problem creating your event')
+      //   })
     },
   },
   computed: {

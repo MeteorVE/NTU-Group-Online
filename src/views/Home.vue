@@ -23,6 +23,7 @@
 // @ is an alias to /src
 // import RoomCard from '@/components/RoomCard.vue'
 import RoomService from '@/services/RoomService.js'
+import { ElMessage } from 'element-plus'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -61,6 +62,7 @@ export default {
             .catch((error) => {
               console.log(
                 '[Home.vue] error: created(), RoomService.getRooms():',
+                '\n理論上這邊不會再有錯誤了，注意一下\n',
                 error.response
               )
             })
@@ -86,6 +88,7 @@ export default {
         })
     } else {
       console.log('plz login !')
+      ElMessage.error('請登入 !')
       // window.location.href = '/login'
       this.$router.push({
         name: 'login',

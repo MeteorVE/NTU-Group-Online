@@ -3,6 +3,7 @@ import store from '@/store/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 
 const apiClient = axios.create({
   baseURL: `http://localhost:3000`,
@@ -42,19 +43,41 @@ apiDjango.interceptors.response.use(undefined, function (err) {
 })
 
 export default {
+  renameKeys(obj, newKeys) {
+    const keyValues = Object.keys(obj).map((key) => {
+      const newKey = newKeys[key] || key
+      return { [newKey]: obj[key] }
+    })
+    return Object.assign({}, ...keyValues)
+  },
   getRooms() {
     return apiDjango.get('/room/')
-  },
-  getUsers(name) {
-    return apiClient.get('/users/' + name)
-  },
-  getRooms_js() {
-    return apiClient.get('/rooms/')
   },
   getRoom(id) {
     return apiDjango.get('/rooms/' + id)
   },
   postRoom(room) {
+    // title, introduction, create_time, valid_time, room_type, room_category, people_limit
+    const keyMapping = {
+      description: 'introduction',
+      type: 'room_type',
+      capacity: 'people_limit',
+      category: 'room_category',
+    }
+    const renamedRoom = this.renameKeys(room, keyMapping)
+    console.log(renamedRoom)
+    return apiDjango.post('/room/', renamedRoom)
+  },
+  // --------------------------------------
+  // json-server used
+  getUsers(name) {
+    return apiClient.get('/users/' + name)
+  },
+  getRooms_js() {
+    // json-server
+    return apiClient.get('/rooms/')
+  },
+  postRoom_js(room) {
     return apiClient.post('/rooms', room)
   },
 }

@@ -26,9 +26,32 @@
 - [ ]  RoomShow (Room 內部排版)
 - [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
 
+## Some useful info
+
+button 套用 href
+https://github.com/ElemeFE/element/issues/4018
+
+Json Beautify
+https://jsonformatter.curiousconcept.com/
+
+Promise
+https://www.796t.com/article.php?id=224627
+
+CORS 之 
+
+```
+Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
+```
+
+--> 注意有沒有少``/``,
+ex: ``apiDjango.post('/room', renamedRoom)`` --> ``apiDjango.post('/room/', renamedRoom)``
+
+
+
 
 
 ## Project setup
+
 ```
 npm install
 ```
@@ -116,7 +139,3 @@ refresh test case:
   - backend: {"refresh":["This field may not be blank."]}
 3. success
 
-## Some useful info
-
-button 套用 href
-https://github.com/ElemeFE/element/issues/4018
