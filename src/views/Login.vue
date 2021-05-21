@@ -82,6 +82,7 @@ export default {
         .then(() => {
           this.$message.success('Login successfull')
           //console.log(this.$store.getters.getToken)
+          this.$router.go(-1)
         })
         .catch((res) => {
           console.log('Login Failed:', res)
