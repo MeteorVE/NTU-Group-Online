@@ -4,7 +4,15 @@
 
   <div>
     <el-container class="create-form">
-      <el-form ref="form" :model="room" label-width="80px">
+      <el-form ref="form" :model="room" label-width="80px" @submit.prevent>
+        <el-alert
+          title="您尚未登入，登入後才能建立房間。"
+          type="warning"
+          show-icon
+          v-if="!isAuth"
+        >
+          <el-link href="/login" type="primary">點我登入</el-link>
+        </el-alert>
         <h1>Create an Room</h1>
         <el-form-item label="Title">
           <el-input v-model="room.title"></el-input>
@@ -53,7 +61,7 @@
             <el-radio label="Lession"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="最大人數">
+        <el-form-item label="最大人數" @submit.prevent>
           <el-slider v-model="room.capacity" show-input :max="100" :step="5">
           </el-slider>
         </el-form-item>
@@ -78,6 +86,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   components: null,
   data() {
@@ -89,16 +99,16 @@ export default {
       //categories: this.$store.state.categories,
       old_room: this.createFreshRoomObject(),
       room: {
-        organizer: '',
-        capacity: '',
-        title: '',
-        region: '',
-        date1: '',
-        date2: '',
+        organizer: '1',
+        capacity: 0,
+        title: '2',
+        region: '3',
+        date1: '4',
+        date2: '5',
         invite: false,
         tag: [],
-        type: '',
-        description: '',
+        type: '6',
+        description: '7',
       },
     }
   },
@@ -138,10 +148,8 @@ export default {
     },
     createFreshRoomObject() {
       const user = this.$store.state.user
-      const id = Math.floor(Math.random() * 10000000)
 
       return {
-        id: id,
         user: user,
         department: '',
         organizer: user, // owner
@@ -151,6 +159,9 @@ export default {
         type: 'public',
       }
     },
+  },
+  computed: {
+    ...mapGetters(['isAuth']),
   },
 }
 </script>

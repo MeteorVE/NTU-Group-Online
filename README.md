@@ -24,6 +24,7 @@
 - [ ]  Create Room Logic
 - [ ]  UserPage
 - [ ]  RoomShow (Room 內部排版)
+- [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
 
 
 
@@ -95,3 +96,27 @@ Search :
 ```
 json-server --watch db.json
 ```
+
+## Test Case
+
+enter homepage test case: 
+1. no token in state and localStorage
+  - go to login
+2. no token in state but in localStorage
+  - state get localStorage info, and refresh, go to refresh testcase
+3. both token in state and localStorage
+  - refresh, go to refresh testcase
+
+refresh test case:
+1. Refresh Token is invalid or expired
+  - error, should go to login page
+    - it will log at .catch()
+  - {"detail":"Token is invalid or expired","code":"token_not_valid"}
+2. though token in localStorage but refresh_token miss 
+  - backend: {"refresh":["This field may not be blank."]}
+3. success
+
+## Some useful info
+
+button 套用 href
+https://github.com/ElemeFE/element/issues/4018

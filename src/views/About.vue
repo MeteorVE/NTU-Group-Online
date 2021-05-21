@@ -8,13 +8,13 @@
       below
     </p>
     <el-button type="primary">el-button</el-button>
-    <el-time-select
+    <!-- <el-time-select
       v-model="value"
       start="08:30"
       step="00:15"
       end="18:30"
       placeholder="選擇時間"
     >
-    </el-time-select>
+    </el-time-select> -->
   </div>
 </template>

@@ -23,6 +23,7 @@
 // @ is an alias to /src
 // import RoomCard from '@/components/RoomCard.vue'
 import RoomService from '@/services/RoomService.js'
+import { mapGetters } from 'vuex'
 
 export default {
   //name: 'RoomList',
@@ -34,16 +35,83 @@ export default {
       rooms: [],
     }
   },
+  computed: {
+    ...mapGetters(['isAuth']),
+  },
   created() {
-    RoomService.getRooms()
-      .then((response) => {
-        this.rooms = response.data
+    if (this.$store.state.token) {
+      this.$store
+        .dispatch('refreshToken', this.event)
+        .then((resRefresh) => {
+          console.log(resRefresh)
+          'status' in resRefresh &&
+            console.log(
+              '[Home.vue.created.then] refreshToken then：' +
+                '\nstatus code: ' +
+                resRefresh.status +
+                '\naccess token: ' +
+                JSON.stringify(resRefresh.data.access)
+            )
+        })
+        .then(() => {
+          RoomService.getRooms()
+            .then((response) => {
+              this.rooms = response.data
+            })
+            .catch((error) => {
+              console.log(
+                '[Home.vue] error: created(), RoomService.getRooms():',
+                error.response
+              )
+            })
+        })
+        .catch((err) => {
+          console.log(
+            '[Home.vue.created.catch], token exist but:',
+            '\nstatus code: ',
+            err.response.status,
+            '\nerror message: ',
+            JSON.stringify(err.response.data)
+          )
+          if (
+            'code' in err.response.data &&
+            err.response.data['code'] == 'token_not_valid'
+          ) {
+            console.log('[Home.vue.created.catch] delete token')
+            this.$store.dispatch('resetToken')
+          }
+          this.$router.push({
+            name: 'login',
+          })
+        })
+    } else {
+      console.log('plz login !')
+      // window.location.href = '/login'
+      this.$router.push({
+        name: 'login',
       })
-      .catch((error) => {
-        console.log('[Home.vue] error: created():', error.response)
-      })
+    }
   },
 }
+/*
+enter homepage test case: 
+1. no token in state and localStorage
+  - go to login
+2. no token in state but in localStorage
+  - state get localStorage info, and refresh, go to refresh testcase
+3. both token in state and localStorage
+  - refresh, go to refresh testcase
+
+refresh test case:
+1. Refresh Token is invalid or expired
+  - error, should go to login page
+    - it will log at .catch()
+  - {"detail":"Token is invalid or expired","code":"token_not_valid"}
+2. though token in localStorage but refresh_token miss 
+  - backend: {"refresh":["This field may not be blank."]}
+3. success
+
+*/
 </script>
 <style scoped>
 .card-header {
