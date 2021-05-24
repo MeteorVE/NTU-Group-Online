@@ -54,7 +54,7 @@ export default {
     return apiDjango.get('/room/')
   },
   getRoom(id) {
-    return apiDjango.get('/rooms/' + id)
+    return apiDjango.get('/room/' + id +'/')
   },
   postRoom(room) {
     // title, introduction, create_time, valid_time, room_type, room_category, people_limit
@@ -68,9 +68,12 @@ export default {
     console.log(renamedRoom)
     return apiDjango.post('/room/', renamedRoom)
   },
+  postJoinRoom(id, nickname){
+    return apiDjango.post('/room/' + id+'/member_list/', { nickname: nickname })
+  },
   // --------------------------------------
   // json-server used
-  getUsers(name) {
+  getUsers_js(name) {
     return apiClient.get('/users/' + name)
   },
   getRooms_js() {

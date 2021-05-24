@@ -10,12 +10,52 @@
               >進入
             </router-link></el-button
           >
+          <el-button
+            type="text"
+            @click=";(dialogFormRoom = room) + (dialogFormVisible = true)"
+            >點我填表單</el-button
+          >
         </div>
       </template>
       <div class="text item">created by @{{ room.organizer }}</div>
       <div class="text item">{{ room.people_limit }}</div>
       <div class="text item">{{ room.introduction }}</div>
     </el-card>
+    <el-dialog title="加入房間" v-model="dialogFormVisible">
+      <el-form :model="dialogFormRoom">
+        <el-form-item label="房間名稱" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.title"></el-form-item>
+        </el-form-item>
+        <el-form-item label="房間 Type" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.room_type"></el-form-item>
+        </el-form-item>
+        <el-form-item label="房間 Category" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.room_category"></el-form-item>
+        </el-form-item>
+        <el-form-item label="簡介" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.introduction"></el-form-item>
+        </el-form-item>
+        <el-form-item label="最大人數" :label-width="formLabelWidth">
+          <el-form-item
+            :label="dialogFormRoom.people_limit.toString()"
+          ></el-form-item>
+        </el-form-item>
+        <el-form-item label="您的暱稱" :label-width="formLabelWidth">
+          <el-input
+            v-model="nickname"
+            autocomplete="off"
+            clearable
+            placeholder="請輸入暱稱"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="joinRoom">送出</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -34,6 +74,10 @@ export default {
   data() {
     return {
       rooms: [],
+      dialogFormVisible: false,
+      dialogFormRoom: '',
+      formLabelWidth: '120px',
+      nickname: '',
     }
   },
   computed: {
@@ -95,9 +139,51 @@ export default {
       })
     }
   },
+  methods: {
+    joinRoom() {
+      console.log('exec join room')
+
+      if (this.$store.state.token) {
+        this.$store
+          .dispatch('refreshToken', this.event)
+          .then((resRefresh) => {
+            console.log(resRefresh)
+            'status' in resRefresh &&
+              console.log(
+                '[Home.vue.created.then] refreshToken then：' +
+                  '\nstatus code: ' +
+                  resRefresh.status +
+                  '\naccess token: ' +
+                  JSON.stringify(resRefresh.data.access)
+              )
+            return RoomService.postJoinRoom(
+              this.dialogFormRoom.id,
+              this.nickname
+            )
+          })
+          .then((res) => {
+            console.log('join success:', res.data)
+            this.$router.push({
+              name: 'room-show',
+              params: { id: this.dialogFormRoom.id },
+            })
+          })
+          .catch((err) => {
+            var errMsg = err.response.data['error']
+            if (errMsg == 'You are already in the room.') {
+              this.$router.push({
+                name: 'room-show',
+                params: { id: this.dialogFormRoom.id },
+              })
+            }
+            console.log(err.response.data['error'])
+          })
+      }
+    },
+  },
 }
 /*
-enter homepage test case: 
+enter homepage test case:
 1. no token in state and localStorage
   - go to login
 2. no token in state but in localStorage
@@ -110,7 +196,7 @@ refresh test case:
   - error, should go to login page
     - it will log at .catch()
   - {"detail":"Token is invalid or expired","code":"token_not_valid"}
-2. though token in localStorage but refresh_token miss 
+2. though token in localStorage but refresh_token miss
   - backend: {"refresh":["This field may not be blank."]}
 3. success
 

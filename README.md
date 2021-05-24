@@ -9,6 +9,8 @@
 
 ## Todo
 
+### General
+
 - [x] Login 後可以跳轉回 "前一個畫面"
     - ``this.$router.go(-1)``
 - [ ] 每次進房間就會 call 一次 refresh token
@@ -21,34 +23,71 @@
     後來發現原本的方法又可行了，也許跟拿掉沒用到的 @select="handler" 有關。
 - [ ]  在 homepage，點了 logout，他會再次 access homepage 但是卻不會讓房間消失。
 - [ ]  Join Room Logic
-- [ ]  Create Room Logic
+- [ ] Create Room Logic
+    - 因為後端好像不能接受新 category 的關係無法測試，邏輯已經寫好了
 - [ ]  UserPage
-- [ ]  RoomShow (Room 內部排版)
 - [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
+
+### RoomShow (聊天室內部)
+
+- [ ] RoomCard 超過固定字數就要強迫壓縮
+- [ ] RoomShow 內部的排版
+- [ ] RoomShow 內部超過字數問題
+
+
+
+Room create -> Room join -> get 各類 List 試著構建整個房間 -> 測試各類 modify API (Room, remove, block, invite, permission)
+
+User -> (Get my room -> render to table)
+
+Home -> Room CSS
+
+Channel
+
+
+
+/GET
+
+/POST
+
+
+
+1. 使用者資料 (id, mail, department, pwd, )
+2. Friend List, history (我參加過的)、我開的房間, ~~Msg Page~~
+
+
 
 ## Some useful info
 
-button 套用 href
-https://github.com/ElemeFE/element/issues/4018
+- button 套用 href
+  - https://github.com/ElemeFE/element/issues/4018
 
-Json Beautify
-https://jsonformatter.curiousconcept.com/
+- Json Beautify
+  - https://jsonformatter.curiousconcept.com/
 
-Promise
-https://www.796t.com/article.php?id=224627
+- Promise
+  - https://www.796t.com/article.php?id=224627
 
-CORS 之 
-
+- CORS 之 
 ```
 Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
 ```
-
 --> 注意有沒有少``/``,
 ex: ``apiDjango.post('/room', renamedRoom)`` --> ``apiDjango.post('/room/', renamedRoom)``
 
 
+- 如果想要做彈窗資訊 (點一個按鈕，背景變暗，然後有個提示框出現)
+  - 簡單的，可以參考 ``El-MessageBox ``
+  - 如果要做的複雜一點，請改用 ``Dialog ``，不要自找麻煩 QQ
 
+- 如果不知道有哪些 API 可以用，可以直接 access ``http://localhost:8000/
+``
 
+-  parent 傳給 子孫(不論幾層)，在 vue3 有個有趣的作法: provide & inject
+  - 但要注意，parent 傳的時候是 send by value, 若想要隨時更新要自己加上 computed 屬性
+  - 定位像是能跨越多層的 props
+
+- vue 中，``val = ref(0)`` --> 讓這個 val 可以直接呼叫 ++ 來被 increment
 
 ## Project setup
 
