@@ -69,7 +69,7 @@ export default {
     return apiDjango.post('/room/', renamedRoom)
   },
   postJoinRoom(id, nickname){
-    return apiDjango.post('/room/' + id+'/member_list/', { nickname: nickname })
+    return apiDjango.post('/room/' + id + '/join_room/', { nickname: nickname })
   },
   // --------------------------------------
   // json-server used

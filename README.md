@@ -13,7 +13,7 @@
 
 - [x] Login 後可以跳轉回 "前一個畫面"
     - ``this.$router.go(-1)``
-- [ ] 每次進房間就會 call 一次 refresh token
+- [x] 每次進房間就會 call 一次 refresh token
 - [x] Login 透過 ``getters.isAuth`` 控制出現
     - 用 mapGetters 讀入，不要在 template 內使用 store。
 - [x] App.vue 綁的 token debug，F5 後會沒辦法得到值，不太對。
@@ -21,12 +21,14 @@
 - [x] Navbar 上面，被選中的會變成黃色。但是如果直接 access Url，會無法觸發 selected 而改變被選中項
     - 原本想透過 computed 來 get router path，再套回 defaultIndex。但怎麼做都沒用。
     後來發現原本的方法又可行了，也許跟拿掉沒用到的 @select="handler" 有關。
+- [x]  Join Room Logic (but 有些東西可能沒測到)
 - [ ]  在 homepage，點了 logout，他會再次 access homepage 但是卻不會讓房間消失。
-- [ ]  Join Room Logic
 - [ ] Create Room Logic
     - 因為後端好像不能接受新 category 的關係無法測試，邏輯已經寫好了
 - [ ]  UserPage
 - [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
+- [ ] Homepage: /user_room  渲染
+
 
 ### RoomShow (聊天室內部)
 
