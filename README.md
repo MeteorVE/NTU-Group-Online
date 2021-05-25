@@ -23,12 +23,14 @@
     後來發現原本的方法又可行了，也許跟拿掉沒用到的 @select="handler" 有關。
 - [x]  Join Room Logic (but 有些東西可能沒測到)
 - [ ]  在 homepage，點了 logout，他會再次 access homepage 但是卻不會讓房間消失。
-- [ ] Create Room Logic
-    - 因為後端好像不能接受新 category 的關係無法測試，邏輯已經寫好了
+- [x] Create Room Logic
+  - 會遇到的正常錯誤: nickname blank 或 title blank，會跳錯誤訊息。
+  - 另外兩種可能 : 沒登入、refresh 過期、其他欄位 key 沒 mapping，會被 handle。
 - [ ]  UserPage
 - [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
 - [ ] Homepage: /user_room  渲染
-
+- [x]] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
+  - 可以成功跳轉
 
 ### RoomShow (聊天室內部)
 

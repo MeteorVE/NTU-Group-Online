@@ -21,18 +21,15 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="NickName">
-          <el-input
-            v-model="room.roomOwnerNickname"
-            placeholder="請填入暱稱"
-          ></el-input>
+          <el-input v-model="room.nickname" placeholder="請填入暱稱"></el-input>
         </el-form-item>
         <el-form-item label="Category">
           <el-select v-model="room.category" placeholder="choose category">
             <el-option
-              v-for="dep in categoryList"
-              :label="dep"
-              :key="dep"
-              :value="dep"
+              v-for="(item, key) in categoryDict"
+              :label="item"
+              :key="item"
+              :value="key"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -65,9 +62,13 @@
         </el-form-item>
         <el-form-item label="Type">
           <el-radio-group v-model="room.type">
-            <el-radio label="Public"></el-radio>
-            <el-radio label="Private"></el-radio>
-            <el-radio label="Lession"></el-radio>
+            <el-radio
+              v-for="(item, key) in roomTypeDict"
+              :label="key"
+              :key="key"
+            >
+              {{ item }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="最大人數" @submit.prevent>
@@ -85,7 +86,9 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="createRoom">Create Room</el-button>
+          <el-button type="primary" @click="createRoom" :loading="loading"
+            >Create Room</el-button
+          >
           <!-- @submit.prevent="createEvent" -->
           <el-button>Cancel</el-button>
         </el-form-item>
@@ -102,21 +105,26 @@ import { ElMessage } from 'element-plus'
 export default {
   components: null,
   data() {
-    const categoryList = ['閒聊', '糾吃飯']
-    const roomType = ['public', 'private', 'lesson']
+    const categoryDict = { course: '課程討論', find_group: '尋求組隊' }
+    const roomTypeDict = {
+      public: '公開',
+      private: '私人',
+      lesson: '課程',
+    }
     return {
-      categoryList,
-      roomType,
+      categoryDict,
+      roomTypeDict,
+      loading: false,
       room: {
         title: '',
-        roomOwnerNickname: '我是房主',
+        nickname: '我是房主',
         capacity: 10,
         category: '',
         date1: '',
         date2: '',
         invite: false,
         tag: [],
-        type: 'Public',
+        type: 'public',
         description: '',
       },
     }
@@ -138,22 +146,18 @@ export default {
                   JSON.stringify(resRefresh.data.access)
                 // 通常到這邊是有正確拿到 token
               )
+            this.loading = true
+            return RoomService.postRoom(this.room)
           })
-          .then(() => {
-            RoomService.postRoom(this.room)
-              .then((response) => {
-                console.log(JSON.stringify(response))
-                // 說實話我還不知道這會是啥，不過應該會是 200+room.data
-              })
-              .catch((error) => {
-                console.log(
-                  '[RoomCreate.vue] error: createRoom(), RoomService.postRoom():',
-                  JSON.stringify(error)
-                )
-                ElMessage.error(error.response)
-              })
+          .then((res) => {
+            if (res.status == 201) {
+              console.log(res.statusText)
+            }
+            ElMessage.success(res.statusText)
+            this.loading = false
           })
           .catch((err) => {
+            this.loading = false
             console.log(
               '[RoomCreate.vue.created.catch], token exist but:',
               '\nstatus code: ',
@@ -167,10 +171,11 @@ export default {
             ) {
               console.log('[RoomCreate.vue.createRoom.catch] delete token')
               this.$store.dispatch('resetToken')
+              this.$router.push({
+                name: 'login',
+              })
             }
-            this.$router.push({
-              name: 'login',
-            })
+            ElMessage.error(JSON.stringify(err.response.data))
           })
       } else {
         console.log('plz login !')
