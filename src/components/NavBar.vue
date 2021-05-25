@@ -10,15 +10,18 @@
       router
     >
       <el-menu-item route="/" index="/">Homepage</el-menu-item>
-      <el-submenu index="4">
-        <template #title>Demo 用選項</template>
-        <el-menu-item index="2-1">選項 1</el-menu-item>
-        <el-submenu index="2-2">
-          <template #title>選項 2</template>
-          <el-menu-item index="2-4-1">選項1</el-menu-item>
-          <el-menu-item index="2-4-2">選項2</el-menu-item>
-        </el-submenu>
-      </el-submenu>
+      <el-menu-item class="plus" route="/room/create" index="4">
+        <i class="el-icon-plus"></i>
+      </el-menu-item>
+      <el-menu-item class="bell" index="5">
+        <i class="el-icon-bell"></i>
+      </el-menu-item>
+      <el-menu-item class="searchbar" index="6">
+        <el-input placeholder="搜尋" v-model="input"></el-input>
+      </el-menu-item>
+      <el-menu-item class="search" index="7">
+        <i class="el-icon-search"></i>
+      </el-menu-item>
       <el-menu-item route="/room/create" index="/room/create"
         >Create</el-menu-item
       >
@@ -64,6 +67,7 @@ export default {
 </script>
 
 <style scoped>
+/*
 .el-submenu__title:hover {
   background-color: #000 !important;
 }
@@ -73,28 +77,17 @@ export default {
 a {
   color: #ffffff;
   text-decoration: none;
+}*/
+
+.el-menu-nav {
+  z-index: 1;
 }
-/* .nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
+.searchbar {
+  position: relative;
+  left: 42%;
 }
-.nav > .brand {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 1.5em;
-  color: #39b982;
-  text-decoration: none;
+.search {
+  position: relative;
+  left: 42%;
 }
-.nav .nav-item {
-  box-sizing: border-box;
-  margin: 0 5px;
-  color: rgba(0, 0, 0, 0.5);
-  text-decoration: none;
-}
-.nav .nav-item.router-link-exact-active {
-  color: #39b982;
-  border-bottom: solid 2px #39b982;
-} */
 </style>

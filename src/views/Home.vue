@@ -1,7 +1,29 @@
 <template>
   <div class="home">
     <!-- <RoomCard v-for="room in rooms" :key="room.id" :room="room" /> -->
-    <el-card v-for="room in rooms" :key="room.id" class="box-card">
+    <el-container>
+      <el-aside width="200px"><SideBar /></el-aside>
+      <el-main id="roomCardContainer" v-if="rooms.length > 0">
+        <div
+          v-masonry="roomCardContainer"
+          transition-duration="0.2s"
+          item-selector=".item"
+          column-width=".item"
+          class="rooms-container"
+        >
+          <div
+            v-masonry-tile
+            class="item"
+            v-for="(room, index) in rooms"
+            v-bind:key="index"
+          >
+            <RoomCard :room="room" />
+          </div>
+        </div>
+      </el-main>
+    </el-container>
+
+    <!-- <el-card v-for="room in rooms" :key="room.id" class="box-card">
       <template #header>
         <div class="card-header">
           <span>{{ room.title }}</span>
@@ -20,7 +42,7 @@
       <div class="text item">created by @{{ room.organizer }}</div>
       <div class="text item">{{ room.people_limit }}</div>
       <div class="text item">{{ room.introduction }}</div>
-    </el-card>
+    </el-card> -->
     <el-dialog title="加入房間" v-model="dialogFormVisible">
       <el-form :model="dialogFormRoom">
         <el-form-item label="房間名稱" :label-width="formLabelWidth">
@@ -61,7 +83,8 @@
 
 <script>
 // @ is an alias to /src
-// import RoomCard from '@/components/RoomCard.vue'
+import RoomCard from '@/components/RoomCard.vue'
+import SideBar from '@/components/SideBar.vue'
 import RoomService from '@/services/RoomService.js'
 import { ElMessage } from 'element-plus'
 import { mapGetters } from 'vuex'
@@ -69,7 +92,8 @@ import { mapGetters } from 'vuex'
 export default {
   //name: 'RoomList',
   components: {
-    //RoomCard,
+    RoomCard,
+    SideBar,
   },
   data() {
     return {
@@ -203,7 +227,7 @@ refresh test case:
 */
 </script>
 <style scoped>
-.card-header {
+/* .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -224,5 +248,5 @@ refresh test case:
 a {
   color: #05acdf;
   text-decoration: none;
-}
+} */
 </style>

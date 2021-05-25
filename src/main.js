@@ -9,18 +9,20 @@ import { VueMasonryPlugin } from 'vue-masonry/src/masonry-vue3.plugin'
 import mitt from 'mitt' // VueMasonryPlugin Dependencies
 
 import { createApp } from 'vue'
-const app = createApp({})
 
+// Way 1
+// const app = createApp(App)
+//   .use(store)
+//   .use(router)
+//   .use(ElementPlus)
+//   .use(VueMasonryPlugin)
+//   .mount('#app')
+
+// Way 2
+let app = createApp(App)
 const emitter = mitt()
 app.config.globalProperties.emitter = emitter
-
-createApp(App)
-  .use(store)
-  .use(router)
-  .use(ElementPlus)
-  .use(VueMasonryPlugin)
-  .mount('#app')
-
+app.use(store).use(router).use(ElementPlus).use(VueMasonryPlugin).mount('#app')
 
 // for auto register component with "Base..." prefix name.
 const requireComponent = require.context(

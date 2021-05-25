@@ -1,12 +1,17 @@
 <template>
-  <router-link :to="{ name: 'room-show', params: { id: room.id } }">
-    <div class="room-card -shadow">
-      <span class="owner">created by @{{ room.organizer }}</span>
-      <h4 class="title">{{ room.title }}</h4>
-      <span>{{ room.capacity }}</span>
-      <p>{{ room.description }}</p>
+  <el-card :body-style="{ padding: '0px' }">
+    <img :src="images[0]" class="image" />
+    <h4>{{ room.title }}</h4>
+    <div>
+      <p>created by @{{}}</p>
     </div>
-  </router-link>
+    <div>
+      <p>limit:{{ room.people_limit }}</p>
+    </div>
+    <div>
+      <p>introduction：{{ room.introduction }}</p>
+    </div>
+  </el-card>
 </template>
 
 <script>
@@ -14,26 +19,41 @@ export default {
   props: {
     room: Object,
   },
+  data() {
+    return {
+      images: [
+        'https://i.imgur.com/qdIZSWc.jpg',
+        'https://i.imgur.com/GOaM9dB.jpg',
+        'https://i.imgur.com/G65qPbl.jpg',
+        'https://i.imgur.com/WxiJ6K0.jpg',
+        'https://i.imgur.com/qdIZSWc.jpg',
+      ],
+    }
+  },
 }
 </script>
 
 <style scoped>
-.room-card {
-  padding: 20px;
-  margin-bottom: 24px;
-  transition: all 0.2s linear;
-  cursor: pointer;
+/* .rooms-container {
+  display: flex;
+} */
+.item {
+  width: 25%;
 }
-.room-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
+.image {
+  max-width: 50%;
 }
-.room-card > .title {
-  margin: 0;
+.el-card div p {
+  margin: 6px;
+  font-size: 14px;
+  text-align: left;
+  line-height: 120%;
 }
-.room-link {
-  color: black;
-  text-decoration: none;
-  font-weight: 100;
+.el-card h4 {
+  margin: 10px;
 }
+/* .rooms-container {
+  position: relative;
+  left: 2%;
+} */
 </style>

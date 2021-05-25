@@ -93,16 +93,13 @@ export default {
   height: 100vh;
 }
 
-#nav {
-  padding: 30px;
+body {
+  margin: 0 !important;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.el-container {
+  height: 100%;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.el-header {
+  padding: 0 !important;
 }
 </style>
