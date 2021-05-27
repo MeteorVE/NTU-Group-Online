@@ -34,10 +34,6 @@ export default {
 </script>
 
 <style scoped>
-/* .rooms-container {
-  display: flex;
-} */
-
 .image {
   max-width: 50%;
 }
@@ -50,8 +46,4 @@ export default {
 .el-card h4 {
   margin: 10px;
 }
-/* .rooms-container {
-  position: relative;
-  left: 2%;
-} */
 </style>

@@ -1,80 +1,49 @@
 <template>
-  <div>
-    <el-row :gutter="20">
-      <el-col :span="10">
-        <div class="grid-content bg-purple">
-          <div class="buttons">
-            <el-button type="danger">退出房間</el-button>
-          </div>
-          <div class="room-header">
-            <h1 class="title">{{ room.title }}</h1>
-            <h5>開房者: {{ room.organizer ? room.organizer.name : '' }}</h5>
-            <h5>分類: {{ room.room_category }}</h5>
-            <h5>
-              限制人數:
-              {{ room.room_type == 'lesson' ? '無限制' : room.people_limit }}
-            </h5>
-          </div>
-
-          <h2>房間簡介</h2>
-          <p>{{ room.introduction }}</p>
+  <el-container>
+    <el-aside class="SideBarContainer"><SideBar :sideBarList="userRooms" /></el-aside>
+    <el-main></el-main>
+    <el-aside class="room-info">
+      <h5 class="title">徵室友</h5>
+      <el-divider></el-divider>
+      <div>
+        <h5>房主</h5>
+        <p>XXX</p>
+      </div>
+      <el-divider></el-divider>
+      <div>
+        <h5>房間簡介</h5>
+        <p>永和區中正路，公寓，每月六千五，房間坪數七坪，家具家電全</p>
+      </div>
+      <el-divider></el-divider>
+      <div>
+        <h5>分類</h5>
+        <el-button size="mini" round>室友</el-button>
+      </div>
+      <el-divider></el-divider>
+      <div>
+        <h5>成員列表</h5>
+        <div class="member" v-for="(o, i) in 10" :key="i">
+          <el-avatar size="small" icon="el-icon-user-solid"></el-avatar>
+          <p class="username">使用者{{ o }}</p>
         </div>
-      </el-col>
-      <el-col :span="10"
-        ><div class="grid-content bg-purple">
-          chatting area，也許要用 component 做
-        </div></el-col
-      >
-      <el-col :span="4"
-        ><div class="grid-content bg-purple">成員們</div></el-col
-      >
-    </el-row>
-    <el-dialog title="編輯房間" v-model="dialogFormVisible">
-      <el-form :model="dialogFormRoom">
-        <el-form-item label="房間名稱" :label-width="formLabelWidth">
-          <el-form-item :label="dialogFormRoom.title"></el-form-item>
-        </el-form-item>
-        <el-form-item label="房間 Type" :label-width="formLabelWidth">
-          <el-form-item :label="dialogFormRoom.room_type"></el-form-item>
-        </el-form-item>
-        <el-form-item label="房間 Category" :label-width="formLabelWidth">
-          <el-form-item :label="dialogFormRoom.room_category"></el-form-item>
-        </el-form-item>
-        <el-form-item label="簡介" :label-width="formLabelWidth">
-          <el-form-item :label="dialogFormRoom.introduction"></el-form-item>
-        </el-form-item>
-        <el-form-item label="最大人數" :label-width="formLabelWidth">
-          <el-form-item
-            :label="dialogFormRoom.people_limit.toString()"
-          ></el-form-item>
-        </el-form-item>
-        <el-form-item label="您的暱稱" :label-width="formLabelWidth">
-          <el-input
-            v-model="nickname"
-            autocomplete="off"
-            clearable
-            placeholder="請輸入暱稱"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="joinRoom">送出</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+      </div>
+      <el-divider></el-divider>
+      <div>
+        <h5>限制人數</h5>
+        <p>10</p>
+      </div>
+    </el-aside>
+  </el-container>
 </template>
 
 <script>
 import RoomService from '@/services/RoomService.js'
+import SideBar from '@/components/SideBar.vue'
 
 export default {
   props: ['id'],
   data() {
     return {
-      exist_btn_text: '離開房間',
       room: {
         id: 0,
         title: 'Room',
@@ -85,65 +54,42 @@ export default {
         room_category: 'course',
         people_limit: 1,
       },
+      userRooms: ['徵室友', '找山友', '吃鬆餅', '搭車回高雄'],
     }
   },
-  created() {
-    new Promise(() => {
-      this.getUserObj()
-        .then((res) => {
-          this.room = res
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    })
+  components: {
+    SideBar,
   },
-  methods: {
-    init() {
-      console.log()
-    },
-    getRoomObj() {},
-    getUserObj() {
-      return new Promise((resolve, reject) => {
-        RoomService.getRoom(this.id)
-          .then((response) => {
-            resolve(response.data)
-            // this.room = response.data  // console.log(this.room)
-          })
-          .catch((error) => {
-            reject(error.data) //  console.log('There was an error:', JSON.stringify(error.response))
-          })
+  created() {
+    RoomService.getRoom(this.id)
+      .then((response) => {
+        this.room = response.data
+        console.log(this.room)
       })
-    },
-    getMemberList() {},
-    getBlockList() {},
-    getInvitationList() {},
+      .catch((error) => {
+        console.log('There was an error:', JSON.stringify(error.response))
+      })
   },
 }
 </script>
-<style scoped>
-.el-row {
-  margin-bottom: 20px;
+<style>
+.SideBarContainer {
+  width: 160px !important;
 }
-.el-col {
-  border-radius: 4px;
+.room-info {
+  text-align: left;
+  width: 200px !important;
 }
-.bg-purple-dark {
-  background: #99a9bf;
+.room-info p {
+  font-size: 12px;
+  margin: 0;
 }
-.bg-purple {
-  background: #d3dce6;
+.member {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
 }
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 500px;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
+.username {
+  padding-left: 10px;
 }
 </style>
