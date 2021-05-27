@@ -227,6 +227,9 @@ refresh test case:
 */
 </script>
 <style scoped>
+.item {
+  width: 25%;
+}
 /* .card-header {
   display: flex;
   justify-content: space-between;

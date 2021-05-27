@@ -28,7 +28,7 @@
   - 另外兩種可能 : 沒登入、refresh 過期、其他欄位 key 沒 mapping，會被 handle。
 - [ ]  UserPage
 - [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
-- [ ] Homepage: /user_room  渲染
+- [ ] Homepage: /user_room  渲染 (後面才會做，因為開發方便)
 - [x]] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
   - 可以成功跳轉
 
@@ -37,6 +37,30 @@
 - [ ] RoomCard 超過固定字數就要強迫壓縮
 - [ ] RoomShow 內部的排版
 - [ ] RoomShow 內部超過字數問題
+
+
+1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人
+  (欄位不能用 uid 或是學號之類的，必須是 token，後端再去反查)
+  後端搭配 Channel 的 boardcast server 必須推送 { msg, uid, nickname, time } 這樣的 obj
+2. 後端必須再給 access_level, nickname，原因是每次 enter room 的場景並不一定會有那些繼承下來的參數
+  或是做一個 GET 版本的 /room/:id/join_room，回傳可以和 POST Res 200 的格式一樣。
+3. admin 按鈕是否顯示，用 isAdmin 去管理。
+4. admin 有 "刪除房間"、"修改房間" 可以按。
+5. Member List 上面有幾個小按鈕 : 
+  - Remove, Block，點擊後都會跳出 Popconfirm 問是否確認執行。
+  - **都要填寫 Reason**
+6. Block List 上面有幾個小按鈕 : 
+  - Delete (解封)，點擊後會有 Popconfirm 問是否確認執行。
+7. 上面兩個 Table 可以使用 Collapse 做摺疊，讓版面更好看。
+8. 上面的 table 也可以透過 Drawer 讓網頁更潮，但有個細節是需要 call ``$ref``
+  - https://zhuanlan.zhihu.com/p/369448926
+  - https://blog.csdn.net/m0_38010595/article/details/112763444
+9. 進 Room 的時候房間總共需要做以下事情 : 
+  - ``/GET /room/:id`` 可以拿到 roomId, title, introduction, create_time, valid_time, room_type, room_category, people_limit
+  - ``/GET /room/:id/join_room`` 先假想這個 API 存在，可以拿到自己的 access_level, nickname
+  - ``/GET /room/:id/member_list`` 可以拿到大家的 access_level, nickname, uid (不一定是學號)
+  - ``/GET /room/:id/block_list``  可以拿到 blocked_user_id, block_manager_id, reason 的 Array
+  - ``/GET /room/:id/invitation`` 可以拿到 ... 不確定。
 
 
 
@@ -71,6 +95,10 @@ Channel
 
 - Promise
   - https://www.796t.com/article.php?id=224627
+  - https://wcc723.github.io/development/2020/02/16/all-new-promise/
+
+- Axios 搭配 Promise
+  - https://segmentfault.com/a/1190000016680014
 
 - CORS 之 
 ```
@@ -92,6 +120,9 @@ ex: ``apiDjango.post('/room', renamedRoom)`` --> ``apiDjango.post('/room/', rena
   - 定位像是能跨越多層的 props
 
 - vue 中，``val = ref(0)`` --> 讓這個 val 可以直接呼叫 ++ 來被 increment
+
+- slot 用法
+![](https://book.vue.tw/assets/img/2-4-slot.d9af1f25.png)
 
 ## Project setup
 

@@ -37,9 +37,7 @@ export default {
 /* .rooms-container {
   display: flex;
 } */
-.item {
-  width: 25%;
-}
+
 .image {
   max-width: 50%;
 }

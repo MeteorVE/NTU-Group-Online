@@ -1,8 +1,11 @@
 <template>
   <div>
     <el-row :gutter="20">
-      <el-col :span="10"
-        ><div class="grid-content bg-purple">
+      <el-col :span="10">
+        <div class="grid-content bg-purple">
+          <div class="buttons">
+            <el-button type="danger">退出房間</el-button>
+          </div>
           <div class="room-header">
             <h1 class="title">{{ room.title }}</h1>
             <h5>開房者: {{ room.organizer ? room.organizer.name : '' }}</h5>
@@ -15,8 +18,8 @@
 
           <h2>房間簡介</h2>
           <p>{{ room.introduction }}</p>
-        </div></el-col
-      >
+        </div>
+      </el-col>
       <el-col :span="10"
         ><div class="grid-content bg-purple">
           chatting area，也許要用 component 做
@@ -26,6 +29,41 @@
         ><div class="grid-content bg-purple">成員們</div></el-col
       >
     </el-row>
+    <el-dialog title="編輯房間" v-model="dialogFormVisible">
+      <el-form :model="dialogFormRoom">
+        <el-form-item label="房間名稱" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.title"></el-form-item>
+        </el-form-item>
+        <el-form-item label="房間 Type" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.room_type"></el-form-item>
+        </el-form-item>
+        <el-form-item label="房間 Category" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.room_category"></el-form-item>
+        </el-form-item>
+        <el-form-item label="簡介" :label-width="formLabelWidth">
+          <el-form-item :label="dialogFormRoom.introduction"></el-form-item>
+        </el-form-item>
+        <el-form-item label="最大人數" :label-width="formLabelWidth">
+          <el-form-item
+            :label="dialogFormRoom.people_limit.toString()"
+          ></el-form-item>
+        </el-form-item>
+        <el-form-item label="您的暱稱" :label-width="formLabelWidth">
+          <el-input
+            v-model="nickname"
+            autocomplete="off"
+            clearable
+            placeholder="請輸入暱稱"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="joinRoom">送出</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -36,6 +74,7 @@ export default {
   props: ['id'],
   data() {
     return {
+      exist_btn_text: '離開房間',
       room: {
         id: 0,
         title: 'Room',
@@ -49,14 +88,37 @@ export default {
     }
   },
   created() {
-    RoomService.getRoom(this.id)
-      .then((response) => {
-        this.room = response.data
-        console.log(this.room)
+    new Promise(() => {
+      this.getUserObj()
+        .then((res) => {
+          this.room = res
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+  },
+  methods: {
+    init() {
+      console.log()
+    },
+    getRoomObj() {},
+    getUserObj() {
+      return new Promise((resolve, reject) => {
+        RoomService.getRoom(this.id)
+          .then((response) => {
+            resolve(response.data)
+            // this.room = response.data  // console.log(this.room)
+          })
+          .catch((error) => {
+            reject(error.data) //  console.log('There was an error:', JSON.stringify(error.response))
+          })
       })
-      .catch((error) => {
-        console.log('There was an error:', JSON.stringify(error.response))
-      })
+    },
+    getMemberList() {},
+    getBlockList() {},
+    getInvitationList() {},
   },
 }
 </script>
