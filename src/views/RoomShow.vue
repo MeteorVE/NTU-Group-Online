@@ -25,9 +25,31 @@
           chatting area，也許要用 component 做
         </div></el-col
       >
-      <el-col :span="4"
-        ><div class="grid-content bg-purple">成員們</div></el-col
-      >
+      <el-col :span="4">
+        <div class="grid-content bg-purple">
+          <el-table :data="memberList" style="width: 100%">
+            <el-table-column fixed prop="nickname" label="暱稱" width="60">
+            </el-table-column>
+            <el-table-column prop="access_level" label="身分" width="60">
+            </el-table-column>
+            <el-table-column label="操作">
+              <template #default="scope">
+                <el-button
+                  size="mini"
+                  @click="handleEdit(scope.$index, scope.row)"
+                  >踢出</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleDelete(scope.$index, scope.row)"
+                  >封鎖</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-col>
     </el-row>
     <el-dialog title="編輯房間" v-model="dialogFormVisible">
       <el-form :model="dialogFormRoom">
@@ -69,12 +91,19 @@
 
 <script>
 import RoomService from '@/services/RoomService.js'
-
+import SideBar from '@/components/SideBar.vue'
 export default {
   props: ['id'],
+  components: {
+    SideBar,
+  },
   data() {
     return {
       exist_btn_text: '離開房間',
+      user: {},
+      memberList: [],
+      invitationList: [],
+      blockList: [],
       room: {
         id: 0,
         title: 'Room',
@@ -88,23 +117,57 @@ export default {
     }
   },
   created() {
-    new Promise(() => {
-      this.getUserObj()
-        .then((res) => {
-          this.room = res
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    })
+    this.getRoomObj()
+      .then((res) => {
+        this.room = res
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+    // this.getUserObj()
+    //   .then((res) => {
+    //     this.user = res
+    //     console.log(res)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+
+    this.getMemberList()
+      .then((res) => {
+        this.memberList = res.data
+        console.log('memberList: ', res.data)
+      })
+      .catch((err) => {
+        console.log(err.data)
+      })
+
+    this.getBlockList()
+      .then((res) => {
+        this.blockList = res.data
+        console.log('blockList:', res.data)
+      })
+      .catch((err) => {
+        console.log(err.data)
+      })
+
+    this.getInvitationList()
+      .then((res) => {
+        this.invitationList = res.data
+        console.log('invitationList', res.data)
+      })
+      .catch((err) => {
+        console.log(err.data)
+      })
   },
   methods: {
     init() {
       console.log()
     },
-    getRoomObj() {},
-    getUserObj() {
+    getUserObj() {},
+    getRoomObj() {
       return new Promise((resolve, reject) => {
         RoomService.getRoom(this.id)
           .then((response) => {
@@ -116,9 +179,15 @@ export default {
           })
       })
     },
-    getMemberList() {},
-    getBlockList() {},
-    getInvitationList() {},
+    getMemberList() {
+      return RoomService.getRoomMemberList(this.id)
+    },
+    getBlockList() {
+      return RoomService.getRoomBlockList(this.id)
+    },
+    getInvitationList() {
+      return RoomService.getRoomInvitationList(this.id)
+    },
   },
 }
 </script>
