@@ -32,13 +32,21 @@ apiDjango.interceptors.request.use(
   (e) => Promise.reject(e)
 )
 
-apiDjango.interceptors.response.use(undefined, function (err) {
+apiDjango.interceptors.response.use(undefined, function (res) {
   return new Promise(function () {
-    if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+    if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
       this.$store.dispatch('logout')
       this.$router.push('/')
     }
-    throw err
+    if (res.status === 200) {
+      return Promise.resolve(res)
+    } else {
+      return Promise.reject(res)
+    }
+    }, function (err){
+    // 處理響應失敗
+    return Promise.reject(err);
+    //throw err
   })
 })
 
@@ -54,7 +62,16 @@ export default {
     return apiDjango.get('/room/')
   },
   getRoom(id) {
-    return apiDjango.get('/room/' + id +'/')
+    return apiDjango.get('/room/' + id + '/')
+  },
+  getRoomMemberList(id) {
+    return apiDjango.get('/room/' + id + '/member_list')
+  },
+  getRoomBlockList(id) {
+    return apiDjango.get('/room/' + id + '/block_list/')
+  },
+  getRoomInvitationList(id) {
+    return apiDjango.get('/room/' + id + '/invitation/')
   },
   postRoom(room) {
     // title, introduction, create_time, valid_time, room_type, room_category, people_limit
@@ -68,7 +85,7 @@ export default {
     console.log(renamedRoom)
     return apiDjango.post('/room/', renamedRoom)
   },
-  postJoinRoom(id, nickname){
+  postJoinRoom(id, nickname) {
     return apiDjango.post('/room/' + id + '/join_room/', { nickname: nickname })
   },
   // --------------------------------------
@@ -77,7 +94,6 @@ export default {
     return apiClient.get('/users/' + name)
   },
   getRooms_js() {
-    // json-server
     return apiClient.get('/rooms/')
   },
   postRoom_js(room) {

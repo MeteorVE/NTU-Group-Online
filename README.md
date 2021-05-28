@@ -29,7 +29,7 @@
 - [ ]  UserPage
 - [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
 - [ ] Homepage: /user_room  渲染 (後面才會做，因為開發方便)
-- [x]] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
+- [x] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
   - 可以成功跳轉
 
 ### RoomShow (聊天室內部)
@@ -45,10 +45,10 @@
 2. 後端必須再給 access_level, nickname，原因是每次 enter room 的場景並不一定會有那些繼承下來的參數
   或是做一個 GET 版本的 /room/:id/join_room，回傳可以和 POST Res 200 的格式一樣。
 3. admin 按鈕是否顯示，用 isAdmin 去管理。
-4. admin 有 "刪除房間"、"修改房間" 可以按。
+4. admin 有 "刪除房間"、"修改房間" 可以按。(block 相關按鈕還沒考慮進去)
 5. Member List 上面有幾個小按鈕 : 
   - Remove, Block，點擊後都會跳出 Popconfirm 問是否確認執行。
-  - **都要填寫 Reason**
+  - **都要填寫 Reason** // 後端有沒有 因為 reason is null so response error
 6. Block List 上面有幾個小按鈕 : 
   - Delete (解封)，點擊後會有 Popconfirm 問是否確認執行。
 7. 上面兩個 Table 可以使用 Collapse 做摺疊，讓版面更好看。
@@ -96,6 +96,8 @@ Channel
 - Promise
   - https://www.796t.com/article.php?id=224627
   - https://wcc723.github.io/development/2020/02/16/all-new-promise/
+  - 哪些 function 可以使用 ``.then()`` ? 
+    - https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Global_Objects/Promise/then
 
 - Axios 搭配 Promise
   - https://segmentfault.com/a/1190000016680014

@@ -9,10 +9,10 @@
         ref="form"
         @submit.prevent="login"
       >
-        <el-form-item prop="username">
+        <el-form-item prop="email">
           <el-input
-            v-model="model.username"
-            placeholder="Username"
+            v-model="model.email"
+            placeholder="Email"
             prefix-icon="fas fa-user"
           ></el-input>
         </el-form-item>
@@ -47,20 +47,20 @@ export default {
   data() {
     return {
       model: {
-        username: '',
+        email: '',
         password: '',
       },
       loading: false,
       rules: {
-        username: [
+        email: [
           {
             required: true,
-            message: 'Username is required',
+            message: 'Email is required',
             trigger: 'blur',
           },
           {
             min: 4,
-            message: 'Username length should be at least 5 characters',
+            message: 'Email length should be at least 4 characters',
             trigger: 'blur',
           },
         ],
@@ -75,7 +75,14 @@ export default {
       },
     }
   },
+  created() {
+    this.forDev()
+  },
   methods: {
+    forDev() {
+      this.model.email = 'test2@test.com'
+      this.model.password = 'test2'
+    },
     Login() {
       this.$store
         .dispatch('login', this.model)
@@ -86,7 +93,7 @@ export default {
         })
         .catch((res) => {
           console.log('Login Failed:', res)
-          this.$message.error('Username or password is invalid')
+          this.$message.error('Email or password is invalid')
         })
     },
     simulateLogin() {

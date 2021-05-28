@@ -40,11 +40,11 @@ apiClient.interceptors.response.use(undefined, function (err) {
 export default {
   postLogin(loginInfo) {
     console.log({
-      username: loginInfo['username'],
+      email: loginInfo['email'],
       password: loginInfo['password'],
     })
     return apiClient.post('/token/', {
-      username: loginInfo['username'],
+      email: loginInfo['email'],
       password: loginInfo['password'],
     })
   },
