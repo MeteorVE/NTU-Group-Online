@@ -17,7 +17,7 @@
         <i class="el-icon-bell"></i>
       </el-menu-item>
       <el-menu-item class="searchbar" index="6">
-        <el-input placeholder="搜尋" v-model="input"></el-input>
+        <el-input placeholder="搜尋" v-model="searchInput"></el-input>
       </el-menu-item>
       <el-menu-item class="search" index="7">
         <i class="el-icon-search"></i>
@@ -40,7 +40,9 @@
 import { mapGetters } from 'vuex'
 export default {
   data() {
-    return {}
+    return {
+      searchInput: '',
+    }
   },
   watch: {},
   created() {

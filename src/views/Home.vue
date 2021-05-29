@@ -2,7 +2,7 @@
   <div class="home">
     <!-- <RoomCard v-for="room in rooms" :key="room.id" :room="room" /> -->
     <el-container>
-      <el-aside width="200px"><SideBar /></el-aside>
+      <el-aside width="160px"><SideBar :sideBarList="sideBarList" /></el-aside>
       <el-main id="roomCardContainer" v-if="rooms.length > 0">
         <div
           v-masonry="roomCardContainer"
@@ -102,6 +102,16 @@ export default {
       dialogFormRoom: '',
       formLabelWidth: '120px',
       nickname: '',
+      sideBarList: [
+        '吃飯',
+        '團購',
+        '遊戲',
+        '聊天',
+        '共乘',
+        '交易',
+        '分組',
+        '出遊',
+      ],
     }
   },
   computed: {

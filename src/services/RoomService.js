@@ -61,18 +61,6 @@ export default {
   getRooms() {
     return apiDjango.get('/room/')
   },
-  getRoom(id) {
-    return apiDjango.get('/room/' + id + '/')
-  },
-  getRoomMemberList(id) {
-    return apiDjango.get('/room/' + id + '/member_list')
-  },
-  getRoomBlockList(id) {
-    return apiDjango.get('/room/' + id + '/block_list/')
-  },
-  getRoomInvitationList(id) {
-    return apiDjango.get('/room/' + id + '/invitation/')
-  },
   postRoom(room) {
     // title, introduction, create_time, valid_time, room_type, room_category, people_limit
     const keyMapping = {
@@ -85,8 +73,37 @@ export default {
     console.log(renamedRoom)
     return apiDjango.post('/room/', renamedRoom)
   },
-  postJoinRoom(id, nickname) {
-    return apiDjango.post('/room/' + id + '/join_room/', { nickname: nickname })
+
+  getRoom(roomId) {
+    return apiDjango.get('/room/' + roomId + '/')
+  },
+
+  getRoomMemberList(roomId) {
+    return apiDjango.get('/room/' + roomId + '/member_list')
+  },
+  getRoomBlockList(roomId) {
+    return apiDjango.get('/room/' + roomId + '/block_list/')
+  },
+  getRoomInvitationList(roomId) {
+    return apiDjango.get('/room/' + roomId + '/invitation/')
+  },
+
+  postJoinRoom(roomId, nickname) {
+    return apiDjango.post('/room/' + roomId + '/join_room/', {
+      nickname: nickname,
+    })
+  },
+
+  postBlockUser(roomId, userId, reason) {
+    return apiDjango.post('/room/' + roomId + '/block/' + userId + '/', {
+      reason: reason,
+    })
+  },
+  //Method Not Allowed: /room/2/remove/18/
+  deleteRemoveUser(roomId, userId, reason) {
+    return apiDjango.delete('/room/' + roomId + '/remove/' + userId + '/', {
+      reason: reason,
+    })
   },
   // --------------------------------------
   // json-server used

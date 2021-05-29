@@ -31,6 +31,7 @@
 - [ ] Homepage: /user_room  渲染 (後面才會做，因為開發方便)
 - [x] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
   - 可以成功跳轉
+- [ ] ElMessage 替換成 this.message
 
 ### RoomShow (聊天室內部)
 
@@ -63,20 +64,22 @@
   - ``/GET /room/:id/invitation`` 可以拿到 ... 不確定。
 
 
+### Test Case
+
+#### In Room 
+
+1. 點擊編輯房間，編輯房間後，前端能正確顯示，後端也有被改變。並且要能被廣播
+2. Remove 和 Block 如果沒有填寫 Reason，無法送出 request
+3. Remove 或是 Block 了一個人，他會被踢出 channel, 也會被移除列表，也會被廣播。
+4. 每個使用者要可以編輯自己的 nickname，而 admin 擁有另一個編輯按鈕。
+5. 在沒有登入的情況下進入頁面會如何。
+
+
 
 Room create -> Room join -> get 各類 List 試著構建整個房間 -> 測試各類 modify API (Room, remove, block, invite, permission)
-
 User -> (Get my room -> render to table)
-
 Home -> Room CSS
-
 Channel
-
-
-
-/GET
-
-/POST
 
 
 
@@ -125,6 +128,16 @@ ex: ``apiDjango.post('/room', renamedRoom)`` --> ``apiDjango.post('/room/', rena
 
 - slot 用法
 ![](https://book.vue.tw/assets/img/2-4-slot.d9af1f25.png)
+
+- ``el-menu`` 的 index 如果是數字，請轉成 String。否則會**瘋狂**報錯。
+
+```html
+<el-menu-item
+  v-for="(item, index) in sideBarList"
+  :key="index"
+  :index="index.toString()"
+>
+```
 
 ## Project setup
 
