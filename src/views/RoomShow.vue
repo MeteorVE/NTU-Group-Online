@@ -1,7 +1,9 @@
 <template>
   <el-container>
-    <el-aside class="SideBarContainer"><SideBar :sideBarList="userRooms" /></el-aside>
-    <el-main></el-main>
+    <el-aside class="SideBarContainer"
+      ><SideBar :sideBarList="userRooms"
+    /></el-aside>
+    <el-main class="chatRoomWrapper"><ChatRoom /></el-main>
     <el-aside class="room-info">
       <h5 class="title">徵室友</h5>
       <el-divider></el-divider>
@@ -19,14 +21,14 @@
         <h5>分類</h5>
         <el-button size="mini" round>室友</el-button>
       </div>
-      <el-divider></el-divider>
+      <!-- <el-divider></el-divider>
       <div>
         <h5>成員列表</h5>
         <div class="member" v-for="(o, i) in 10" :key="i">
           <el-avatar size="small" icon="el-icon-user-solid"></el-avatar>
           <p class="username">使用者{{ o }}</p>
         </div>
-      </div>
+      </div> -->
       <el-divider></el-divider>
       <div>
         <h5>限制人數</h5>
@@ -39,6 +41,7 @@
 <script>
 import RoomService from '@/services/RoomService.js'
 import SideBar from '@/components/SideBar.vue'
+import ChatRoom from '@/components/ChatRoom.vue'
 
 export default {
   props: ['id'],
@@ -59,6 +62,7 @@ export default {
   },
   components: {
     SideBar,
+    ChatRoom,
   },
   created() {
     RoomService.getRoom(this.id)
@@ -72,7 +76,13 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
+.el-container /deep/ .el-main {
+  padding: 0 1%;
+}
+.chatRoomWrapper {
+  max-height: 88vh;
+}
 .SideBarContainer {
   width: 160px !important;
 }

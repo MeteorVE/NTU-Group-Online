@@ -2,7 +2,7 @@
   <div id="app">
     <NavBar />
     <router-view :key="$route.fullPath" />
-    <el-input
+    <!-- <el-input
       type="textarea"
       :autosize="{ minRows: 2, maxRows: 4 }"
       placeholder="Token"
@@ -22,7 +22,7 @@
       v-model="consoleText"
       :value="consoleText"
     >
-    </el-input>
+    </el-input> -->
   </div>
 </template>
 
@@ -88,18 +88,23 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  height: 100vh;
+  max-height: 100%;
+}
+::-webkit-scrollbar {
+  width: 8px;
 }
 
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
 body {
   margin: 0 !important;
-}
-.el-container {
-  height: 100%;
-}
-.el-header {
-  padding: 0 !important;
 }
 </style>

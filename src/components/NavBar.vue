@@ -16,12 +16,6 @@
       <el-menu-item class="bell" index="5">
         <i class="el-icon-bell"></i>
       </el-menu-item>
-      <el-menu-item class="searchbar" index="6">
-        <el-input placeholder="搜尋" v-model="input"></el-input>
-      </el-menu-item>
-      <el-menu-item class="search" index="7">
-        <i class="el-icon-search"></i>
-      </el-menu-item>
       <el-menu-item route="/room/create" index="/room/create"
         >Create</el-menu-item
       >
@@ -31,6 +25,12 @@
       </el-menu-item>
       <el-menu-item @click="logout"> Logout </el-menu-item>
       <el-menu-item route="/profile" index="/profile"> User </el-menu-item>
+      <el-menu-item class="searchbar" index="6">
+        <el-input placeholder="搜尋" v-model="input"></el-input>
+      </el-menu-item>
+      <el-menu-item class="search" index="7">
+        <i class="el-icon-search"></i>
+      </el-menu-item>
     </el-menu>
     <!-- <router-link :to="{ name: 'room-show' }">LinkTitle</router-link> -->
   </div>
@@ -82,12 +82,9 @@ a {
 .el-menu-nav {
   z-index: 1;
 }
-.searchbar {
-  position: relative;
-  left: 42%;
-}
+.searchbar,
 .search {
-  position: relative;
-  left: 42%;
+  position: relative !important;
+  left: 30%;
 }
 </style>
