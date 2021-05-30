@@ -32,12 +32,17 @@
 - [x] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
   - 可以成功跳轉
 - [ ] ElMessage 替換成 this.message
+- [ ] 如果在 Login 頁面登入失敗，進 401，然後會出現 this.$router undefine
+  - 但不影響功能，挺妙的
+- [ ] 很多地方的 if then 可以改寫
 
 ### RoomShow (聊天室內部)
 
 - [ ] RoomCard 超過固定字數就要強迫壓縮
 - [ ] RoomShow 內部的排版
 - [ ] RoomShow 內部超過字數問題
+- [ ] 我沒有想過如果 admin remove 自己。
+- [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人
@@ -62,6 +67,21 @@
   - ``/GET /room/:id/member_list`` 可以拿到大家的 access_level, nickname, uid (不一定是學號)
   - ``/GET /room/:id/block_list``  可以拿到 blocked_user_id, block_manager_id, reason 的 Array
   - ``/GET /room/:id/invitation`` 可以拿到 ... 不確定。
+10. 在有 Channel 的協助下，保證時間還有效的情況下，token 不會 invalid, 所以其餘動作不會去 refresh token。
+    如果有 invalid 的情況，代表已經和 Channel 斷開連結，連線不上聊天室，那操作就不該給他成功。
+11. 重拿 memberList -> local 更新 user(filter memberId) -> watch user 變更再更新 isAdmin
+  - 那，哪些情況會重拿 memberList ? 
+12. pesudo operation : 廣播更新。
+  - 假設為了 loading 著想，接收到廣播時可以只透過前端進行 userList 的增減，而非所有 List 重新 /GET 一次。
+  - 但邏輯寫起來也許會有點麻煩。還沒寫到，不確定
+
+getMemberList
+getBlockList
+// getRemoveList
+Room Modify
+InvitingList
+InvitedList
+RoomRecord
 
 
 ### Test Case

@@ -26,15 +26,36 @@ apiClient.interceptors.request.use(
   (e) => Promise.reject(e)
 )
 
-apiClient.interceptors.response.use(undefined, function (err) {
-  return new Promise(function () {
-    if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-      this.$store.dispatch('logout')
-      this.$router.push('/')
+apiClient.interceptors.response.use(
+  (res) => {
+    return Promise.resolve(res)
+  },
+  (err) => {
+    if (err && err.response) {
+      switch (err.response.status) {
+        case 401:
+          console.log('登入無效')
+          store.dispatch('logout')
+          this.$router.push('/')
+          break
+        case 404:
+          console.log('找不到該頁面')
+          break
+        case 500:
+          console.log('伺服器出錯')
+          break
+        case 503:
+          console.log('服務失效')
+          break
+        default:
+          console.log(`連接錯誤${err.response.status}`)
+      }
+    } else {
+      console.log('連接到服務器失敗')
     }
-    throw err
-  })
-})
+    return Promise.reject(err.response)
+  }
+)
 //console.log(apiClient.defaults.headers.common['Authorization']) 
 
 export default {

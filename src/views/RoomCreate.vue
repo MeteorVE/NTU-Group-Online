@@ -131,12 +131,11 @@ export default {
   },
   created() {},
   methods: {
-    createRoom() {
+    hardcreateRoom() {
       if (this.$store.state.token) {
         this.$store
-          .dispatch('refreshToken', this.event)
+          .dispatch('refreshToken')
           .then((resRefresh) => {
-            console.log(resRefresh)
             'status' in resRefresh &&
               console.log(
                 '[RoomCreate.vue.createRoom.then] refreshToken then：' +
@@ -150,6 +149,8 @@ export default {
             return RoomService.postRoom(this.room)
           })
           .then((res) => {
+            console.log('WTF')
+
             if (res.status == 201) {
               console.log(res.statusText)
             }
@@ -157,6 +158,8 @@ export default {
             this.loading = false
           })
           .catch((err) => {
+            console.log('[Warning ! 401 401 401 !]')
+
             this.loading = false
             console.log(
               '[RoomCreate.vue.created.catch], token exist but:',
@@ -197,6 +200,33 @@ export default {
       //   .catch(() => {
       //     console.log('There was a problem creating your event')
       //   })
+    },
+    createRoom() {
+      if (this.$store.state.token) {
+        return this.$store
+          .dispatch('refreshToken')
+          .then((res) => {
+            if (res.status != 200) {
+              return Promise.reject('refresh token err')
+            }
+            this.loading = true
+            return RoomService.postRoom(this.room)
+          })
+          .then((res) => {
+            console.log('res in light CreateRoom:', res)
+            ElMessage.success(res.statusText)
+            this.loading = false
+          })
+          .catch((err) => {
+            console.log('err in light CreateRoom:', err)
+            this.loading = false
+          })
+      } else {
+        console.log('plz login !')
+        this.$router.push({
+          name: 'login',
+        })
+      }
     },
   },
   computed: {

@@ -1,8 +1,8 @@
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import App from './App.vue'
+import router from './router'
+import store from './store'
 import ElementPlus from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 import { VueMasonryPlugin } from 'vue-masonry/src/masonry-vue3.plugin'
@@ -30,7 +30,7 @@ const requireComponent = require.context(
   false,
   /Base[A-Z]\w+\.(vue|js)$/
 )
-requireComponent.keys().forEach(fileName => {
+requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName)
 
   const componentName = upperFirst(

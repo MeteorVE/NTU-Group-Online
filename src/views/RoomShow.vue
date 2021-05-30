@@ -5,6 +5,7 @@
         ><SideBar :sideBarList="userRooms"
       /></el-aside>
       <el-main>
+        <ChatRoom />
         <h3>成員列表</h3>
         <el-table :data="memberList" style="width: 100%">
           <el-table-column type="expand">
@@ -19,7 +20,7 @@
                 <el-form-item label="階級">
                   <span>{{ props.row.access_level }}</span>
                 </el-form-item>
-                <el-form-item label="操作">
+                <el-form-item label="操作" v-if="isAdmin">
                   <el-button
                     size="mini"
                     type="warning"
@@ -48,11 +49,11 @@
         </el-table>
         <h3>Block 列表</h3>
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180">
+          <el-table-column prop="uid" label="Member ID" width="110">
           </el-table-column>
-          <el-table-column prop="name" label="姓名" width="180">
+          <el-table-column prop="nickname" label="暱稱" width="50">
           </el-table-column>
-          <el-table-column prop="address" label="地址"> </el-table-column>
+          <el-table-column prop="reason" label="原因"> </el-table-column>
         </el-table>
       </el-main>
       <el-aside class="room-info">
@@ -155,21 +156,27 @@
 <script>
 import RoomService from '@/services/RoomService.js'
 import SideBar from '@/components/SideBar.vue'
+import ChatRoom from '@/components/ChatRoom.vue'
+
 export default {
   props: ['id'],
   components: {
     SideBar,
+    ChatRoom,
   },
   data() {
     return {
       exist_btn_text: '離開房間',
-      user: {},
+      user: {
+        access_level: 'user',
+      },
       memberList: [],
       invitationList: [],
       blockList: [],
       userRooms: ['徵室友', '找山友', '吃鬆餅', '搭車回高雄'],
       host: '',
       dialogFormVisible: false,
+      isAdmin: true,
       room: {
         id: 0,
         title: 'Room',
@@ -204,15 +211,31 @@ export default {
       ],
     }
   },
-  created() {
-    this.getRoomObj()
-      .then((res) => {
-        this.room = res
-        console.log(res)
+  async created() {
+    if (this.$store.state.token) {
+      this.$store
+        .dispatch('refreshToken')
+        .then((resRefresh) => {
+          console.log(resRefresh)
+          this.init_list() // if getList occurred err, will show in func
+        })
+        .catch((err) => {
+          if (
+            'code' in err.response.data &&
+            err.response.data['code'] == 'token_not_valid'
+          ) {
+            this.$store.dispatch('resetToken')
+            this.$router.push({
+              name: 'login',
+            })
+          }
+        })
+    } else {
+      console.log('plz login !')
+      this.$router.push({
+        name: 'login',
       })
-      .catch((err) => {
-        console.log(err)
-      })
+    }
 
     // this.getUserObj()
     //   .then((res) => {
@@ -222,40 +245,47 @@ export default {
     //   .catch((err) => {
     //     console.log(err)
     //   })
-
-    this.getMemberList()
-      .then((res) => {
-        this.memberList = res.data
-        this.host = res.data.filter(
-          (user) => user.access_level == 'admin'
-        )[0].nickname
-        console.log('memberList: ', res.data)
-      })
-      .catch((err) => {
-        console.log(err.data)
-      })
-
-    this.getBlockList()
-      .then((res) => {
-        this.blockList = res.data
-        console.log('blockList:', res.data)
-      })
-      .catch((err) => {
-        console.log(err.data)
-      })
-
-    this.getInvitationList()
-      .then((res) => {
-        this.invitationList = res.data
-        console.log('invitationList', res.data)
-      })
-      .catch((err) => {
-        console.log(err.data)
-      })
   },
   methods: {
-    init() {
-      console.log()
+    init_list() {
+      this.getRoomObj()
+        .then((res) => {
+          this.room = res
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+      this.getInvitationList()
+        .then((res) => {
+          this.invitationList = res.data
+          console.log('invitationList', res.data)
+        })
+        .catch((err) => {
+          console.log(err.data)
+        })
+
+      this.getMemberList()
+        .then((res) => {
+          this.memberList = res.data
+          this.host = res.data.filter(
+            (user) => user.access_level == 'admin'
+          )[0].nickname
+          console.log('memberList: ', res.data)
+        })
+        .catch((err) => {
+          console.log(err.data)
+        })
+
+      this.getBlockList()
+        .then((res) => {
+          this.blockList = res.data
+          console.log('blockList:', res.data)
+        })
+        .catch((err) => {
+          console.log(err.data)
+        })
     },
     getUserObj() {},
     getCategories() {},
@@ -296,27 +326,21 @@ export default {
         }
       )
         .then((value) => {
-          console.log(row.member_id)
-
-          return (
-            RoomService.deleteRemoveUser(this.id, row.member_id, value), value
-          )
+          if (operation == 'block') {
+            return RoomService.postBlockUser(this.id, row.member_id, value)
+          } else if (operation == 'remove') {
+            return RoomService.deleteRemoveUser(this.id, row.member_id, value)
+          }
         })
-        .then((res, value) => {
-          console.log(res.status)
-
-          // this.getRemoveList().then((res) => {
-          //   this.blockList = res.data
-          //   console.log('blockList:', res.data)
-          // })
-
+        .then((res) => {
+          res.status && console.log(res.status)
           this.$message({
             type: 'success',
-            message: operationText + '成功，執行原因: ' + value,
+            message: operationText + '成功',
           })
         })
         .catch((err) => {
-          console.log(err)
+          console.log('[In RoomShow]', err)
           if (err == 'cancel') {
             this.$message({
               type: 'info',
@@ -335,9 +359,25 @@ export default {
       //return RoomService.postBlockUser(this.id, row.member_id)
     },
   },
+  watch: {
+    memberList: function (val) {
+      // for(var u of memberList){
+      //   if(u.member_id == this.user.member_id){
+      //     this.isAdmin =
+      //   }
+      // }
+      console.log(val)
+    },
+  },
 }
 </script>
 <style scoped>
+.el-container :deep(.el-main) {
+  padding: 0 1%;
+}
+.chatRoomWrapper {
+  max-height: 88vh;
+}
 .SideBarContainer {
   width: 160px !important;
 }
