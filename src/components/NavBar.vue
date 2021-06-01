@@ -9,29 +9,33 @@
       active-text-color="#ffd04b"
       router
     >
-      <el-menu-item route="/" index="/">Homepage</el-menu-item>
-      <el-menu-item class="plus" route="/room/create" index="4">
-        <i class="el-icon-plus"></i>
-      </el-menu-item>
-      <el-menu-item class="bell" index="5">
-        <i class="el-icon-bell"></i>
-      </el-menu-item>
+      <div class="menu-item-group left-group">
+        <el-menu-item route="/" index="/">Homepage</el-menu-item>
+        <el-menu-item class="plus" route="/room/create" index="4">
+          <i class="el-icon-plus"></i>
+        </el-menu-item>
+        <el-menu-item class="bell" index="5">
+          <i class="el-icon-bell"></i>
+        </el-menu-item>
 
-      <el-menu-item route="/room/create" index="/room/create"
-        >Create</el-menu-item
-      >
-      <el-menu-item route="/about" index="/about"> About </el-menu-item>
-      <el-menu-item v-if="!isAuth" route="/login" index="/login">
-        Login
-      </el-menu-item>
-      <el-menu-item @click="logout"> Logout </el-menu-item>
-      <el-menu-item route="/profile" index="/profile"> User </el-menu-item>
-      <el-menu-item class="searchbar" index="6">
-        <el-input placeholder="搜尋" v-model="searchInput"></el-input>
-      </el-menu-item>
-      <el-menu-item class="search" index="7">
-        <i class="el-icon-search"></i>
-      </el-menu-item>
+        <el-menu-item route="/room/create" index="/room/create"
+          >Create</el-menu-item
+        >
+        <el-menu-item route="/about" index="/about"> About </el-menu-item>
+        <el-menu-item v-if="!isAuth" route="/login" index="/login">
+          Login
+        </el-menu-item>
+        <el-menu-item @click="logout"> Logout </el-menu-item>
+        <el-menu-item route="/profile" index="/profile"> User </el-menu-item>
+      </div>
+      <div class="menu-item-group right-group">
+        <el-menu-item class="searchbar" index="6">
+          <el-input placeholder="搜尋" v-model="searchInput"></el-input>
+        </el-menu-item>
+        <el-menu-item class="search" index="7">
+          <i class="el-icon-search"></i>
+        </el-menu-item>
+      </div>
     </el-menu>
     <!-- <router-link :to="{ name: 'room-show' }">LinkTitle</router-link> -->
   </div>
@@ -81,14 +85,19 @@ a {
   color: #ffffff;
   text-decoration: none;
 }*/
-
 .el-menu-nav {
   z-index: 1;
+  display: flex;
 }
-
-.searchbar,
-.search {
-  position: relative !important;
-  left: 30%;
+.menu-item-group {
+  display: flex;
+}
+.left-group {
+  flex-grow: 1;
+  justify-content: flex-start;  
+}
+.right-group {
+  flex-grow: 1;
+  justify-content: flex-end;
 }
 </style>

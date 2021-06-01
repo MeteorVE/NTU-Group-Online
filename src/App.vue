@@ -2,7 +2,7 @@
   <div id="app">
     <NavBar />
     <router-view :key="$route.fullPath" />
-    <el-input
+    <!-- <el-input
       type="textarea"
       :autosize="{ minRows: 2, maxRows: 4 }"
       placeholder="Token"
@@ -14,7 +14,7 @@
     >
     <el-button type="primary" plain @click="testReturn()"
       >test API: verify token</el-button
-    >
+    > -->
   </div>
 </template>
 
@@ -82,19 +82,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   max-height: 100%;
-}
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 body {
   margin: 0 !important;

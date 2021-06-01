@@ -1,37 +1,40 @@
 <template>
-  <div class="messagesWrapper">
-    <div
-      v-for="(message, index) in messages"
-      :key="index"
-      class="bubbleWrapper"
-    >
-      <template v-if="message.user === 'myself'">
-        <div class="inlineContainer own">
-          <img
-            class="inlineIcon"
-            src="https://www.pinclipart.com/picdir/middle/205-2059398_blinkk-en-mac-app-store-ninja-icon-transparent.png"
-          />
-          <div class="ownBubble own">{{ message.text }}</div>
-        </div>
-        <span class="own">{{ message.time }}</span>
-      </template>
-      <template v-else>
-        <div class="inlineContainer">
-          <img
-            class="inlineIcon"
-            src="https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png"
-          />
-          <div class="otherBubble other">{{ message.text }}</div>
-        </div>
-        <span class="other">{{ message.time }}</span>
-      </template>
+  <el-scrollbar class="messageWrapperScrollBar">
+    <div class="messagesWrapper">
+      <div
+        v-for="(message, index) in messages"
+        :key="index"
+        class="bubbleWrapper"
+        ref="messageRef"
+      >
+        <template v-if="message.user === 'myself'">
+          <div class="inlineContainer own">
+            <img
+              class="inlineIcon"
+              src="https://www.pinclipart.com/picdir/middle/205-2059398_blinkk-en-mac-app-store-ninja-icon-transparent.png"
+            />
+            <div class="ownBubble own">{{ message.text }}</div>
+          </div>
+          <span class="own">{{ message.time }}</span>
+        </template>
+        <template v-else>
+          <div class="inlineContainer">
+            <img
+              class="inlineIcon"
+              src="https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png"
+            />
+            <div class="otherBubble other">{{ message.text }}</div>
+          </div>
+          <span class="other">{{ message.time }}</span>
+        </template>
+      </div>
     </div>
-  </div>
+  </el-scrollbar>
   <el-input
     placeholder="輸入訊息"
     v-model="message"
     @keydown="addMessage"
-    class="message-input"
+    class="messageInput"
   ></el-input>
 </template>
 
@@ -92,7 +95,11 @@ export default {
     addMessage(e) {
       if (e.key === 'Enter' && this.message) {
         var today = new Date()
-        var currentTime = today.getHours() + ':' + today.getMinutes()
+        var hour = today.getHours()
+        var minute = today.getMinutes()
+        hour = String(hour).padStart(2, '0')
+        minute = String(minute).padStart(2, '0')
+        var currentTime = `${hour}:${minute}`
         var newMessage = {
           user: 'myself',
           text: this.message,
@@ -102,16 +109,28 @@ export default {
         this.message = ''
       }
     },
-    // setMessageRef(el) {
-    //   console.log(el.id)
-    // }
+    scrollToBottom() {
+      const el = this.$refs.messageRef
+      if (el && this.message === '') {
+        el.scrollIntoView(false, { behavior: 'smooth' })
+      }
+    },
+  },
+  updated() {
+    this.scrollToBottom()
+  },
+  mounted() {
+    this.scrollToBottom()
   },
 }
 </script>
 
 <style>
-.messagesWrapper {
+.messageWrapperScrollBar {
   max-height: 90%;
+}
+.messagesWrapper {
+  height: 100%;
   overflow: auto;
   overflow-x: hidden;
 }
