@@ -1,5 +1,4 @@
 <template>
-
   <el-container class="mainContainer">
     <el-aside class="SideBarContainer"
       ><SideBar :sideBarList="userRooms"
@@ -9,7 +8,6 @@
     </el-main>
     <el-aside class="roomInfo">
       <el-scrollbar>
-
         <h5 class="title">{{ room.title }}</h5>
         <el-divider></el-divider>
         <div>
@@ -70,7 +68,7 @@
     </el-aside>
   </el-container>
   <el-dialog title="編輯房間" v-model="dialogFormVisible">
-    <el-form :model="dialogFormRoom"> 
+    <el-form :model="dialogFormRoom">
       <el-form-item label="房間名稱" :label-width="formLabelWidth">
         <el-form-item :label="dialogFormRoom.title"></el-form-item>
       </el-form-item>
@@ -116,10 +114,10 @@
             <el-form-item label="暱稱">
               <span>{{ props.row.nickname }}</span>
             </el-form-item>
-            <el-form-item label="階級">
-              <span>{{ props.row.access_level }}</span>
-            </el-form-item>
-            <el-form-item label="操作" v-if="isAdmin">
+            <el-form-item
+              label="操作"
+              v-if="isAdmin && user.member_id != props.row.member_id"
+            >
               <el-button
                 size="mini"
                 type="warning"
@@ -135,21 +133,78 @@
                 @click="handleMemberOperation(props.$index, props.row, 'block')"
                 >封鎖</el-button
               >
+              <el-popconfirm
+                confirmButtonText="確認"
+                cancelButtonText="取消"
+                icon="el-icon-info"
+                iconColor="red"
+                title="確定轉移房主身分給他 ? 您將降級為無權限用戶。"
+                @confirm="handleTransferAdmin(props.row)"
+              >
+                <template #reference>
+                  <el-button size="mini" type="danger" plain
+                    >將房主轉移給他</el-button
+                  >
+                </template>
+              </el-popconfirm>
+            </el-form-item>
+            <el-form-item label="更改階級成:">
+              <el-select
+                v-model="tmp"
+                @change="handleSetLevel($event, props.row.member_id)"
+              >
+                <el-option
+                  v-for="(val, key) in levelDict"
+                  :key="key"
+                  :label="val"
+                  :value="key"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="Member ID" prop="member_id"></el-table-column>
+      <el-table-column label="Member ID" prop="member_id"> </el-table-column>
       <el-table-column label="暱稱" prop="nickname"></el-table-column>
       <el-table-column label="階級" prop="access_level"></el-table-column>
     </el-table>
     <h3>Block 列表</h3>
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="uid" label="Member ID" width="110">
+    <el-table :data="blockList" style="width: 100%">
+      <el-table-column type="expand">
+        <template #default="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="操作者">
+              <span>{{
+                memberList.filter(
+                  (m) => m.member_id == props.row.block_manager_id
+                )[0].nickname +
+                '(' +
+                props.row.block_manager_id +
+                ')'
+              }}</span>
+            </el-form-item>
+            <el-form-item label="操作" v-if="isAdmin">
+              <el-popconfirm
+                confirmButtonText="確認"
+                cancelButtonText="取消"
+                icon="el-icon-info"
+                iconColor="red"
+                title="確定解除封鎖 ?"
+                @confirm="handleUnblockOperation(props.row)"
+              >
+                <template #reference>
+                  <el-button size="mini" type="danger">解除封鎖</el-button>
+                </template>
+              </el-popconfirm>
+            </el-form-item>
+          </el-form>
+        </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="暱稱" width="50">
+      <el-table-column prop="blocked_user_id" label="Member ID">
       </el-table-column>
-      <el-table-column prop="reason" label="原因"> </el-table-column>
+
+      <el-table-column prop="reason" label="原因"></el-table-column>
     </el-table>
     <template #footer>
       <span class="dialog-footer">
@@ -187,11 +242,7 @@ export default {
       levelDict: { admin: '房主', manager: '房管', user: '普通用戶' },
       host: '',
       dialogFormVisible: false,
-
-      dialogFormRoom: {},
-      memberFormVisible: false,
-      isAdmin: true,
-
+      isAdmin: false,
       room: {
         id: 0,
         title: 'Loading Not Successful',
@@ -209,6 +260,8 @@ export default {
           address: '上海市普陀区金沙江路 1518 弄',
         },
       ],
+      dialogFormRoom: {},
+      memberFormVisible: false,
     }
   },
   async created() {
