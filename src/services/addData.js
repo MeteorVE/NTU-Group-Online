@@ -16,6 +16,35 @@ const apiDjango = axios.create({
   },
 })
 
+apiDjango.interceptors.response.use(
+  (res) => {
+    return Promise.resolve(res)
+  },
+  (err) => {
+    if (err && err.response) {
+      switch (err.response.status) {
+        case 401:
+          console.log('登入無效(帳密錯誤或用戶不存在?)')
+          break
+        case 404:
+          console.log('找不到該頁面')
+          break
+        case 500:
+          console.log('伺服器出錯')
+          break
+        case 503:
+          console.log('服務失效')
+          break
+        default:
+          console.log(`連接錯誤${err.response.status}`)
+      }
+    } else {
+      console.log('連接到服務器失敗')
+    }
+    return Promise.reject(err.response)
+  }
+)
+
 function readAccount(){
   var text = fs.readFileSync('../assets/testData.txt', 'utf8')
   text = text.split('\n')
@@ -35,6 +64,7 @@ const getValue = async (u) => {
       password: u[1],
     })
     .then((res) => {
+      
       return res.data.access
     })
 }
@@ -48,7 +78,7 @@ const executeQueryAndExtractData = async () => {
   }
 
   for(var i in tokens){
-    var roomId = 2
+    var roomId = 6
     apiDjango
       .post(
         '/room/' + roomId + '/join_room/',

@@ -91,6 +91,8 @@ export default {
   },
 
   getRoomMemberList(roomId) {
+    console.log("called");
+    
     return apiDjango.get('/room/' + roomId + '/member_list')
   },
   getRoomBlockList(roomId) {
@@ -99,23 +101,41 @@ export default {
   getRoomInvitationList(roomId) {
     return apiDjango.get('/room/' + roomId + '/invitation/')
   },
-
   postJoinRoom(roomId, nickname) {
     return apiDjango.post('/room/' + roomId + '/join_room/', {
       nickname: nickname,
     })
   },
 
+  // Block and Unblock
   postBlockUser(roomId, userId, reason) {
     return apiDjango.post('/room/' + roomId + '/block/' + userId + '/', {
       reason: reason,
     })
   },
-  //Method Not Allowed: /room/2/remove/18/
+  deleteUnblockUser(roomId, userId) {
+    return apiDjango.delete('/room/' + roomId + '/unblock/' + userId + '/')
+  },
+
+  // Remove User
   deleteRemoveUser(roomId, userId, reason) {
     return apiDjango.delete('/room/' + roomId + '/remove/' + userId + '/', {
       reason: reason,
     })
+  },
+
+  // Transefer Admin
+  putTransferAdmin(roomId, newAdminId) {
+    return apiDjango.put(
+      '/room/' + roomId + '/transfer_admin/' + newAdminId + '/'
+    )
+  },
+  putSetLevel(roomId, dict) {
+    return apiDjango.put('/room/' + roomId + '/set_access_level/', dict)
+  },
+
+  geUserId() {
+    return apiDjango.get('/api/user/get_id/')
   },
   // --------------------------------------
   // json-server used
