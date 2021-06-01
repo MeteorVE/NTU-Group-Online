@@ -74,6 +74,8 @@
 12. pesudo operation : 廣播更新。
   - 假設為了 loading 著想，接收到廣播時可以只透過前端進行 userList 的增減，而非所有 List 重新 /GET 一次。
   - 但邏輯寫起來也許會有點麻煩。還沒寫到，不確定
+13. 修改權限後，local data 要自己 read memberList, 算算看自己是不是 admin。
+
 
 getMemberList
 getBlockList
@@ -82,6 +84,27 @@ Room Modify
 InvitingList
 InvitedList
 RoomRecord
+
+
+### RoomShow 內部事件連動
+
+1. 進入房間 
+  - 成員列表刷新 getMemberList
+  - 如果是非法成員  他還是會 access url 但是房間會顯示一些錯誤訊息 (無法連線到正確房間)
+2. 有人主動離開房間 (被廣播通知)
+  - 成員列表刷新 getMemberList
+3. 有人被 remove (被廣播通知)
+  - 成員列表刷新 getMemberList
+4. 有人被 block (被廣播通知)
+  - 成員列表刷新 getMemberList
+  - block List 刷新
+5. 某A對某B發出邀請 
+  - 邀請中列表刷新 getInvitationList
+6. 某B接受某A的邀請，進房間了
+  - 邀請中列表刷新 getInvitationList
+  - 成員列表刷新 getMemberList
+7. 修改房間資訊, 有人修改了 blockList，有人修改了權限
+  - 房間資訊刷新 (commit -> 其他人刷新)(上述三個各別刷新，剛好都沒有額外關聯誰)
 
 
 ### Test Case
@@ -157,6 +180,17 @@ ex: ``apiDjango.post('/room', renamedRoom)`` --> ``apiDjango.post('/room/', rena
   :key="index"
   :index="index.toString()"
 >
+```
+
+- input 搭配動態按鈕更改
+  - https://www.jianshu.com/p/f1dd60cacfb5
+
+- Vue 3 使 element UI 失效的一些部分
+  - https://segmentfault.com/a/1190000038164296
+
+```
+<template v-slot:prop="childProps">
+</template>
 ```
 
 ## Project setup

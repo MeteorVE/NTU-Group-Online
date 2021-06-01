@@ -17,10 +17,10 @@
                 <el-form-item label="暱稱">
                   <span>{{ props.row.nickname }}</span>
                 </el-form-item>
-                <el-form-item label="階級">
-                  <span>{{ props.row.access_level }}</span>
-                </el-form-item>
-                <el-form-item label="操作" v-if="isAdmin">
+                <el-form-item
+                  label="操作"
+                  v-if="isAdmin && user.member_id != props.row.member_id"
+                >
                   <el-button
                     size="mini"
                     type="warning"
@@ -38,6 +38,34 @@
                     "
                     >封鎖</el-button
                   >
+                  <el-popconfirm
+                    confirmButtonText="確認"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="確定轉移房主身分給他 ? 您將降級為無權限用戶。"
+                    @confirm="handleTransferAdmin(props.row)"
+                  >
+                    <template #reference>
+                      <el-button size="mini" type="danger" plain
+                        >將房主轉移給他</el-button
+                      >
+                    </template>
+                  </el-popconfirm>
+                </el-form-item>
+                <el-form-item label="更改階級成:">
+                  <el-select
+                    v-model="tmp"
+                    @change="handleSetLevel($event, props.row.member_id)"
+                  >
+                    <el-option
+                      v-for="(val, key) in levelDict"
+                      :key="key"
+                      :label="val"
+                      :value="key"
+                    >
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </el-form>
             </template>
@@ -48,12 +76,41 @@
           <el-table-column label="階級" prop="access_level"></el-table-column>
         </el-table>
         <h3>Block 列表</h3>
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="uid" label="Member ID" width="110">
+        <el-table :data="blockList" style="width: 100%">
+          <el-table-column type="expand">
+            <template #default="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="操作者">
+                  <span>{{
+                    memberList.filter(
+                      (m) => m.member_id == props.row.block_manager_id
+                    )[0].nickname +
+                    '(' +
+                    props.row.block_manager_id +
+                    ')'
+                  }}</span>
+                </el-form-item>
+                <el-form-item label="操作" v-if="isAdmin">
+                  <el-popconfirm
+                    confirmButtonText="確認"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="確定解除封鎖 ?"
+                    @confirm="handleUnblockOperation(props.row)"
+                  >
+                    <template #reference>
+                      <el-button size="mini" type="danger">解除封鎖</el-button>
+                    </template>
+                  </el-popconfirm>
+                </el-form-item>
+              </el-form>
+            </template>
           </el-table-column>
-          <el-table-column prop="nickname" label="暱稱" width="50">
+          <el-table-column prop="blocked_user_id" label="Member ID">
           </el-table-column>
-          <el-table-column prop="reason" label="原因"> </el-table-column>
+
+          <el-table-column prop="reason" label="原因"></el-table-column>
         </el-table>
       </el-main>
       <el-aside class="room-info">
@@ -106,7 +163,7 @@
         <el-divider></el-divider>
         <div>
           <h5>測試 input</h5>
-          <el-input placeholder="请输入内容 " clearable>
+          <el-input placeholder="請輸入內容" clearable>
             <template #suffix>
               <i class="el-icon-edit el-input__icon" @click="handleIconClick">
               </i>
@@ -167,6 +224,7 @@ export default {
   data() {
     return {
       exist_btn_text: '離開房間',
+      tmp: '',
       user: {
         access_level: 'user',
       },
@@ -174,14 +232,15 @@ export default {
       invitationList: [],
       blockList: [],
       userRooms: ['徵室友', '找山友', '吃鬆餅', '搭車回高雄'],
+      levelDict: { admin: '房主', manager: '房管', user: '普通用戶' },
       host: '',
       dialogFormVisible: false,
-      isAdmin: true,
+      isAdmin: false,
       room: {
         id: 0,
-        title: 'Room',
-        introduction: 'Default',
-        create_time: '2021-05-13T20:33:33.033448+08:00',
+        title: 'Loading Not Successful',
+        introduction: 'Loading Not Successful',
+        create_time: '2000-01-01T20:33:33.033448+08:00',
         valid_time: null,
         room_type: 'private',
         room_category: 'course',
@@ -193,21 +252,6 @@ export default {
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄',
         },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄',
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄',
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄',
-        },
       ],
     }
   },
@@ -217,7 +261,7 @@ export default {
         .dispatch('refreshToken')
         .then((resRefresh) => {
           console.log(resRefresh)
-          this.init_list() // if getList occurred err, will show in func
+          return this.init_list() // if get_xxx_List occurred err, will show in func
         })
         .catch((err) => {
           if (
@@ -236,15 +280,6 @@ export default {
         name: 'login',
       })
     }
-
-    // this.getUserObj()
-    //   .then((res) => {
-    //     this.user = res
-    //     console.log(res)
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //   })
   },
   methods: {
     init_list() {
@@ -273,6 +308,7 @@ export default {
             (user) => user.access_level == 'admin'
           )[0].nickname
           console.log('memberList: ', res.data)
+          return this.getUserObj()
         })
         .catch((err) => {
           console.log(err.data)
@@ -287,13 +323,21 @@ export default {
           console.log(err.data)
         })
     },
-    getUserObj() {},
+    getUserObj() {
+      RoomService.geUserId()
+        .then((res) => {
+          let userId = res.data.id
+          this.user = this.memberList.filter((m) => m.member_id == userId)[0]
+        })
+        .catch((err) => {
+          return Promise.reject(err)
+        })
+    },
     getCategories() {},
     getRoomObj() {
       return new Promise((resolve, reject) => {
         RoomService.getRoom(this.id)
           .then((response) => {
-            console.log(this.room)
             resolve(response.data)
             // this.room = response.data  //
           })
@@ -313,6 +357,47 @@ export default {
       return RoomService.getRoomInvitationList(this.id)
     },
     handleIconClick() {},
+    handleSetLevel(newLevel, userId) {
+      console.log(newLevel, userId)
+
+      RoomService.putSetLevel(this.id, { [userId]: newLevel })
+        .then(() => {
+          console.log('suc')
+          return this.getMemberList()
+        })
+        .then((res) => {
+          this.memberList = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    handleAddModerator(row) {
+      let parameter = {}
+      parameter[row.member_id] = ''
+      console.log(parameter)
+    },
+    handleTransferAdmin(row) {
+      RoomService.putTransferAdmin(this.id, row.member_id)
+        .then(() => {
+          return this.getBlockList()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    handleUnblockOperation(row) {
+      RoomService.deleteUnblockUser(this.id, row.blocked_user_id)
+        .then(() => {
+          console.log('unblock successful')
+          this.blockList = this.blockList.filter(
+            (m) => m.blocked_user_id != row.blocked_user_id
+          )
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
     handleMemberOperation(id, row, operation) {
       var operationText = operation == 'block' ? '封鎖' : '踢出房間'
       this.$prompt(
@@ -325,11 +410,15 @@ export default {
           inputErrorMessage: '原因不能為空 !',
         }
       )
-        .then((value) => {
+        .then((val) => {
           if (operation == 'block') {
-            return RoomService.postBlockUser(this.id, row.member_id, value)
+            return RoomService.postBlockUser(this.id, row.member_id, val.value)
           } else if (operation == 'remove') {
-            return RoomService.deleteRemoveUser(this.id, row.member_id, value)
+            return RoomService.deleteRemoveUser(
+              this.id,
+              row.member_id,
+              val.value
+            )
           }
         })
         .then((res) => {
@@ -338,6 +427,15 @@ export default {
             type: 'success',
             message: operationText + '成功',
           })
+          this.memberList = this.memberList.filter(
+            (member) => member.member_id != row.member_id
+          )
+          if (operation == 'block') {
+            return this.getBlockList()
+          }
+        })
+        .then((res) => {
+          this.blockList = res.data
         })
         .catch((err) => {
           console.log('[In RoomShow]', err)
@@ -360,13 +458,15 @@ export default {
     },
   },
   watch: {
-    memberList: function (val) {
-      // for(var u of memberList){
-      //   if(u.member_id == this.user.member_id){
-      //     this.isAdmin =
-      //   }
-      // }
-      console.log(val)
+    memberList: function (_memberList) {
+      this.getUserObj()
+      console.log('[watch] memberList changed:', _memberList)
+    },
+    user: function (_user) {
+      this.isAdmin =
+        _user.access_level == 'admin' || _user.access_level == 'moderator'
+          ? true
+          : false
     },
   },
 }
