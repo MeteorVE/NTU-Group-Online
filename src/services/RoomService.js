@@ -89,22 +89,25 @@ export default {
   getRoom(roomId) {
     return apiDjango.get('/room/' + roomId + '/')
   },
-
+  putRoom(roomId, dict){
+    return apiDjango.put('/room/' + roomId + '/', dict)
+  },
   getRoomMemberList(roomId) {
-    console.log("called");
-    
+    console.log('called')
+
     return apiDjango.get('/room/' + roomId + '/member_list')
   },
   getRoomBlockList(roomId) {
     return apiDjango.get('/room/' + roomId + '/block_list/')
   },
-  getRoomInvitationList(roomId) {
-    return apiDjango.get('/room/' + roomId + '/invitation/')
-  },
+
   postJoinRoom(roomId, nickname) {
     return apiDjango.post('/room/' + roomId + '/join_room/', {
       nickname: nickname,
     })
+  },
+  getRoomCategory() {
+    return apiDjango.get('/room/category_list/')
   },
 
   // Block and Unblock
@@ -132,6 +135,18 @@ export default {
   },
   putSetLevel(roomId, dict) {
     return apiDjango.put('/room/' + roomId + '/set_access_level/', dict)
+  },
+
+  // Invitation
+  getRoomInvitationList(roomId) {
+    return apiDjango.get('/room/' + roomId + '/invitation/')
+  },
+  // room/6/invite/19/
+  postRoomInvite(roomId, userId) {
+    return apiDjango.post('/room/' + roomId + '/invite/' + userId + '/')
+  },
+  getRoomRecord(roomId) {
+    return apiDjango.get('/room_record/' + roomId + '/')
   },
 
   geUserId() {

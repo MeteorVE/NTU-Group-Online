@@ -3,9 +3,6 @@
 
 ## Notice
 
-後端使用 ``se_project-61317552730eb6a6213a4e50b44f166fbc42e45e``
-5/20 那時的版本有 bug，所以我 trace 到這個 working tree
-[se_project 6131755273](https://github.com/cty001996/se_project/tree/61317552730eb6a6213a4e50b44f166fbc42e45e)
 
 ## Todo
 
