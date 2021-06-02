@@ -64,29 +64,50 @@
             </template>
           </el-input>
         </div>
+        <el-divider></el-divider>
       </el-scrollbar>
     </el-aside>
   </el-container>
-  <el-dialog title="編輯房間" v-model="dialogFormVisible">
+  <el-dialog title="編輯房間" v-model="dialogFormVisible" v-if="isAdmin">
     <el-form :model="dialogFormRoom">
-      <el-form-item label="房間名稱" :label-width="formLabelWidth">
-        <el-form-item :label="dialogFormRoom.title"></el-form-item>
+      <el-form-item label="房間名稱">
+        <el-input v-model="dialogFormRoom.title"></el-input>
       </el-form-item>
-      <el-form-item label="房間 Type" :label-width="formLabelWidth">
-        <el-form-item :label="dialogFormRoom.room_type"></el-form-item>
+      <el-form-item label="房間 Category">
+        <el-select
+          v-model="dialogFormRoom.room_category"
+          placeholder="選擇房間分類"
+        >
+          <el-option
+            v-for="(item, key) in categoryDict"
+            :label="item"
+            :key="item"
+            :value="key"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="房間 Category" :label-width="formLabelWidth">
-        <el-form-item :label="dialogFormRoom.room_category"></el-form-item>
-      </el-form-item>
-      <el-form-item label="簡介" :label-width="formLabelWidth">
-        <el-form-item :label="dialogFormRoom.introduction"></el-form-item>
-      </el-form-item>
-      <el-form-item label="最大人數" :label-width="formLabelWidth">
-        <el-form-item :label="dialogFormRoom.people_limit"></el-form-item>
-      </el-form-item>
-      <el-form-item label="您的暱稱" :label-width="formLabelWidth">
+      <el-form-item label="簡介">
         <el-input
-          v-model="nickname"
+          type="textarea"
+          placeholder="Enter description of your room:"
+          v-model="dialogFormRoom.introduction"
+          maxlength="100"
+          show-word-limit
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item label="最大人數" @submit.prevent>
+        <el-slider
+          v-model="dialogFormRoom.people_limit"
+          show-input
+          :max="100"
+          :step="5"
+        >
+        </el-slider>
+      </el-form-item>
+      <el-form-item label="您的暱稱">
+        <el-input
+          v-model="user.nickname"
           autocomplete="off"
           clearable
           placeholder="請輸入暱稱"
@@ -96,7 +117,9 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
+        <el-button
+          type="primary"
+          @click=";[(handleEditRoom(), (dialogFormVisible = false))]"
           >送出</el-button
         >
       </span>
@@ -148,7 +171,7 @@
                 </template>
               </el-popconfirm>
             </el-form-item>
-            <el-form-item label="更改階級成:">
+            <el-form-item label="更改階級成:" v-if="isAdmin">
               <el-select
                 v-model="tmp"
                 @change="handleSetLevel($event, props.row.member_id)"
@@ -206,14 +229,57 @@
 
       <el-table-column prop="reason" label="原因"></el-table-column>
     </el-table>
+    <h3>邀請列表</h3>
+    <el-form :inline="true" class="demo-form-inline">
+      <el-form-item label="請輸入欲邀請學號">
+        <el-input v-model="invitedUserId" placeholder="學號"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleInvitation">邀請</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table :data="invitationList" style="width: 100%">
+      <el-table-column type="expand">
+        <template #default="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="操作" v-if="isAdmin">
+              <el-popconfirm
+                confirmButtonText="確認"
+                cancelButtonText="取消"
+                icon="el-icon-info"
+                iconColor="red"
+                title="確定取消邀請 ?"
+                @confirm="handleCancelInvitation(props.row)"
+              >
+                <template #reference>
+                  <el-button size="mini" type="danger">取消邀請</el-button>
+                </template>
+              </el-popconfirm>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column prop="invited_id" label="被邀請者"></el-table-column>
+      <el-table-column prop="inviter_id" label="邀請者"></el-table-column>
+    </el-table>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="memberFormVisible = false">取消</el-button>
         <el-button type="primary" @click="memberFormVisible = false"
-          >確定</el-button
+          >關閉</el-button
         >
       </span>
     </template>
+    <h3>Room Record</h3>
+    <div>
+      <span
+        v-for="rec in roomRecord.slice(
+          roomRecord.length - 5,
+          roomRecord.length
+        )"
+        :key="rec"
+        >{{ rec.recording }}<br
+      /></span>
+    </div>
   </el-dialog>
 </template>
 
@@ -232,15 +298,18 @@ export default {
     return {
       exist_btn_text: '離開房間',
       tmp: '',
+      invitedUserId: '',
       user: {
         access_level: 'user',
       },
       memberList: [],
       invitationList: [],
       blockList: [],
+      categoryDict: {},
       userRooms: ['徵室友', '找山友', '吃鬆餅', '搭車回高雄'],
       levelDict: { admin: '房主', manager: '房管', user: '普通用戶' },
       host: '',
+      roomRecord: '',
       dialogFormVisible: false,
       isAdmin: false,
       room: {
@@ -295,6 +364,7 @@ export default {
       this.getRoomObj()
         .then((res) => {
           this.room = res
+          this.dialogFormRoom = { ...res }
           console.log(res)
         })
         .catch((err) => {
@@ -331,6 +401,33 @@ export default {
         .catch((err) => {
           console.log(err.data)
         })
+
+      this.getInvitationList()
+        .then((res) => {
+          this.invitationList = res.data
+          console.log('invitationList:', res.data)
+        })
+        .catch((err) => {
+          console.log(err.data)
+        })
+
+      this.getRoomRecord()
+        .then((res) => {
+          this.roomRecord = res.data
+          console.log('roomRecord:', res.data)
+        })
+        .catch((err) => {
+          console.log(err.data)
+        })
+
+      this.getRoomCategory()
+        .then((res) => {
+          this.categoryDict = res.data
+          console.log('categoryDict:', res.data)
+        })
+        .catch((err) => {
+          console.log(err.data)
+        })
     },
     getUserObj() {
       RoomService.geUserId()
@@ -348,7 +445,6 @@ export default {
         RoomService.getRoom(this.id)
           .then((response) => {
             resolve(response.data)
-            // this.room = response.data  //
           })
           .catch((error) => {
             console.log('There was an error:', JSON.stringify(error.response))
@@ -365,7 +461,42 @@ export default {
     getInvitationList() {
       return RoomService.getRoomInvitationList(this.id)
     },
+    getRoomRecord() {
+      return RoomService.getRoomRecord(this.id)
+    },
+    getRoomCategory() {
+      return RoomService.getRoomCategory()
+    },
+    handleEditRoom() {
+      console.log('handleEditRoom')
+      console.log('before:', this.dialogFormRoom)
+
+      RoomService.putRoom(this.id, this.dialogFormRoom)
+        .then((res) => {
+          console.log('putRoom Successful', res.data)
+          this.room = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
     handleIconClick() {},
+    handleInvitation() {
+      RoomService.postRoomInvite(this.id, this.invitedUserId)
+        .then(() => {
+          console.log('postRoomInvite Successful')
+          return this.getInvitationList()
+        })
+        .then((res) => {
+          this.invitationList = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    handleCancelInvitation(row) {
+      console.log(row.invited_id)
+    },
     handleSetLevel(newLevel, userId) {
       console.log(newLevel, userId)
 
