@@ -43,15 +43,41 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import WsService from '@/services/WebsocketService.js'
+import store from '@/store/index.js'
 export default {
   data() {
     return {
+      notifyws: null,
       searchInput: '',
     }
   },
   watch: {},
   created() {
     //this.routerIndex = this.$router.path
+    //------------------websocket-----------------------------
+    //這是通知的websocket,具體說明在Room Show有了
+    //靠夭啊好像做在Navbar就不用每頁去Handle了欸
+    if (store.state.notifyWebsocketConn == null) {
+      this.notifyws = WsService.InitNotifyWebsocket(store.state.token) //初始化
+      this.notifyws.onmessage = (event) => {
+        //console.log(event.data)
+        let res = JSON.parse(event.data) //-------收到的data-----------
+        switch (event.data.header) {
+          case 'setConn': //設定連線的東西
+            if (res.res != 'Success Connect') {
+              console.log('Authentication Error or Websocket server Error')
+            }
+            break
+          case 'notify': //通知
+            //res.notify_string:按照開會的說法目前後端好像是說會送一個string過來,然後前端再去get,明天寫
+            break
+          case 'ping': //ping前端還有沒有活著
+            break
+        }
+      }
+    }
+    //---------------------websocket------------------------
   },
   computed: {
     ...mapGetters(['isAuth']),

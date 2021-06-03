@@ -39,10 +39,13 @@
 </template>
 
 <script>
+//import WsService from '@/services/WebsocketService.js'
+
 export default {
   data() {
     return {
       message: '',
+      sendMessage: '',
       messages: [
         {
           id: 1,
@@ -89,6 +92,7 @@ export default {
           time: '11:23',
         },
       ],
+      roomws: {},
     }
   },
   methods: {
@@ -106,6 +110,18 @@ export default {
           time: currentTime,
         }
         this.messages.push(newMessage)
+        // 這裡是要傳送訊息到Websocket server的code
+        let nowRoomID = parseInt(this.$route.params.id, 10)
+        console.log(this.$store.state.user_id)
+        let msgObj = {
+          header: 'message', // Message 的 header,正常message的header就叫message
+          msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
+          userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
+          roomID: nowRoomID, // 目前的roomID,用route參數的ID來判斷
+          message: this.message,   //文字訊息
+          token: this.$store.state.token, //Request 都必需附上token
+        }
+        this.roomws[nowRoomID].send(JSON.stringify(msgObj))
         this.message = ''
       }
     },

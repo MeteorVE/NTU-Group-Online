@@ -1,15 +1,15 @@
 import { createStore } from 'vuex'
-import jwt_decode from "jwt-decode";
 import RoomService from '@/services/RoomService.js'
 import TokenService from '@/services/TokenService.js'
-import WsService from '@/services/WebsocketService.js'
+//import WsService from '@/services/WebsocketService.js'
 
 export default createStore({
   state: {
     rooms: [],
-    roomWebsocketConn: [],
+    roomWebsocketConn: {},
     notifyWebsocketConn: null,
     user_id: -1,
+    first_connect: true,
     token: localStorage.getItem('token') || '',
     refreshToken: localStorage.getItem('refresh_token') || '',
   },
@@ -30,14 +30,11 @@ export default createStore({
     },
   },
   actions: {
-    login({ commit, state }, loginInfo) {
+    login({ commit }, loginInfo) {
       return TokenService.postLogin(loginInfo).then((res) => {
         if (res.status == 200) {
           commit('SET_TOKEN', res.data)
           console.log('[in action login]:', res)
-          let tokenPayload = jwt_decode(res.data.access)
-          state.user_id = tokenPayload.user_id
-          WsService.InitNotifyWebsocket(state.user_id, res.data.access)
         }
       })
     },
@@ -59,6 +56,7 @@ export default createStore({
         if (res.status == 200) {
           commit('SET_TOKEN', res.data)
           localStorage.setItem('token', res.data['access'])
+          //WsService.InitNotifyWebsocket(res.data.access)
           console.log('[Action login]: complete', res)
           return Promise.resolve(res)
         } else {

@@ -1,6 +1,8 @@
 import store from '@/store/index.js'
+import jwt_decode from 'jwt-decode'
 
-const NotifyWsServiceAddr = "ws://127.0.0.1:8090/wsServer/connection/user/"
+const NotifyWsServiceAddr = 'ws://127.0.0.1:8090/wsServer/connection/user/'
+const RoomWsPrefix = 'ws://127.0.0.1:8090/ws/room/'
 
 export class NotifyWsInfo {
   constructor(websocket, userID, token) {
@@ -10,25 +12,48 @@ export class NotifyWsInfo {
   }
 }
 
+export class RoomWsInfo {
+  constructor(websocket, userID, roomID, token) {
+    this.websocket = websocket
+    this.userID = userID
+    this.roomID = roomID
+    this.token = token
+  }
+}
+
 export default {
-  InitNotifyWebsocket(userID, token) {
-    let ws = new WebSocket(NotifyWsServiceAddr + userID)
+  InitNotifyWebsocket(token) {
+    let tokenPayload = jwt_decode(token)
+    store.state.user_id = tokenPayload.user_id
+    let userID = tokenPayload.user_id
+    var ws = new WebSocket(NotifyWsServiceAddr + userID)
     ws.onopen = function () {
-      console.log('Successful Connect')
-      //var notifyInfo = new NotifyWsInfo(ws, store.userID, token)
+      //console.log('Successful Connect')
       let sendInfo = { user_id: userID, token: token }
       ws.send(JSON.stringify(sendInfo))
-      ws.onmessage = (event) => {
-        let ret = JSON.parse(event.data)
-        if (ret.status != 'Success Connect') {
-          console.log(ret.status)
-          console.log('Authentication Error or Websocket server Error')
-        }
-        var notifyInfo = new NotifyWsInfo(ws, userID, token)
-        store.state.notifyWebsocketConn = notifyInfo
-      }
+      var notifyInfo = new NotifyWsInfo(ws, store.state.user_id, token)
+      store.state.notifyWebsocketConn = notifyInfo
     }
-  }
+    ws.onclose = () => {
+      console.log('Notification websocket close')
+    }
+    return ws
+  },
+  InitRoomWebsocket(token, roomID) {
+    let tokenPayload = jwt_decode(token)
+    let userID = tokenPayload.user_id
+    var ws = new WebSocket(RoomWsPrefix + roomID)
+    ws.onopen = function () {
+      let sendInfo = { user_id: userID, token: token }
+      ws.send(JSON.stringify(sendInfo))
+      var RoomInfo = new RoomWsInfo(ws, userID, roomID, token)
+      store.state.roomWebsocketConn[roomID] = RoomInfo
+    }
+    ws.onclose = () => {
+      console.log('Room ID: ' + roomID + ' websocket close')
+    }
+    return ws
+  },
 }
 
 /*
