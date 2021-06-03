@@ -106,6 +106,13 @@ export default {
       nickname: nickname,
     })
   },
+  deleteLeaveRoom(roomId){
+    return apiDjango.delete('room/' + roomId + '/leave_room/')
+  },
+  deleteRoom(roomId){
+    return apiDjango.delete('room/' + roomId + '/')
+  },
+
   getRoomCategory() {
     return apiDjango.get('/room/category_list/')
   },
@@ -152,8 +159,11 @@ export default {
     return apiDjango.get('/room_record/' + roomId + '/')
   },
 
-  geUserId() {
+  getUserId() {
     return apiDjango.get('/api/user/get_id/')
+  },
+  getUserRooms(){
+    return apiDjango.get('/user_room/')
   },
   // --------------------------------------
   // json-server used

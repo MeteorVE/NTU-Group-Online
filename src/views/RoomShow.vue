@@ -1,7 +1,10 @@
 <template>
   <el-container class="mainContainer">
     <el-aside class="SideBarContainer"
-      ><SideBar :sideBarList="userRooms"
+      ><SideBar
+        :sideBarList="
+          userRooms.map((r) => ({ text: r.title, url: '/room/' + r.id + '/' }))
+        "
     /></el-aside>
     <el-main class="chatRoomContainer">
       <ChatRoom />
@@ -65,6 +68,22 @@
           </el-input>
         </div>
         <el-divider></el-divider>
+        <div>
+          <h5>離開房間</h5>
+          <el-popconfirm
+            confirmButtonText="離開"
+            confirmButtonType="danger"
+            cancelButtonText="取消"
+            icon="el-icon-info"
+            iconColor="red"
+            title="確定離開 ? 離開後將不會是成員。若您是房主會直接刪除房間。"
+            @confirm="handleExitRoom"
+          >
+            <template #reference>
+              <el-button type="danger" round>離開房間</el-button>
+            </template>
+          </el-popconfirm>
+        </div>
       </el-scrollbar>
     </el-aside>
   </el-container>
@@ -171,7 +190,10 @@
                 </template>
               </el-popconfirm>
             </el-form-item>
-            <el-form-item label="更改階級成:" v-if="isAdmin">
+            <el-form-item
+              label="更改階級成:"
+              v-if="isAdmin && user.member_id != props.row.member_id"
+            >
               <el-select
                 v-model="tmp"
                 @change="handleSetLevel($event, props.row.member_id)"
@@ -306,7 +328,7 @@ export default {
       invitationList: [],
       blockList: [],
       categoryDict: {},
-      userRooms: ['徵室友', '找山友', '吃鬆餅', '搭車回高雄'],
+      userRooms: [],
       levelDict: { admin: '房主', manager: '房管', user: '普通用戶' },
       host: '',
       roomRecord: '',
@@ -353,7 +375,7 @@ export default {
           }
         })
     } else {
-      console.log('plz login !')
+      this.$message.error('請登入 !')
       this.$router.push({
         name: 'login',
       })
@@ -428,9 +450,17 @@ export default {
         .catch((err) => {
           console.log(err.data)
         })
+
+      this.getUserRooms()
+        .then((res) => {
+          this.userRooms = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
     getUserObj() {
-      RoomService.geUserId()
+      RoomService.getUserId()
         .then((res) => {
           let userId = res.data.id
           this.user = this.memberList.filter((m) => m.member_id == userId)[0]
@@ -466,6 +496,9 @@ export default {
     getRoomCategory() {
       return RoomService.getRoomCategory()
     },
+    getUserRooms() {
+      return RoomService.getUserRooms()
+    },
     handleEditRoom() {
       console.log('handleEditRoom')
       console.log('before:', this.dialogFormRoom)
@@ -480,6 +513,17 @@ export default {
         })
     },
     handleIconClick() {},
+    handleExitRoom() {
+      if (false & (this.user.access_level == 'admin')) {
+        return RoomService.deleteRoom(this.id).catch((err) => {
+          this.$message.error(err.data.error)
+        })
+      } else {
+        return RoomService.deleteLeaveRoom(this.id).catch((err) => {
+          this.$message.error(err.data.error)
+        })
+      }
+    },
     handleInvitation() {
       RoomService.postRoomInvite(this.id, this.invitedUserId)
         .then(() => {
@@ -490,7 +534,7 @@ export default {
           this.invitationList = res.data
         })
         .catch((err) => {
-          console.log(err)
+          this.$message.error(err.data.error)
         })
     },
     handleCancelInvitation(row) {
@@ -506,9 +550,10 @@ export default {
         })
         .then((res) => {
           this.memberList = res.data
+          this.$message.success('修改階級成功 !')
         })
         .catch((err) => {
-          console.log(err)
+          this.$message.error('handleSetLevel:', err.data.error)
         })
     },
     handleAddModerator(row) {
