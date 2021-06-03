@@ -309,6 +309,7 @@
 import RoomService from '@/services/RoomService.js'
 import SideBar from '@/components/SideBar.vue'
 import ChatRoom from '@/components/ChatRoom.vue'
+import WsService from '@/services/WebsocketService.js'
 
 export default {
   props: ['id'],
@@ -379,7 +380,52 @@ export default {
       this.$router.push({
         name: 'login',
       })
+    } 
+    //---------------------websocket-------------------------------
+    if (this.$store.state.roomWebsocketConn[this.$route.params.id] == null) {
+      this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
+        this.$store.state.token,
+        this.$route.params.id
+      ) //初始化
+      let nowRoomID = this.$route.params.id //取得目前的Room ID
+      this.roomws[nowRoomID].onmessage = (event) => {
+        console.log(event.data)
+        let res = JSON.parse(event.data) //訊息的data
+        let showtime = null 
+        //-------按照header判斷訊息種類---------
+        switch (res.header) {
+          case 'message': //-----正常傳訊息會是這個header-------
+            console.log(res.userID) //訊息的JSON中會有 1.傳的User的ID
+            console.log(res.roomID) // 2.從哪個room傳出來的,那個room的ID
+            console.log(res.username) // 3.那個user的nickname 目前還沒有 等等會寫
+            console.log(res.message) // 4.傳送的message
+            showtime = new Date(res.time) //5.訊息的時間 用js就能Parse出來了
+            showtime.getHours()
+            //--------------以上可以自由運用----------------------
+            /* 這邊原本是要顯示訊息的code，但我不會Element UI跟Vue的高端寫法，只好交給前端去做
+            console.log(this.$store.state.user_id)
+            if (res.userId != this.$store.state.user_id) {
+              this.messages.push({
+                id: res.userID,
+                user: res.username,
+                time: String(showtime.getHours()) + String(showtime.getMinutes()),
+                text: res.message,
+              })
+            }
+            */
+            break
+          case 'update':
+            //目前還沒實現，就是update Room相關東西所跳出來的message,但之後大概會有以下的資料
+            // res.update_data, 更新的資訊，會是一個字串，直接秀出這個訊息即可，看前端要怎麼的implement
+            break
+          case 'ping': //也是確認websocket還有沒有活著的部份
+            break
+        }
+      }
     }
+
+
+    //--------------------websocket-------------------------------
   },
   methods: {
     init_list() {

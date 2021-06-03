@@ -1,10 +1,15 @@
 import { createStore } from 'vuex'
 import RoomService from '@/services/RoomService.js'
 import TokenService from '@/services/TokenService.js'
+//import WsService from '@/services/WebsocketService.js'
 
 export default createStore({
   state: {
     rooms: [],
+    roomWebsocketConn: {},
+    notifyWebsocketConn: null,
+    user_id: -1,
+    first_connect: true,
     token: localStorage.getItem('token') || '',
     refreshToken: localStorage.getItem('refresh_token') || '',
   },
@@ -51,6 +56,7 @@ export default createStore({
         if (res.status == 200) {
           commit('SET_TOKEN', res.data)
           localStorage.setItem('token', res.data['access'])
+          //WsService.InitNotifyWebsocket(res.data.access)
           console.log('[Action login]: complete', res)
           return Promise.resolve(res)
         } else {
