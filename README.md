@@ -34,14 +34,22 @@
 - [ ] UserPage
 - [ ] Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
 
+### Homepage
+
+- [ ] 根據使用者狀態顯示 "進入房間" 或是 "加入房間"
+- [ ] 
+
 ### RoomShow (聊天室內部)
 
+- [x] 離開房間
 - [x] 我沒有想過如果 admin remove 自己。
   - 相關按鈕透過篩選 admin id 來擋住。
 - [ ] RoomCard 超過固定字數就要強迫壓縮
 - [ ] RoomShow 內部的排版
 - [ ] RoomShow 內部超過字數問題
 - [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
+- [ ] Warning 您參加過多房間
+  - 他會在 join_room 就出去
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人
