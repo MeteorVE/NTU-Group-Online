@@ -17,7 +17,7 @@
             v-for="(room, index) in rooms"
             v-bind:key="index"
           >
-            <RoomCard :room="room" />
+            <RoomCard :room="room" :typeDict="roomTypeDict" />
           </div>
         </div>
       </el-main>
@@ -86,7 +86,7 @@
 import RoomCard from '@/components/RoomCard.vue'
 import SideBar from '@/components/SideBar.vue'
 import RoomService from '@/services/RoomService.js'
-import { ElMessage } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -102,6 +102,7 @@ export default {
       dialogFormRoom: '',
       formLabelWidth: '120px',
       nickname: '',
+      roomTypeDict: [],
       sideBarList: [
         '吃飯',
         '團購',
@@ -120,29 +121,36 @@ export default {
   created() {
     if (this.$store.state.token) {
       this.$store
-        .dispatch('refreshToken', this.event)
+        .dispatch('refreshToken')
         .then((resRefresh) => {
-          console.log(resRefresh)
-          'status' in resRefresh &&
-            console.log(
-              '[Home.vue.created.then] refreshToken then：' +
-                '\nstatus code: ' +
-                resRefresh.status +
-                '\naccess token: ' +
-                JSON.stringify(resRefresh.data.access)
-            )
+          console.log('resRefresh:', resRefresh)
+          return resRefresh
         })
-        .then(() => {
+        .then((response) => {
+          console.log('token:', response.data, '\nstart to get some list:')
+
           RoomService.getRooms()
-            .then((response) => {
-              this.rooms = response.data
+            .then((res) => {
+              this.rooms = res.data
             })
-            .catch((error) => {
-              console.log(
-                '[Home.vue] error: created(), RoomService.getRooms():',
-                '\n理論上這邊不會再有錯誤了，注意一下\n',
-                error.response
-              )
+            .catch((err) => {
+              console.log('getRooms err :', err)
+            })
+
+          RoomService.getRoomCategory()
+            .then((res) => {
+              this.sideBarList = Object.values(res.data)
+            })
+            .catch((err) => {
+              console.log('getRoomCategory err :', err)
+            })
+
+          RoomService.getRoomType()
+            .then((res) => {
+              this.roomTypeDict = res.data
+            })
+            .catch((err) => {
+              console.log('getRoomType err :', err)
             })
         })
         .catch((err) => {
@@ -166,8 +174,7 @@ export default {
         })
     } else {
       console.log('plz login !')
-      ElMessage.error('請登入 !')
-      // window.location.href = '/login'
+      this.$message.error('請登入 !')
       this.$router.push({
         name: 'login',
       })

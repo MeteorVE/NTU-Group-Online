@@ -19,26 +19,28 @@
     - 原本想透過 computed 來 get router path，再套回 defaultIndex。但怎麼做都沒用。
     後來發現原本的方法又可行了，也許跟拿掉沒用到的 @select="handler" 有關。
 - [x]  Join Room Logic (but 有些東西可能沒測到)
-- [ ]  在 homepage，點了 logout，他會再次 access homepage 但是卻不會讓房間消失。
+- [x]  在 homepage，點了 logout，他會再次 access homepage 但是卻不會讓房間消失。
+  - 現在會強制導向 login page
 - [x] Create Room Logic
   - 會遇到的正常錯誤: nickname blank 或 title blank，會跳錯誤訊息。
   - 另外兩種可能 : 沒登入、refresh 過期、其他欄位 key 沒 mapping，會被 handle。
-- [ ]  UserPage
-- [ ]  Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
-- [ ] Homepage: /user_room  渲染 (後面才會做，因為開發方便)
 - [x] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
   - 可以成功跳轉
-- [ ] ElMessage 替換成 this.message
+- [x] ElMessage 替換成 this.message
 - [ ] 如果在 Login 頁面登入失敗，進 401，然後會出現 this.$router undefine
   - 但不影響功能，挺妙的
 - [ ] 很多地方的 if then 可以改寫
+- [ ] Homepage: /user_room  渲染 (後面才會做，因為開發方便)
+- [ ] UserPage
+- [ ] Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
 
 ### RoomShow (聊天室內部)
 
+- [x] 我沒有想過如果 admin remove 自己。
+  - 相關按鈕透過篩選 admin id 來擋住。
 - [ ] RoomCard 超過固定字數就要強迫壓縮
 - [ ] RoomShow 內部的排版
 - [ ] RoomShow 內部超過字數問題
-- [ ] 我沒有想過如果 admin remove 自己。
 - [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
 
 

@@ -89,7 +89,7 @@ export default {
   getRoom(roomId) {
     return apiDjango.get('/room/' + roomId + '/')
   },
-  putRoom(roomId, dict){
+  putRoom(roomId, dict) {
     return apiDjango.put('/room/' + roomId + '/', dict)
   },
   getRoomMemberList(roomId) {
@@ -108,6 +108,9 @@ export default {
   },
   getRoomCategory() {
     return apiDjango.get('/room/category_list/')
+  },
+  getRoomType() {
+    return apiDjango.get('/room/type_list/')
   },
 
   // Block and Unblock

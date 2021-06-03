@@ -100,7 +100,7 @@
 <script>
 import RoomService from '@/services/RoomService.js'
 import { mapGetters } from 'vuex'
-import { ElMessage } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 
 export default {
   components: null,
@@ -154,7 +154,7 @@ export default {
             if (res.status == 201) {
               console.log(res.statusText)
             }
-            ElMessage.success(res.statusText)
+            this.$message.success(res.statusText)
             this.loading = false
           })
           .catch((err) => {
@@ -178,7 +178,7 @@ export default {
                 name: 'login',
               })
             }
-            ElMessage.error(JSON.stringify(err.response.data))
+            this.$message.error(JSON.stringify(err.response.data))
           })
       } else {
         console.log('plz login !')
@@ -214,7 +214,7 @@ export default {
           })
           .then((res) => {
             console.log('res in light CreateRoom:', res)
-            ElMessage.success(res.statusText)
+            this.$message.success(res.statusText)
             this.loading = false
           })
           .catch((err) => {

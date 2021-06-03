@@ -439,7 +439,6 @@ export default {
           return Promise.reject(err)
         })
     },
-    getCategories() {},
     getRoomObj() {
       return new Promise((resolve, reject) => {
         RoomService.getRoom(this.id)
