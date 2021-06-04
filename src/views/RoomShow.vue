@@ -354,6 +354,7 @@ export default {
       ],
       dialogFormRoom: {},
       memberFormVisible: false,
+      roomws: {},
     }
   },
   async created() {
@@ -383,11 +384,17 @@ export default {
     }
     //---------------------websocket-------------------------------
     if (this.$store.state.roomWebsocketConn[this.$route.params.id] == null) {
+      console.log(
+        'this.$store.state.roomWebsocketConn[this.$route.params.id] == null'
+      )
+
       this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
         this.$store.state.token,
         this.$route.params.id
       ) //初始化
       let nowRoomID = this.$route.params.id //取得目前的Room ID
+      console.log(this.roomws[nowRoomID])
+
       this.roomws[nowRoomID].onmessage = (event) => {
         console.log(event.data)
         let res = JSON.parse(event.data) //訊息的data

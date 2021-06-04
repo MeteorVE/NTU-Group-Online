@@ -5,10 +5,11 @@
     <!-- <el-input
       type="textarea"
       :autosize="{ minRows: 2, maxRows: 4 }"
-      placeholder="Token"
+      placeholder="Here will show RoomWebsocketConn"
       v-model="textarea"
     >
-    </el-input>
+    </el-input> -->
+    <!-- 
     <el-button type="primary" plain @click="copyClipboard()"
       >Copy text</el-button
     >
@@ -31,15 +32,15 @@ export default {
     }
   },
   created() {
-    this.textarea = this.$store.state.token
+    this.textarea = ''
   },
   watch: {
-    token: function (val) {
+    roomWebsocketConn: function (val) {
       this.textarea = val
     },
   },
   computed: {
-    ...mapState(['token']),
+    ...mapState(['token', 'roomWebsocketConn']),
   },
   methods: {
     copyClipboard() {

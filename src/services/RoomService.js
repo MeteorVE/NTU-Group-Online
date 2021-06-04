@@ -93,8 +93,6 @@ export default {
     return apiDjango.put('/room/' + roomId + '/', dict)
   },
   getRoomMemberList(roomId) {
-    console.log('called')
-
     return apiDjango.get('/room/' + roomId + '/member_list/')
   },
   getRoomBlockList(roomId) {
