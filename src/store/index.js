@@ -6,6 +6,7 @@ import TokenService from '@/services/TokenService.js'
 export default createStore({
   state: {
     rooms: [],
+    filter: '',
     roomWebsocketConn: {},
     notifyWebsocketConn: null,
     user_id: -1,

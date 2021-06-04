@@ -2,24 +2,36 @@
   <div class="home">
     <!-- <RoomCard v-for="room in rooms" :key="room.id" :room="room" /> -->
     <el-container>
-      <el-aside width="160px"><SideBar :sideBarList="sideBarList" /></el-aside>
-      <el-main id="roomCardContainer" v-if="rooms.length > 0">
+      <el-aside width="160px"
+        ><SideBar
+          v-on:applyFilter="updateFilter($event)"
+          :sideBarList="
+            category.map((c) => ({
+              text: c,
+              url: '',
+              urlMode: false,
+            }))
+          "
+      /></el-aside>
+      <el-main id="roomCardContainer" v-if="filteredRooms.length > 0">
         <div
           v-masonry="roomCardContainer"
           transition-duration="0.2s"
           item-selector=".item"
           column-width=".item"
           class="rooms-container"
+          v-if="filteredRooms.length > 0"
         >
           <div
             v-masonry-tile
             class="item"
-            v-for="(room, index) in rooms"
+            v-for="(room, index) in filteredRooms"
             v-bind:key="index"
           >
             <RoomCard :room="room" :typeDict="roomTypeDict" />
           </div>
         </div>
+        <div v-else><el-empty description="找不到相關結果"></el-empty></div>
       </el-main>
     </el-container>
 
@@ -103,7 +115,7 @@ export default {
       formLabelWidth: '120px',
       nickname: '',
       roomTypeDict: [],
-      sideBarList: [
+      category: [
         '吃飯',
         '團購',
         '遊戲',
@@ -117,6 +129,17 @@ export default {
   },
   computed: {
     ...mapGetters(['isAuth']),
+    filteredRooms: function () {
+      if (this.$store.state.filter) {
+        // console.log(this.$store.state.filter)
+        return this.rooms.filter((room) => 
+          room.room_category.includes(this.$store.state.filter) ||
+            room.introduction.includes(this.$store.state.filter) ||
+            room.title.includes(this.$store.state.filter)
+        )
+      }
+      return this.rooms
+    },
   },
   created() {
     if (this.$store.state.token) {
@@ -220,6 +243,9 @@ export default {
             console.log(err.response.data['error'])
           })
       }
+    },
+    updateFilter(category) {
+      this.filter = category
     },
   },
 }
