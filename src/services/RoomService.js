@@ -89,7 +89,7 @@ export default {
   getRoom(roomId) {
     return apiDjango.get('/room/' + roomId + '/')
   },
-  putRoom(roomId, dict){
+  putRoom(roomId, dict) {
     return apiDjango.put('/room/' + roomId + '/', dict)
   },
   getRoomMemberList(roomId) {
@@ -106,8 +106,18 @@ export default {
       nickname: nickname,
     })
   },
+  deleteLeaveRoom(roomId){
+    return apiDjango.delete('room/' + roomId + '/leave_room/')
+  },
+  deleteRoom(roomId){
+    return apiDjango.delete('room/' + roomId + '/')
+  },
+
   getRoomCategory() {
     return apiDjango.get('/room/category_list/')
+  },
+  getRoomType() {
+    return apiDjango.get('/room/type_list/')
   },
 
   // Block and Unblock
@@ -149,8 +159,11 @@ export default {
     return apiDjango.get('/room_record/' + roomId + '/')
   },
 
-  geUserId() {
+  getUserId() {
     return apiDjango.get('/api/user/get_id/')
+  },
+  getUserRooms(){
+    return apiDjango.get('/user_room/')
   },
   // --------------------------------------
   // json-server used

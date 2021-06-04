@@ -2,24 +2,36 @@
   <div class="home">
     <!-- <RoomCard v-for="room in rooms" :key="room.id" :room="room" /> -->
     <el-container>
-      <el-aside width="160px"><SideBar :sideBarList="sideBarList" /></el-aside>
-      <el-main id="roomCardContainer" v-if="rooms.length > 0">
+      <el-aside width="160px"
+        ><SideBar
+          v-on:applyFilter="updateFilter($event)"
+          :sideBarList="
+            category.map((c) => ({
+              text: c,
+              url: '',
+              urlMode: false,
+            }))
+          "
+      /></el-aside>
+      <el-main id="roomCardContainer">
         <div
           v-masonry="roomCardContainer"
           transition-duration="0.2s"
           item-selector=".item"
           column-width=".item"
           class="rooms-container"
+          v-if="filteredRooms.length > 0"
         >
           <div
             v-masonry-tile
             class="item"
-            v-for="(room, index) in rooms"
+            v-for="(room, index) in filteredRooms"
             v-bind:key="index"
           >
-            <RoomCard :room="room" />
+            <RoomCard :room="room" :typeDict="roomTypeDict" />
           </div>
         </div>
+        <div v-else><el-empty description="找不到相關結果"></el-empty></div>
       </el-main>
     </el-container>
 
@@ -86,7 +98,7 @@
 import RoomCard from '@/components/RoomCard.vue'
 import SideBar from '@/components/SideBar.vue'
 import RoomService from '@/services/RoomService.js'
-import { ElMessage } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -102,7 +114,8 @@ export default {
       dialogFormRoom: '',
       formLabelWidth: '120px',
       nickname: '',
-      sideBarList: [
+      roomTypeDict: [],
+      category: [
         '吃飯',
         '團購',
         '遊戲',
@@ -116,33 +129,51 @@ export default {
   },
   computed: {
     ...mapGetters(['isAuth']),
+    filteredRooms: function () {
+      if (this.$store.state.filter) {
+        // console.log(this.$store.state.filter)
+        return this.rooms.filter((room) => 
+          room.room_category.includes(this.$store.state.filter) ||
+            room.introduction.includes(this.$store.state.filter) ||
+            room.title.includes(this.$store.state.filter)
+        )
+      }
+      return this.rooms
+    },
   },
   created() {
     if (this.$store.state.token) {
       this.$store
-        .dispatch('refreshToken', this.event)
+        .dispatch('refreshToken')
         .then((resRefresh) => {
-          console.log(resRefresh)
-          'status' in resRefresh &&
-            console.log(
-              '[Home.vue.created.then] refreshToken then：' +
-                '\nstatus code: ' +
-                resRefresh.status +
-                '\naccess token: ' +
-                JSON.stringify(resRefresh.data.access)
-            )
+          console.log('resRefresh:', resRefresh)
+          return resRefresh
         })
-        .then(() => {
+        .then((response) => {
+          console.log('token:', response.data, '\nstart to get some list:')
+
           RoomService.getRooms()
-            .then((response) => {
-              this.rooms = response.data
+            .then((res) => {
+              this.rooms = res.data
             })
-            .catch((error) => {
-              console.log(
-                '[Home.vue] error: created(), RoomService.getRooms():',
-                '\n理論上這邊不會再有錯誤了，注意一下\n',
-                error.response
-              )
+            .catch((err) => {
+              console.log('getRooms err :', err)
+            })
+
+          RoomService.getRoomCategory()
+            .then((res) => {
+              this.sideBarList = Object.values(res.data)
+            })
+            .catch((err) => {
+              console.log('getRoomCategory err :', err)
+            })
+
+          RoomService.getRoomType()
+            .then((res) => {
+              this.roomTypeDict = res.data
+            })
+            .catch((err) => {
+              console.log('getRoomType err :', err)
             })
         })
         .catch((err) => {
@@ -166,8 +197,7 @@ export default {
         })
     } else {
       console.log('plz login !')
-      ElMessage.error('請登入 !')
-      // window.location.href = '/login'
+      this.$message.error('請登入 !')
       this.$router.push({
         name: 'login',
       })
@@ -213,6 +243,9 @@ export default {
             console.log(err.response.data['error'])
           })
       }
+    },
+    updateFilter(category) {
+      this.filter = category
     },
   },
 }

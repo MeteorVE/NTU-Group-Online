@@ -1,15 +1,15 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
-    <img :src="images[0]" class="image" />
+    <img :src="images[room.id % 4]" class="image" />
     <h4>{{ room.title }}</h4>
     <div>
-      <p>created by @{{}}</p>
+      <p>分類 :</p>
+      <el-tag type="success">{{ room.room_category }}</el-tag>
+      <el-tag type="info">{{ typeDict[room.room_type] }}</el-tag>
     </div>
     <div>
-      <p>limit:{{ room.people_limit }}</p>
-    </div>
-    <div>
-      <p>introduction：{{ room.introduction }}</p>
+      <p>人數限制 : {{ room.people_limit }}</p>
+      <p>簡介 : {{ introduction }}</p>
     </div>
   </el-card>
 </template>
@@ -18,6 +18,15 @@
 export default {
   props: {
     room: Object,
+    typeDict: Object,
+  },
+  computed: {
+    introduction: function () {
+      if (this.room.introduction.length > 30) {
+        return this.room.introduction.slice(0, 30) + '...'
+      }
+      return this.room.introduction
+    },
   },
   data() {
     return {
@@ -26,7 +35,6 @@ export default {
         'https://i.imgur.com/GOaM9dB.jpg',
         'https://i.imgur.com/G65qPbl.jpg',
         'https://i.imgur.com/WxiJ6K0.jpg',
-        'https://i.imgur.com/qdIZSWc.jpg',
       ],
     }
   },
@@ -39,7 +47,8 @@ export default {
 } */
 
 .image {
-  max-width: 50%;
+  /* max-width: 50%; */
+  max-width: 100%;
 }
 .el-card div p {
   margin: 6px;
