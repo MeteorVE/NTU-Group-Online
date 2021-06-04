@@ -1,11 +1,10 @@
 import { createStore } from 'vuex'
-import RoomService from '@/services/RoomService.js'
 import TokenService from '@/services/TokenService.js'
 //import WsService from '@/services/WebsocketService.js'
 
 export default createStore({
   state: {
-    rooms: [],
+
     filter: '',
     roomWebsocketConn: {},
     notifyWebsocketConn: null,
@@ -15,9 +14,7 @@ export default createStore({
     refreshToken: localStorage.getItem('refresh_token') || '',
   },
   mutations: {
-    ADD_ROOM(state, room) {
-      state.rooms.push(room)
-    },
+
     // setToken = (state, { token }) => state.token = token
     SET_TOKEN(state, token) {
       if ('access' in token){
@@ -70,16 +67,9 @@ export default createStore({
       localStorage.removeItem('token')
       localStorage.removeItem('refresh_token')
     },
-    createRoom({ commit }, room) {
-      return RoomService.postRoom(room).then(() => {
-        commit('ADD_ROOM', room)
-      })
-    },
+
   },
   getters: {
-    getRoomById: (state) => (id) => {
-      return state.rooms.find((room) => room.id === id)
-    },
     getToken: (state) => state.token,
     isAuth: (state) => !!state.token,
   },

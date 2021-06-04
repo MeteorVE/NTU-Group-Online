@@ -6,6 +6,7 @@ import RoomCreate from '@/views/RoomCreate.vue'
 import RoomShow from '@/views/RoomShow.vue'
 import LoginPage from '@/views/Login.vue'
 import UserPage from '@/views/UserPage.vue'
+import MailRedirect from '@/views/MailRedirect.vue'
 
 const routes = [
   {
@@ -35,6 +36,12 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginPage,
+  },
+  {
+    path: '/forgotpwd/:mailToken',
+    name: 'mail-verify',
+    component: MailRedirect,
+    props: true,
   },
   {
     path: '/profile',

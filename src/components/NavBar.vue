@@ -61,7 +61,7 @@ export default {
     //------------------websocket-----------------------------
     //這是通知的websocket,具體說明在Room Show有了
     //靠夭啊好像做在Navbar就不用每頁去Handle了欸
-    if (store.state.notifyWebsocketConn == null) {
+    if (store.state.token & (store.state.notifyWebsocketConn == null)) {
       this.notifyws = WsService.InitNotifyWebsocket(store.state.token) //初始化
       this.notifyws.onmessage = (event) => {
         //console.log(event.data)

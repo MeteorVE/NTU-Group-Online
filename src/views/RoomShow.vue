@@ -380,7 +380,7 @@ export default {
       this.$router.push({
         name: 'login',
       })
-    } 
+    }
     //---------------------websocket-------------------------------
     if (this.$store.state.roomWebsocketConn[this.$route.params.id] == null) {
       this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
@@ -391,7 +391,7 @@ export default {
       this.roomws[nowRoomID].onmessage = (event) => {
         console.log(event.data)
         let res = JSON.parse(event.data) //訊息的data
-        let showtime = null 
+        let showtime = null
         //-------按照header判斷訊息種類---------
         switch (res.header) {
           case 'message': //-----正常傳訊息會是這個header-------
@@ -424,7 +424,6 @@ export default {
         }
       }
     }
-
 
     //--------------------websocket-------------------------------
   },

@@ -15,7 +15,7 @@
       /></el-aside>
       <el-main id="roomCardContainer">
         <div
-          v-masonry="roomCardContainer"
+          v-masonry
           transition-duration="0.2s"
           item-selector=".item"
           column-width=".item"
@@ -132,8 +132,9 @@ export default {
     filteredRooms: function () {
       if (this.$store.state.filter) {
         // console.log(this.$store.state.filter)
-        return this.rooms.filter((room) => 
-          room.room_category.includes(this.$store.state.filter) ||
+        return this.rooms.filter(
+          (room) =>
+            room.room_category.includes(this.$store.state.filter) ||
             room.introduction.includes(this.$store.state.filter) ||
             room.title.includes(this.$store.state.filter)
         )
