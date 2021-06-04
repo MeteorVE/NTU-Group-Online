@@ -118,7 +118,7 @@ export default {
           msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
           userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
           roomID: nowRoomID, // 目前的roomID,用route參數的ID來判斷
-          message: this.message,   //文字訊息
+          message: this.message, //文字訊息
           token: this.$store.state.token, //Request 都必需附上token
         }
         this.roomws[nowRoomID].send(JSON.stringify(msgObj))

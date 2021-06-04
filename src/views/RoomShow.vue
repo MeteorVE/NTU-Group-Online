@@ -397,7 +397,7 @@ export default {
           case 'message': //-----正常傳訊息會是這個header-------
             console.log(res.userID) //訊息的JSON中會有 1.傳的User的ID
             console.log(res.roomID) // 2.從哪個room傳出來的,那個room的ID
-            console.log(res.username) // 3.那個user的nickname 目前還沒有 等等會寫
+            console.log(res.nickname) // 3.那個user的nickname 目前還沒有 等等會寫
             console.log(res.message) // 4.傳送的message
             showtime = new Date(res.time) //5.訊息的時間 用js就能Parse出來了
             showtime.getHours()
@@ -415,8 +415,9 @@ export default {
             */
             break
           case 'update':
-            //目前還沒實現，就是update Room相關東西所跳出來的message,但之後大概會有以下的資料
-            // res.update_data, 更新的資訊，會是一個字串，直接秀出這個訊息即可，看前端要怎麼的implement
+            console.log(res.roomID) //送到的room ID
+            console.log(res.message) //我們要update廣播的message
+            console.log(res.time) //送出這個訊息的時間
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
             break
