@@ -28,7 +28,11 @@
             v-for="(room, index) in filteredRooms"
             v-bind:key="index"
           >
-            <RoomCard :room="room" :typeDict="roomTypeDict" />
+            <RoomCard
+              :room="room"
+              :typeDict="roomTypeDict"
+              @update="updateClickedRoom"
+            />
           </div>
         </div>
         <div v-else><el-empty description="找不到相關結果"></el-empty></div>
@@ -55,16 +59,19 @@
       <div class="text item">{{ room.people_limit }}</div>
       <div class="text item">{{ room.introduction }}</div>
     </el-card> -->
+
     <el-dialog title="加入房間" v-model="dialogFormVisible">
       <el-form :model="dialogFormRoom">
         <el-form-item label="房間名稱" :label-width="formLabelWidth">
           <el-form-item :label="dialogFormRoom.title"></el-form-item>
         </el-form-item>
         <el-form-item label="房間 Type" :label-width="formLabelWidth">
-          <el-form-item :label="dialogFormRoom.room_type"></el-form-item>
+          <el-tag type="info">{{ dialogFormRoom.room_type }}</el-tag>
+          <!-- <el-form-item :label="dialogFormRoom.room_type"></el-form-item> -->
         </el-form-item>
         <el-form-item label="房間 Category" :label-width="formLabelWidth">
-          <el-form-item :label="dialogFormRoom.room_category"></el-form-item>
+          <el-tag type="success">{{ dialogFormRoom.room_category }}</el-tag>
+          <!-- <el-form-item :label="dialogFormRoom.room_category"></el-form-item> -->
         </el-form-item>
         <el-form-item label="簡介" :label-width="formLabelWidth">
           <el-form-item :label="dialogFormRoom.introduction"></el-form-item>
@@ -110,6 +117,7 @@ export default {
   data() {
     return {
       rooms: [],
+      userRooms: [],
       dialogFormVisible: false,
       dialogFormRoom: '',
       formLabelWidth: '120px',
@@ -175,6 +183,13 @@ export default {
             })
             .catch((err) => {
               console.log('getRoomType err :', err)
+            })
+          RoomService.getUserRooms()
+            .then((res) => {
+              this.userRooms = res.data
+            })
+            .catch((err) => {
+              console.log(err)
             })
         })
         .catch((err) => {
@@ -248,27 +263,21 @@ export default {
     updateFilter(category) {
       this.filter = category
     },
+    updateClickedRoom(dic) {
+      if (dic['clickedRoomId'] in this.userRooms.map((r) => r.id)) {
+        this.$router.push({
+          name: 'room-show',
+          params: { id: dic['clickedRoomId'] },
+        })
+      } else {
+        this.dialogFormVisible = dic['dialogFormVisible']
+        this.dialogFormRoom = dic['dialogFormRoom']
+      }
+
+      // console.log(dic)
+    },
   },
 }
-/*
-enter homepage test case:
-1. no token in state and localStorage
-  - go to login
-2. no token in state but in localStorage
-  - state get localStorage info, and refresh, go to refresh testcase
-3. both token in state and localStorage
-  - refresh, go to refresh testcase
-
-refresh test case:
-1. Refresh Token is invalid or expired
-  - error, should go to login page
-    - it will log at .catch()
-  - {"detail":"Token is invalid or expired","code":"token_not_valid"}
-2. though token in localStorage but refresh_token miss
-  - backend: {"refresh":["This field may not be blank."]}
-3. success
-
-*/
 </script>
 <style scoped>
 .item {

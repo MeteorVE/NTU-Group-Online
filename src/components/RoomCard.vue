@@ -10,6 +10,7 @@
     <div>
       <p>人數限制 : {{ room.people_limit }}</p>
       <p>簡介 : {{ introduction }}</p>
+      <el-button type="text" @click="emitParent">進入房間</el-button>
     </div>
   </el-card>
 </template>
@@ -36,7 +37,26 @@ export default {
         'https://i.imgur.com/G65qPbl.jpg',
         'https://i.imgur.com/WxiJ6K0.jpg',
       ],
+      // dialogFormRoom: '',
+      dialogFormVisible: false,
     }
+  },
+  methods: {
+    emitParent() {
+      this.$emit('update', {
+        dialogFormRoom: this.room,
+        dialogFormVisible: true,
+        clickedRoomId: this.room.id,
+      })
+    },
+  },
+  watch: {
+    dialogFormRoom: {
+      handler(val) {
+        this.$emit('update', { dialogFormRoom: val, dialogFormVisible: true })
+        this.dialogFormRoom = ''
+      },
+    },
   },
 }
 </script>

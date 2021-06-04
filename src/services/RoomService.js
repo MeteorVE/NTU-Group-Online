@@ -95,7 +95,7 @@ export default {
   getRoomMemberList(roomId) {
     console.log('called')
 
-    return apiDjango.get('/room/' + roomId + '/member_list')
+    return apiDjango.get('/room/' + roomId + '/member_list/')
   },
   getRoomBlockList(roomId) {
     return apiDjango.get('/room/' + roomId + '/block_list/')
