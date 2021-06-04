@@ -13,7 +13,7 @@
             }))
           "
       /></el-aside>
-      <el-main id="roomCardContainer" v-if="filteredRooms.length > 0">
+      <el-main id="roomCardContainer">
         <div
           v-masonry="roomCardContainer"
           transition-duration="0.2s"
