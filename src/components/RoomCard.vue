@@ -1,6 +1,6 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
-    <img :src="images[0]" class="image" />
+    <img :src="images[room.id % 4]" class="image" />
     <h4>{{ room.title }}</h4>
     <div>
       <p>分類 :</p>
@@ -9,7 +9,7 @@
     </div>
     <div>
       <p>人數限制 : {{ room.people_limit }}</p>
-      <p>簡介 : {{ room.introduction }}</p>
+      <p>簡介 : {{ introduction }}</p>
     </div>
   </el-card>
 </template>
@@ -20,6 +20,14 @@ export default {
     room: Object,
     typeDict: Object,
   },
+  computed: {
+    introduction: function () {
+      if (this.room.introduction.length > 30) {
+        return this.room.introduction.slice(0, 30) + '...'
+      }
+      return this.room.introduction
+    },
+  },
   data() {
     return {
       images: [
@@ -27,7 +35,6 @@ export default {
         'https://i.imgur.com/GOaM9dB.jpg',
         'https://i.imgur.com/G65qPbl.jpg',
         'https://i.imgur.com/WxiJ6K0.jpg',
-        'https://i.imgur.com/qdIZSWc.jpg',
       ],
     }
   },
@@ -40,7 +47,8 @@ export default {
 } */
 
 .image {
-  max-width: 50%;
+  /* max-width: 50%; */
+  max-width: 100%;
 }
 .el-card div p {
   margin: 6px;
