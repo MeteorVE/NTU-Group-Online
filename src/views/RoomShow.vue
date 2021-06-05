@@ -7,7 +7,7 @@
         "
     /></el-aside>
     <el-main class="chatRoomContainer">
-      <ChatRoom />
+      <ChatRoom :roomws="roomws" />
     </el-main>
     <el-aside class="roomInfo">
       <el-scrollbar>

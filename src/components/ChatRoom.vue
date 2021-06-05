@@ -42,6 +42,7 @@
 //import WsService from '@/services/WebsocketService.js'
 
 export default {
+  props: ['roomws'],
   data() {
     return {
       message: '',
@@ -92,7 +93,7 @@ export default {
           time: '11:23',
         },
       ],
-      roomws: {},
+      // roomws: {},
     }
   },
   methods: {
