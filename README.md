@@ -3,6 +3,11 @@
 
 ## Notice
 
+Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
+範例 : 
+``http://localhost:8080/verify/mail/ansi4r-83a75d91506d3176baa3d66768b22121``
+
+
 
 ## Todo
 
@@ -44,12 +49,18 @@
 - [x] 離開房間
 - [x] 我沒有想過如果 admin remove 自己。
   - 相關按鈕透過篩選 admin id 來擋住。
-- [ ] RoomCard 超過固定字數就要強迫壓縮
+- [x] RoomCard 超過固定字數就要強迫壓縮
+- [x] RoomShow 內部超過字數問題
 - [ ] RoomShow 內部的排版
-- [ ] RoomShow 內部超過字數問題
 - [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
 - [ ] Warning 您參加過多房間
   - 他會在 join_room 就出去
+- [ ] 如果是不存在的房間得 redirect
+- [ ] 前端想想 is_verify 驗證
+- [ ] 每個操作都得 refresh Room Record
+- [ ] 房內前端得改學號
+  - MemberList 能不能給學號 ? 
+  - 或是 getUserList / getUserDetail 也得給 ?
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人

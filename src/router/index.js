@@ -7,6 +7,7 @@ import RoomShow from '@/views/RoomShow.vue'
 import LoginPage from '@/views/Login.vue'
 import UserPage from '@/views/UserPage.vue'
 import MailRedirect from '@/views/MailRedirect.vue'
+import CommonRedirect from '@/views/CommonRedirect.vue'
 
 const routes = [
   {
@@ -47,6 +48,18 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: UserPage,
+  },
+  {
+    path: '/:type',
+    name: 'unknow-redirect',
+    component: CommonRedirect,
+    props: true,
+  },
+  {
+    path: '/:type/:token',
+    name: 'verify-mail',
+    component: CommonRedirect,
+    props: true,
   },
 ]
 

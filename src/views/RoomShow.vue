@@ -565,7 +565,6 @@ export default {
           console.log(err)
         })
     },
-    handleIconClick() {},
     handleExitRoom() {
       if (false & (this.user.access_level == 'admin')) {
         return RoomService.deleteRoom(this.id).catch((err) => {

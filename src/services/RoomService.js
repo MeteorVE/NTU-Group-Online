@@ -5,15 +5,6 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 
-const apiClient = axios.create({
-  baseURL: `http://localhost:3000`,
-  withCredentials: false, // This is the default
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-})
-
 const apiDjango = axios.create({
   baseURL: `http://localhost:8000`,
   withCredentials: false, // This is the default
@@ -104,10 +95,10 @@ export default {
       nickname: nickname,
     })
   },
-  deleteLeaveRoom(roomId){
+  deleteLeaveRoom(roomId) {
     return apiDjango.delete('room/' + roomId + '/leave_room/')
   },
-  deleteRoom(roomId){
+  deleteRoom(roomId) {
     return apiDjango.delete('room/' + roomId + '/')
   },
 
@@ -160,18 +151,13 @@ export default {
   getUserId() {
     return apiDjango.get('/api/user/get_id/')
   },
-  getUserRooms(){
+  getUserDetail(userId) {
+    return apiDjango.get('/api/user/' + userId + '/')
+  },
+  getUserRooms() {
     return apiDjango.get('/user_room/')
   },
-  // --------------------------------------
-  // json-server used
-  getUsers_js(name) {
-    return apiClient.get('/users/' + name)
-  },
-  getRooms_js() {
-    return apiClient.get('/rooms/')
-  },
-  postRoom_js(room) {
-    return apiClient.post('/rooms', room)
+  getMailVerify(token) {
+    return apiDjango.get('/api/user/verify_email/MjA/' + token + '/')
   },
 }
