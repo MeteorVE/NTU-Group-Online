@@ -191,6 +191,7 @@ export default {
             .catch((err) => {
               console.log(err)
             })
+          this.$emit('wsConnStart', true)
         })
         .catch((err) => {
           console.log(
