@@ -14,16 +14,16 @@
           <el-link href="/login" type="primary">點我登入</el-link>
         </el-alert>
         <h1>Create an Room</h1>
-        <el-form-item label="Title">
+        <el-form-item prop="title" label="房間標題" :rules="notNullrule">
           <el-input
             v-model="room.title"
             placeholder="請填入房間標題"
           ></el-input>
         </el-form-item>
-        <el-form-item label="NickName">
+        <el-form-item label="您的暱稱" prop="nickname" :rules="notNullrule">
           <el-input v-model="room.nickname" placeholder="請填入暱稱"></el-input>
         </el-form-item>
-        <el-form-item label="Category">
+        <el-form-item label="房間分類" prop="category" :rules="notNullrule">
           <el-select v-model="room.category" placeholder="choose category">
             <el-option
               v-for="(item, key) in categoryDict"
@@ -33,7 +33,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="End Time">
+        <el-form-item label="關房時間">
           <el-col :span="11">
             <el-date-picker
               type="date"
@@ -51,16 +51,16 @@
             ></el-time-picker>
           </el-col>
         </el-form-item>
-        <el-form-item label="允許邀請">
+        <!-- <el-form-item label="允許邀請">
           <el-switch v-model="room.invite"></el-switch>
-        </el-form-item>
+        </el-form-item> 
         <el-form-item label="Tag">
           <el-checkbox-group v-model="room.tag">
             <el-checkbox label="吃" name="type"></el-checkbox>
             <el-checkbox label="衣服" name="type"></el-checkbox>
           </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="Type">
+        </el-form-item>-->
+        <el-form-item label="房間類型">
           <el-radio-group v-model="room.type">
             <el-radio
               v-for="(item, key) in roomTypeDict"
@@ -75,7 +75,10 @@
           <el-slider v-model="room.capacity" show-input :max="100" :step="5">
           </el-slider>
         </el-form-item>
-        <el-form-item label="Description">
+        <el-form-item prop="description" :rules="notNullrule">
+          <template #label>
+            <span>簡介</span>
+          </template>
           <el-input
             type="textarea"
             placeholder="Enter description of your room:"
@@ -84,6 +87,12 @@
             show-word-limit
           >
           </el-input>
+        </el-form-item>
+        <el-form-item label="封面照片">
+          <el-input
+            v-model="room.image"
+            placeholder="可放可不放，建議上傳 imgur 並複製圖片網址(.jpg 或 .png 結尾)"
+          ></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="createRoom" :loading="loading"
@@ -115,42 +124,51 @@ export default {
       categoryDict,
       roomTypeDict,
       loading: false,
+      notNullrule: { required: true, message: '不能為空', trigger: 'blur' },
       room: {
         title: '',
         nickname: '我是房主',
         capacity: 10,
         category: '',
-        date1: '',
-        date2: '',
+        date1: new Date(),
+        date2: new Date(new Date().setHours(23, 59, 59)),
         invite: false,
         tag: [],
         type: 'public',
         description: '',
+        image: '',
       },
     }
   },
-  created() {},
+  created() {
+    if (!this.$store.state.token) {
+      console.log('plz login !')
+      this.$router.push({
+        name: 'login',
+      })
+    }
+    if (this.$store.state.token && !this.$store.state.is_verify) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        if (this.$store.state.is_verify == false) {
+          this.$router.push({
+            name: 'profile',
+          })
+          this.$message.error('未過 mail 認證 !')
+        }
+      })
+    }
+  },
   methods: {
     hardcreateRoom() {
       if (this.$store.state.token) {
         this.$store
           .dispatch('refreshToken')
           .then((resRefresh) => {
-            'status' in resRefresh &&
-              console.log(
-                '[RoomCreate.vue.createRoom.then] refreshToken then：' +
-                  '\nstatus code: ' +
-                  resRefresh.status +
-                  '\naccess token: ' +
-                  JSON.stringify(resRefresh.data.access)
-                // 通常到這邊是有正確拿到 token
-              )
+            console.log('resRefresh token:', resRefresh.data)
             this.loading = true
             return RoomService.postRoom(this.room)
           })
           .then((res) => {
-            console.log('WTF')
-
             if (res.status == 201) {
               console.log(res.statusText)
             }
@@ -213,12 +231,19 @@ export default {
             return RoomService.postRoom(this.room)
           })
           .then((res) => {
-            console.log('res in light CreateRoom:', res)
+            console.log('res in CreateRoom:', res)
             this.$message.success(res.statusText)
             this.loading = false
+            this.$router.push({
+              name: 'room-show',
+              params: { id: res.data.id },
+            })
           })
           .catch((err) => {
-            console.log('err in light CreateRoom:', err)
+            console.log('err in CreateRoom:', err.data, Object.keys(err.data))
+            for (let [key, val] of Object.entries(err.data)) {
+              this.$message.error(key + ': ' + val[0])
+            }
             this.loading = false
           })
       } else {

@@ -69,5 +69,14 @@ export default {
       })
     },
   },
+  notUsed() {
+    if (this.$store.state.user_id == -1) {
+      this.$store.dispatch('getUserId')
+    }
+    let res = null
+    if (res.data.map((ro) => ro.id).includes(this.$store.state.user_id)) {
+      return this.init_list()
+    }
+  },
 }
 </script>

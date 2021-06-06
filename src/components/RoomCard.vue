@@ -10,7 +10,9 @@
     <div>
       <p>人數限制 : {{ room.people_limit }}</p>
       <p>簡介 : {{ introduction }}</p>
-      <el-button type="text" @click="emitParent">進入房間</el-button>
+      <div style="text-align: center">
+        <el-button type="text" @click="emitParent">進入房間</el-button>
+      </div>
     </div>
   </el-card>
 </template>

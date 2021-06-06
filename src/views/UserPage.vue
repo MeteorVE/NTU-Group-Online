@@ -3,6 +3,7 @@
   people_limit -->
 
   <div>
+    <h2>{{ id }}</h2>
     <el-container class="create-form">
       <el-form ref="form" :model="room" label-width="80px">
         <h1>Create an Room</h1>
@@ -21,6 +22,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import RoomService from '@/services/RoomService.js'
 
 export default {
   components: null,
@@ -40,10 +42,18 @@ export default {
         type: '6',
         description: '7',
       },
+      id: '',
     }
   },
   created() {
     //this.checkAuth()
+    RoomService.getUserId()
+      .then((res) => {
+        this.id = res.data.id
+      })
+      .catch((err) => {
+        console.log('[err in user]', err)
+      })
   },
   methods: {
     checkAuth() {

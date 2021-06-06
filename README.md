@@ -32,17 +32,35 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
 - [x] 還沒測試 RoomCreate 硬刪掉 token 會怎樣
   - 可以成功跳轉
 - [x] ElMessage 替換成 this.message
-- [ ] 如果在 Login 頁面登入失敗，進 401，然後會出現 this.$router undefine
-  - 但不影響功能，挺妙的
+- [x] Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
+  - 直接導向 login
+- [x] 如果在 Login 頁面登入失敗，進 401，然後會出現 this.$router undefine
+  - 是 service.js 內的 import 未引入 router 導致
+- [x] Forgot pwd 的頁面測試 
 - [ ] 很多地方的 if then 可以改寫
-- [ ] Homepage: /user_room  渲染 (後面才會做，因為開發方便)
 - [ ] UserPage
-- [ ] Room Create 的 Warning 的 "點我登入" 連結，希望可以和 Warning text 同一行。
+- [ ] Register 頁面
+
+### RoomCreate
+
+- [x] 創完房間要 redirect 直接進房
+- [x] 我時間有給對但是紀錄是錯的 QQ
+  - 房內可以正確顯示
+- [ ] 如果創建失敗要跳出相對應訊息，例如某某某沒填。
+  - switch case
+  - 目前使用遞迴展示 dictionary 解決，不確定後端會不會改中文
+  - 還有一個問題 : 一個人的創房間上限有沒有 error message ?
+
 
 ### Homepage
 
-- [ ] 根據使用者狀態顯示 "進入房間" 或是 "加入房間"
-- [ ] 
+- [x] 根據使用者狀態顯示 "進入房間" 或是 "加入房間"
+- [x] 加入房間要 redirect 直接進房
+- [x] 加入房間的 dialog 要排版
+  - 分類 置左 --> 排好了
+  - line-height 已經透過多種方法設置還是沒用，暫時無解
+- [ ] DB: 要新增 image 欄位(type: 網址 = String)
+  - 前端如果沒有  會用 el-skeleton-item 去填充
 
 ### RoomShow (聊天室內部)
 
@@ -51,16 +69,22 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
   - 相關按鈕透過篩選 admin id 來擋住。
 - [x] RoomCard 超過固定字數就要強迫壓縮
 - [x] RoomShow 內部超過字數問題
-- [ ] RoomShow 內部的排版
+- [x] RoomShow 內部的排版
+- [x] 前端想想 is_verify 驗證
+- [x] 移除修改暱稱
+- [x] 如果是不存在的房間得 redirect
 - [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
+- [ ] 每個操作都得 refresh Room Record --> Ws notfiy 'xxx-List'
+  - priority 稍微一點點  等後端 (還有其他更多事情得先完成)
 - [ ] Warning 您參加過多房間
   - 他會在 join_room 就出去
-- [ ] 如果是不存在的房間得 redirect
-- [ ] 前端想想 is_verify 驗證
-- [ ] 每個操作都得 refresh Room Record
-- [ ] 房內前端得改學號
-  - MemberList 能不能給學號 ? 
-  - 或是 getUserList / getUserDetail 也得給 ?
+- [ ]  房內前端得改學號
+  - 後端已給，直接拿欄位
+  - blockList 沒給
+- [ ] invitation
+  - 理論上是 user page 要做
+- [ ] notification 
+- [ ] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人
@@ -134,19 +158,6 @@ RoomRecord
 3. Remove 或是 Block 了一個人，他會被踢出 channel, 也會被移除列表，也會被廣播。
 4. 每個使用者要可以編輯自己的 nickname，而 admin 擁有另一個編輯按鈕。
 5. 在沒有登入的情況下進入頁面會如何。
-
-
-
-Room create -> Room join -> get 各類 List 試著構建整個房間 -> 測試各類 modify API (Room, remove, block, invite, permission)
-User -> (Get my room -> render to table)
-Home -> Room CSS
-Channel
-
-
-
-1. 使用者資料 (id, mail, department, pwd, )
-2. Friend List, history (我參加過的)、我開的房間, ~~Msg Page~~
-
 
 
 ## Some useful info

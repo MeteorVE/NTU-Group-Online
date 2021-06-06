@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item prop="repeatPassword" label="再輸入一次">
           <el-input
-            v-model="model.password2"
+            v-model="model.repeatPassword"
             placeholder="Input password again"
             type="password"
             prefix-icon="fas fa-repeat"
@@ -41,8 +41,10 @@
 </template>
 
 <script>
+import RoomService from '@/services/RoomService.js'
+
 export default {
-  props: ['mailToken'],
+  props: ['userToken', 'mailToken'],
   data() {
     var validatePass2 = (rule, value, callback) => {
       if (value !== this.model.password) {
@@ -78,7 +80,7 @@ export default {
             message: 'Password length should be at least 4 characters',
             trigger: 'blur',
           },
-          { validator: validatePass2, trigger: 'blur', required: true },
+          { validator: validatePass2, trigger: 'blur' },
         ],
       },
     }
@@ -93,6 +95,11 @@ export default {
     },
     submitReset() {
       console.log('submitReset')
+      return RoomService.postResetPassword(
+        this.userToken,
+        this.mailToken,
+        this.model.password
+      )
     },
     simulateLogin() {
       return new Promise((resolve) => {
@@ -106,6 +113,17 @@ export default {
       }
       this.loading = true
       await this.submitReset()
+        .then((res) => {
+          this.$message.error('修改成功 !')
+          console.log(res)
+          this.$router.push({
+            name: 'login',
+          })
+        })
+        .catch((err) => {
+          this.$message.error('有些問題發生了 ! 請聯繫管理員 QQ')
+          console.log(err)
+        })
       this.loading = false
     },
   },

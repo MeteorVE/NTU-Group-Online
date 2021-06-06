@@ -46,7 +46,6 @@ export default {
     ) {
       this.hasInitWs = true
       this.notifyws = WsService.InitNotifyWebsocket(this.$store.state.token) //初始化
-      console.log('this is create')
       this.notifyws.onmessage = (event) => {
         console.log(event.data)
         let res = JSON.parse(event.data) //-------收到的data-----------
@@ -71,6 +70,11 @@ export default {
       }
     }
     //---------------------websocket------------------------
+    if (this.$store.state.token) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        console.log('is_verify:', this.$store.state.is_verify)
+      })
+    }
   },
   watch: {
     roomWebsocketConn: function (val) {
@@ -110,17 +114,15 @@ export default {
         })
     },
     initWs: function (wsConn) {
-      console.log('emit')
-      console.log(wsConn)
-      console.log(this.hasInitWs)
+      // console.log('[emit] in App.vue', wsConn, this.hasInitWs)
       if (wsConn === true && this.hasInitWs === false) {
         this.hasInitWs = true
         //------------------websocket-----------------------------
         //這是通知的websocket,具體說明在Room Show有了
         //靠夭啊好像做在Navbar就不用每頁去Handle了欸
-        console.log(this.$store.state.token)
-        console.log(this.$store.state.notifyWebsocketConn)
-        console.log("This isn't create")
+        // console.log(this.$store.state.token)
+        // console.log(this.$store.state.notifyWebsocketConn)
+        // console.log("This isn't create")
         if (this.$store.state.token && this.notifyws == null) {
           console.log('initiate')
           this.notifyws = WsService.InitNotifyWebsocket(this.$store.state.token) //初始化
@@ -138,7 +140,10 @@ export default {
                 console.log(res.notify_string)
                 if (res.notify_string === 'notify') {
                   console.log('You have notify')
+                  // todos: getNotificationList
+                  // ... index++
                 }
+                // notification 顯示在小鈴鐺裡面的
                 //res.notify_string:按照開會的說法目前後端好像是說會送一個string過來,然後前端再去get,明天寫
                 break
               case 'ping': //ping前端還有沒有活著
@@ -167,7 +172,7 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   max-height: 100%;
 }

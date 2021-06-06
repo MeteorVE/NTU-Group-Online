@@ -1,21 +1,20 @@
 import axios from 'axios'
 import store from '@/store/index.js'
+import router from '@/router/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-//const state = store ? store.state : {}
-// console.log(store)
 
-const apiClient = axios
-  .create({
-    baseURL: `http://localhost:8000`,
-    withCredentials: false, // This is the default
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-  })
+const apiClient = axios.create({
+  baseURL: `http://localhost:8000`,
+  // baseURL: `https://ntu-online-group-api.herokuapp.com/`,
+  withCredentials: false, // This is the default
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+})
 
 apiClient.interceptors.request.use(
   (request) => {
@@ -36,7 +35,7 @@ apiClient.interceptors.response.use(
         case 401:
           console.log('登入無效')
           store.dispatch('logout')
-          this.$router.push('/')
+          router.push('/')
           break
         case 404:
           console.log('找不到該頁面')
@@ -60,10 +59,6 @@ apiClient.interceptors.response.use(
 
 export default {
   postLogin(loginInfo) {
-    console.log({
-      email: loginInfo['email'],
-      password: loginInfo['password'],
-    })
     return apiClient.post('/token/', {
       email: loginInfo['email'],
       password: loginInfo['password'],

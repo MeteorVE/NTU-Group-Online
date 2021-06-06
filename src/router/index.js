@@ -39,7 +39,7 @@ const routes = [
     component: LoginPage,
   },
   {
-    path: '/forgotpwd/:mailToken',
+    path: '/forgetpwd/:userToken/:mailToken',
     name: 'mail-verify',
     component: MailRedirect,
     props: true,
@@ -56,7 +56,7 @@ const routes = [
     props: true,
   },
   {
-    path: '/:type/:token',
+    path: '/:type/:userToken/:token',
     name: 'verify-mail',
     component: CommonRedirect,
     props: true,

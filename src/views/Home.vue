@@ -61,7 +61,7 @@
     </el-card> -->
 
     <el-dialog title="加入房間" v-model="dialogFormVisible">
-      <el-form :model="dialogFormRoom">
+      <el-form :model="dialogFormRoom" label-position="left">
         <el-form-item label="房間名稱" :label-width="formLabelWidth">
           <el-form-item :label="dialogFormRoom.title"></el-form-item>
         </el-form-item>
@@ -70,10 +70,12 @@
           <!-- <el-form-item :label="dialogFormRoom.room_type"></el-form-item> -->
         </el-form-item>
         <el-form-item label="房間 Category" :label-width="formLabelWidth">
-          <el-tag type="success">{{ dialogFormRoom.room_category }}</el-tag>
+          <el-tag type="success" style="text-align: left">{{
+            dialogFormRoom.room_category
+          }}</el-tag>
           <!-- <el-form-item :label="dialogFormRoom.room_category"></el-form-item> -->
         </el-form-item>
-        <el-form-item label="簡介" :label-width="formLabelWidth">
+        <el-form-item label="簡介" :label-width="formLabelWidth" class="desc">
           <el-form-item :label="dialogFormRoom.introduction"></el-form-item>
         </el-form-item>
         <el-form-item label="最大人數" :label-width="formLabelWidth">
@@ -151,13 +153,20 @@ export default {
     },
   },
   created() {
+    if (this.$store.state.token && !this.$store.state.is_verify) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        if (this.$store.state.is_verify == false) {
+          this.$router.push({
+            name: 'profile',
+          })
+          this.$message.error('未過 mail 認證 !')
+        }
+      })
+    }
+
     if (this.$store.state.token) {
       this.$store
         .dispatch('refreshToken')
-        .then((resRefresh) => {
-          console.log('resRefresh:', resRefresh)
-          return resRefresh
-        })
         .then((response) => {
           console.log('token:', response.data, '\nstart to get some list:')
 
@@ -184,6 +193,7 @@ export default {
             .catch((err) => {
               console.log('getRoomType err :', err)
             })
+
           RoomService.getUserRooms()
             .then((res) => {
               this.userRooms = res.data
@@ -265,7 +275,8 @@ export default {
       this.filter = category
     },
     updateClickedRoom(dic) {
-      if (dic['clickedRoomId'] in this.userRooms.map((r) => r.id)) {
+      let uRoomsId = this.userRooms.map((r) => r.id)
+      if (uRoomsId.includes(dic['clickedRoomId'])) {
         this.$router.push({
           name: 'room-show',
           params: { id: dic['clickedRoomId'] },
@@ -274,8 +285,6 @@ export default {
         this.dialogFormVisible = dic['dialogFormVisible']
         this.dialogFormRoom = dic['dialogFormRoom']
       }
-
-      // console.log(dic)
     },
   },
 }
@@ -283,6 +292,13 @@ export default {
 <style scoped>
 .item {
   width: 25%;
+}
+.el-form-item > label {
+  line-height: 2px;
+}
+
+.desc {
+  line-height: 2px;
 }
 /* .card-header {
   display: flex;

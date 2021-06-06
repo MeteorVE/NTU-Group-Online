@@ -19,6 +19,16 @@
         </div>
         <el-divider></el-divider>
         <div>
+          <h5>房間開放時間</h5>
+          <p>
+            {{ room.create_time.slice(0, 10) }}
+            {{ room.create_time.slice(11, 19) }} ~<br />
+            {{ room.valid_time.slice(0, 10) }}
+            {{ !room.valid_time ? '未指定' : room.valid_time.slice(11, 19) }}
+          </p>
+        </div>
+        <el-divider></el-divider>
+        <div>
           <h5>
             房間簡介<i
               class="el-icon-edit el-input__icon"
@@ -115,22 +125,16 @@
         >
         </el-input>
       </el-form-item>
-      <el-form-item label="最大人數" @submit.prevent>
+      <el-form-item @submit.prevent>
+        <span>最大人數</span>
         <el-slider
           v-model="dialogFormRoom.people_limit"
           show-input
           :max="100"
           :step="5"
+          input-size="mini"
         >
         </el-slider>
-      </el-form-item>
-      <el-form-item label="您的暱稱">
-        <el-input
-          v-model="user.nickname"
-          autocomplete="off"
-          clearable
-          placeholder="請輸入暱稱"
-        ></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -150,8 +154,8 @@
       <el-table-column type="expand">
         <template #default="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="Member ID">
-              <span>{{ props.row.member_id }}</span>
+            <el-form-item label="學號">
+              <span>{{ props.row.username }}</span>
             </el-form-item>
             <el-form-item label="暱稱">
               <span>{{ props.row.nickname }}</span>
@@ -210,7 +214,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="Member ID" prop="member_id"> </el-table-column>
+      <el-table-column label="學號" prop="username"> </el-table-column>
       <el-table-column label="暱稱" prop="nickname"></el-table-column>
       <el-table-column label="階級" prop="access_level"></el-table-column>
     </el-table>
@@ -246,9 +250,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="blocked_user_id" label="Member ID">
-      </el-table-column>
-
+      <el-table-column prop="blocked_user_id" label="學號"> </el-table-column>
       <el-table-column prop="reason" label="原因"></el-table-column>
     </el-table>
     <h3>邀請列表</h3>
@@ -261,7 +263,7 @@
       </el-form-item>
     </el-form>
     <el-table :data="invitationList" style="width: 100%">
-      <el-table-column type="expand">
+      <!-- <el-table-column type="expand">
         <template #default="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="操作" v-if="isAdmin">
@@ -280,9 +282,12 @@
             </el-form-item>
           </el-form>
         </template>
-      </el-table-column>
-      <el-table-column prop="invited_id" label="被邀請者"></el-table-column>
-      <el-table-column prop="inviter_id" label="邀請者"></el-table-column>
+      </el-table-column> -->
+      <el-table-column
+        prop="invited_username"
+        label="被邀請者"
+      ></el-table-column>
+      <el-table-column prop="inviter_username" label="邀請者"></el-table-column>
     </el-table>
     <template #footer>
       <span class="dialog-footer">
@@ -340,16 +345,16 @@ export default {
         title: 'Loading Not Successful',
         introduction: 'Loading Not Successful',
         create_time: '2000-01-01T20:33:33.033448+08:00',
-        valid_time: null,
+        valid_time: '2000-01-01T20:33:33.033448+08:00',
         room_type: 'private',
         room_category: 'course',
         people_limit: 1,
       },
       tableData: [
         {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄',
+          date: '2010-01-01',
+          name: '',
+          address: '',
         },
       ],
       dialogFormRoom: {},
@@ -358,23 +363,36 @@ export default {
     }
   },
   async created() {
+    if (this.$store.state.token && !this.$store.state.is_verify) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        if (this.$store.state.is_verify == false) {
+          this.$router.push({
+            name: 'profile',
+          })
+          this.$message.error('未過 mail 認證 !')
+        }
+      })
+    }
+
     if (this.$store.state.token) {
       this.$store
         .dispatch('refreshToken')
         .then((resRefresh) => {
           console.log(resRefresh)
-          return this.init_list() // if get_xxx_List occurred err, will show in func
+          return this.getUserRooms()
+        })
+        .then((res) => {
+          if (res.data.map((ro) => ro.id).includes(Number(this.id))) {
+            return this.init_list()
+          } else {
+            this.$message.error('你怎麼進來的 = =')
+            return Promise.reject('user not in room !')
+          }
         })
         .catch((err) => {
-          if (
-            'code' in err.response.data &&
-            err.response.data['code'] == 'token_not_valid'
-          ) {
-            this.$store.dispatch('resetToken')
-            this.$router.push({
-              name: 'login',
-            })
-          }
+          // if refresh token is invalid, it will trigger 401 and redirect to Login auto.
+          // so here we don't need to handle it.
+          console.log(err)
         })
     } else {
       this.$message.error('請登入 !')
@@ -424,6 +442,7 @@ export default {
           case 'update':
             console.log(res.roomID) //送到的room ID
             console.log(res.message) //我們要update廣播的message
+            // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
             console.log(res.time) //送出這個訊息的時間
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
@@ -503,20 +522,15 @@ export default {
         .catch((err) => {
           console.log(err.data)
         })
-
-      this.getUserRooms()
-        .then((res) => {
-          this.userRooms = res.data
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     },
     getUserObj() {
       RoomService.getUserId()
         .then((res) => {
           let userId = res.data.id
-          this.user = this.memberList.filter((m) => m.member_id == userId)[0]
+          let userObj = this.memberList.filter((m) => m.member_id == userId)[0]
+          if (userObj) {
+            this.user = userObj
+          }
         })
         .catch((err) => {
           return Promise.reject(err)

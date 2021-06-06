@@ -80,8 +80,8 @@ export default {
   },
   methods: {
     forDev() {
-      this.model.email = 'test@test.com'
-      this.model.password = 'test'
+      this.model.email = 'test1@test.com'
+      this.model.password = 'test1'
     },
     Login() {
       this.$store

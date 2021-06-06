@@ -29,7 +29,7 @@
 import RoomService from '@/services/RoomService.js'
 
 export default {
-  props: ['type', 'token'],
+  props: ['type', 'token', 'userToken'],
   data() {
     return {
       title: 'Oh no!!',
@@ -45,7 +45,7 @@ export default {
       // getMailVerify
       if (this.type == 'verify-mail') {
         this.title = 'Mail Verification'
-        RoomService.getMailVerify(this.token)
+        RoomService.getMailVerify(this.userToken, this.token)
           .then((res) => {
             if (res.data == 'success') {
               this.description = 'Verify Successful !'

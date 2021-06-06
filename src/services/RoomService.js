@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store/index.js'
+import router from '@/router/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -7,6 +8,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 const apiDjango = axios.create({
   baseURL: `http://localhost:8000`,
+  // baseURL: `https://ntu-online-group-api.herokuapp.com/`,
   withCredentials: false, // This is the default
   headers: {
     Accept: 'application/json',
@@ -33,7 +35,7 @@ apiDjango.interceptors.response.use(
         case 401:
           console.log('登入無效')
           store.dispatch('logout')
-          this.$router.push('/')
+          router.push('/')
           break
         case 404:
           console.log('找不到該頁面')
@@ -66,6 +68,8 @@ export default {
   },
   postRoom(room) {
     // title, introduction, create_time, valid_time, room_type, room_category, people_limit
+    console.log('[Room]:', room.date2.toString())
+
     const keyMapping = {
       description: 'introduction',
       type: 'room_type',
@@ -73,7 +77,12 @@ export default {
       category: 'room_category',
     }
     const renamedRoom = this.renameKeys(room, keyMapping)
-    console.log(renamedRoom)
+    renamedRoom['valid_time'] =
+      room.date1.toISOString().slice(0, 10) +
+      ' ' +
+      room.date2.toString().slice(16, 24)
+
+    console.log('[renamedRoom]:', renamedRoom)
     return apiDjango.post('/room/', renamedRoom)
   },
 
@@ -157,7 +166,15 @@ export default {
   getUserRooms() {
     return apiDjango.get('/user_room/')
   },
-  getMailVerify(token) {
-    return apiDjango.get('/api/user/verify_email/MjA/' + token + '/')
+  getMailVerify(userToken, token) {
+    return apiDjango.get(
+      '/api/user/verify_email/' + userToken + '/' + token + '/'
+    )
+  },
+  postResetPassword(userToken, token, _password) {
+    return apiDjango.post(
+      '/api/user/password_reset/' + userToken + '/' + token + '/',
+      { password: _password }
+    )
   },
 }
