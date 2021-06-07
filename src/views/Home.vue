@@ -6,7 +6,7 @@
         ><SideBar
           v-on:applyFilter="updateFilter($event)"
           :sideBarList="
-            category.map((c) => ({
+            sideBarList.map((c) => ({
               text: c,
               url: '',
             }))
@@ -32,6 +32,7 @@
               :room="room"
               :typeDict="roomTypeDict"
               @update="updateClickedRoom"
+              :imageList="imageList"
             />
           </div>
         </div>
@@ -85,7 +86,7 @@
         </el-form-item>
         <el-form-item label="您的暱稱" :label-width="formLabelWidth">
           <el-input
-            v-model="nickname"
+            v-model="user.nickname"
             autocomplete="off"
             clearable
             placeholder="請輸入暱稱"
@@ -117,14 +118,117 @@ export default {
     SideBar,
   },
   data() {
+    const imageList = [
+      {
+        value: '自定義',
+        url: '',
+        category: '',
+      },
+      {
+        value: '課程討論',
+        url: 'https://i.imgur.com/GIiSOLM.jpg',
+        category: 'course',
+      },
+      {
+        value: '吃飯',
+        url: 'https://i.imgur.com/kN4J0UL.jpg',
+        category: 'eating',
+      },
+      {
+        value: '爬山',
+        url: 'https://i.imgur.com/17SSeJb.png',
+        category: 'hiking',
+      },
+      {
+        value: '打籃球',
+        url: 'https://i.imgur.com/o2uS5WX.png',
+        category: 'baseketball',
+      },
+      {
+        value: '打 Apex',
+        url: 'https://i.imgur.com/PkZu9rV.jpg',
+        category: 'apex',
+      },
+      {
+        value: '玩 Switch 遊戲',
+        url: 'https://i.imgur.com/16C4zzd.png',
+        category: 'switch',
+      },
+      {
+        value: '跑步',
+        url: 'https://i.imgur.com/wc0HqRT.png',
+        category: 'running',
+      },
+      {
+        value: '團購',
+        url: 'https://i.imgur.com/hcP3JA2.png',
+        category: 'group_buying',
+      },
+      {
+        value: '逛街',
+        url: 'https://i.imgur.com/85zF3RK.jpg',
+        category: 'shopping',
+      },
+      {
+        value: '打遊戲',
+        url: 'https://i.imgur.com/ex5uIMF.jpg',
+        category: 'game',
+      },
+      {
+        value: '買衣服',
+        url: 'https://i.imgur.com/UElotjt.jpg',
+        category: 'clothing',
+      },
+      {
+        value: '麥當勞',
+        url: 'https://i.imgur.com/Ll9w1eq.png',
+        category: 'mc',
+      },
+      {
+        value: '肯德基',
+        url: 'https://i.imgur.com/NBt3Xka.jpg',
+        category: 'kfc',
+      },
+      {
+        value: '看電影',
+        url: 'https://i.imgur.com/QzZKggo.png',
+        category: 'moive',
+      },
+      {
+        value: '演唱會',
+        url: 'https://i.imgur.com/NBt3Xka.jpg',
+        category: 'live',
+      },
+      {
+        value: '打桌球',
+        url: 'https://i.imgur.com/kluQV3e.jpg',
+        category: 'tabletennis',
+      },
+      {
+        value: '讀書',
+        url: 'https://i.imgur.com/jneYUkV.jpg',
+        category: 'study',
+      },
+      {
+        value: '讀書會',
+        url: 'https://i.imgur.com/rM3O9xh.png',
+        category: 'studyclub',
+      },
+      {
+        value: '看比賽',
+        url: 'https://i.imgur.com/Yya0Www.png',
+        category: 'race',
+      },
+    ]
     return {
+      imageList,
       rooms: [],
       userRooms: [],
       dialogFormVisible: false,
       dialogFormRoom: '',
       formLabelWidth: '120px',
-      nickname: '',
       roomTypeDict: [],
+      sideBarList: [],
       category: [
         '吃飯',
         '團購',
@@ -135,6 +239,7 @@ export default {
         '分組',
         '出遊',
       ],
+      user: { nickname: '' },
     }
   },
   computed: {
@@ -178,9 +283,23 @@ export default {
               console.log('getRooms err :', err)
             })
 
+          this.$store
+            .dispatch('getUserId')
+            .then(() => {
+              return RoomService.getUserDetail(this.$store.state.user_id)
+            })
+            .then((res) => {
+              this.user = res.data
+            })
+            .catch((err) => {
+              console.log('getRooms err :', err)
+            })
+
           RoomService.getRoomCategory()
             .then((res) => {
-              this.sideBarList = Object.values(res.data)
+              console.log('[Warning]: 目前有成功拿到資料但是沒有寫入', res.data)
+              this.sideBarList = this.imageList.map((o) => o.value)
+              // this.sideBarList = Object.values(res.data)
             })
             .catch((err) => {
               console.log('getRoomCategory err :', err)
@@ -238,36 +357,30 @@ export default {
         this.$store
           .dispatch('refreshToken', this.event)
           .then((resRefresh) => {
-            console.log(resRefresh)
-            'status' in resRefresh &&
-              console.log(
-                '[Home.vue.created.then] refreshToken then：' +
-                  '\nstatus code: ' +
-                  resRefresh.status +
-                  '\naccess token: ' +
-                  JSON.stringify(resRefresh.data.access)
-              )
+            console.log(resRefresh.data.access)
+
             return RoomService.postJoinRoom(
               this.dialogFormRoom.id,
-              this.nickname
+              this.user.nickname
             )
           })
           .then((res) => {
-            console.log('join success:', res.data)
+            console.log('[Success]: 已加入房間', res.data)
             this.$router.push({
               name: 'room-show',
               params: { id: this.dialogFormRoom.id },
             })
           })
           .catch((err) => {
-            var errMsg = err.response.data['error']
+            var errMsg = err.data['error']
             if (errMsg == 'You are already in the room.') {
               this.$router.push({
                 name: 'room-show',
                 params: { id: this.dialogFormRoom.id },
               })
             }
-            console.log(err.response.data['error'])
+            // console.log(err.data['error'])
+            this.$message.error(err.data['error'])
           })
       }
     },

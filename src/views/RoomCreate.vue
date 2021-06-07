@@ -30,10 +30,10 @@
             @change="renderUrl"
           >
             <el-option
-              v-for="(item, key) in categoryDict"
-              :label="item"
-              :key="item"
-              :value="key"
+              v-for="category in imageList"
+              :label="category.value"
+              :key="category.category"
+              :value="category.category"
             ></el-option>
           </el-select>
         </el-form-item>

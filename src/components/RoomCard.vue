@@ -1,12 +1,12 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
     <img
+      v-if="room.image_url && !imageLoadFailed"
       :src="room.image_url"
       class="image"
       @error="imageLoadFailed = true"
-      v-if="!imageLoadFailed"
     />
-    <el-skeleton v-if="imageLoadFailed">
+    <el-skeleton v-else>
       <template #template>
         <el-skeleton-item variant="image" style="height: 150px" />
       </template>
@@ -14,8 +14,10 @@
     <h4>{{ room.title }}</h4>
     <div>
       <p>分類 :</p>
-      <el-tag type="success">{{ room.room_category }}</el-tag>
-      <el-tag type="info">{{ typeDict[room.room_type] }}</el-tag>
+      <el-tag type="success">{{ getCategoryName() }}</el-tag>
+      <el-tag type="info">{{
+        typeDict[room.room_type] ? typeDict[room.room_type] : room.room_type
+      }}</el-tag>
     </div>
     <div>
       <p>人數限制 : {{ room.people_limit }}</p>
@@ -32,6 +34,7 @@ export default {
   props: {
     room: Object,
     typeDict: Object,
+    imageList: Array,
   },
   computed: {
     introduction: function () {
@@ -67,6 +70,17 @@ export default {
         dialogFormVisible: true,
         clickedRoomId: this.room.id,
       })
+    },
+    getCategoryName() {
+      let result = this.imageList.find(
+        (o) => o.category == this.room.room_category
+      )
+
+      if (result) {
+        return result.value
+      } else {
+        return this.room.room_category
+      }
     },
   },
   watch: {

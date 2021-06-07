@@ -52,6 +52,7 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
   - 目前使用遞迴展示 dictionary 解決，不確定後端會不會改中文
   - 還有一個問題 : 一個人的創房間上限有沒有 error message ?
 
+- [ ] url 可以是空的，後端在 init 的時候可以不用預設，或是預設 ``''``
 
 ### Register
 - [ ] 如果創建失敗要跳出相對應訊息，例如某某某沒填。
@@ -68,6 +69,13 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
 - [x] DB: 要新增 image 欄位(type: 網址 = String)
   - 前端如果沒有  會用 el-skeleton-item 去填充
   - 做好了 ! 而且完美 handle url failed 情況，還在 create 自動推薦 !
+- [ ] 左邊 SideBar 的 category 是寫死的
+  - 目前可以讀取 imageList 但是並非跟後端溝通得到的，不好。
+- [ ] Join Room 失敗不會跳錯誤訊息
+  - 現在會了，但是是英文
+- [x] Homepage 暱稱不會自動載入預設的
+  - 現在會了，但是要經過兩次的 /GET，it is so inefficient but I have done my best.
+- [ ] Homepage 按 Enter 會 jumpout 不是直接觸發 submit
 
 ### RoomShow (聊天室內部)
 
@@ -91,6 +99,16 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
   - 理論上是 user page 要做
 - [ ] notification 
 - [ ] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
+
+- [ ] 關閉房間沒做出來
+- [ ] 一些操作是否可以改成 403 ? 401 是 invalid token / 登入失敗在用的
+- [ ] Moderator 不能被 Admin 給 Remove ?
+- [ ] 如果 ws server 在啟動後使用者才加入房間，會無法正確讀取 member list
+
+引述自 https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Status
+> 403 Forbidden
+> 用戶端並無訪問權限，例如未被授權，所以伺服器拒絕給予應有的回應。
+> 不同於 401，伺服端知道用戶端的身份。
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人
