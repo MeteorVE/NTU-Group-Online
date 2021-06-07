@@ -8,6 +8,9 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
 ``http://localhost:8080/verify-mail/MjU/anwhy8-c74b2a2e33d5e8e28355e2bfe3970ba3/``
 ``http://localhost:8080/forgetpwd/MjQ/anv2cs-5c8dae1703cf292a05db291ddbe5b2e4/``
 
+https://ntu-online-group.herokuapp.com/
+https://git.heroku.com/ntu-online-group.git
+
 
 
 ## Todo

@@ -1,14 +1,15 @@
 import axios from 'axios'
 import store from '@/store/index.js'
 import router from '@/router/index.js'
+require('dotenv').config()
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 
 const apiClient = axios.create({
-  baseURL: `http://localhost:8000`,
-  // baseURL: `https://ntu-online-group-api.herokuapp.com/`,
+  baseURL: process.env.BACKEND,
+  // baseURL: `http://localhost:8000`,
   withCredentials: false, // This is the default
   headers: {
     Accept: 'application/json',

@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
+    "dotenv": "^10.0.0",
     "element-plus": "^1.0.2-beta.28",
     "json-server": "^0.16.3",
     "jwt-decode": "^3.1.2",

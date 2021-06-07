@@ -1,8 +1,11 @@
 import store from '@/store/index.js'
 import jwt_decode from 'jwt-decode'
+require('dotenv').config()
 
-const NotifyWsServiceAddr = 'ws://127.0.0.1:8090/wsServer/connection/user/'
-const RoomWsPrefix = 'ws://127.0.0.1:8090/ws/room/'
+// const WsPrefix = 'ws://127.0.0.1:8090'
+const WsPrefix = process.env.WS_SERVER
+const NotifyWsServiceAddr = WsPrefix + '/wsServer/connection/user/'
+const RoomWsPrefix = WsPrefix + '/ws/room/'
 
 export class NotifyWsInfo {
   constructor(websocket, userID, token) {

@@ -25,6 +25,9 @@
           Login
         </el-menu-item>
         <el-menu-item @click="logout"> Logout </el-menu-item>
+        <el-menu-item v-if="!isAuth" route="/register" index="/register">
+          Register
+        </el-menu-item>
         <el-menu-item route="/profile" index="/profile"> User </el-menu-item>
       </div>
       <div class="menu-item-group right-group">
@@ -71,7 +74,7 @@ export default {
         .catch(() => {
           console.log('There was a problem when logout')
         })
-        this.$emit('logoutsignal', true)
+      this.$emit('logoutsignal', true)
     },
     clearFilter() {
       this.$store.state.filter = ''
