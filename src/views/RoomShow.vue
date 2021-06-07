@@ -372,6 +372,7 @@ export default {
   async created() {
     if (this.$store.state.token && !this.$store.state.is_verify) {
       this.$store.dispatch('getIsVerify').then(() => {
+        console.log('未過 mail 認證 !')
         if (this.$store.state.is_verify == false) {
           this.$router.push({
             name: 'profile',

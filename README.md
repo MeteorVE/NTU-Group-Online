@@ -59,8 +59,9 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
 - [x] 加入房間的 dialog 要排版
   - 分類 置左 --> 排好了
   - line-height 已經透過多種方法設置還是沒用，暫時無解
-- [ ] DB: 要新增 image 欄位(type: 網址 = String)
+- [x] DB: 要新增 image 欄位(type: 網址 = String)
   - 前端如果沒有  會用 el-skeleton-item 去填充
+  - 做好了 ! 而且完美 handle url failed 情況，還在 create 自動推薦 !
 
 ### RoomShow (聊天室內部)
 
@@ -85,6 +86,7 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
   - 理論上是 user page 要做
 - [ ] notification 
 - [ ] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
+- [ ] is_verify 的 function 又炸了，因為後端不給看
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人

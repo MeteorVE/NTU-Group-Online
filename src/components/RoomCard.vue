@@ -1,7 +1,7 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
     <img
-      :src="images[room.id % 4]"
+      :src="room.image_url"
       class="image"
       @error="imageLoadFailed = true"
       v-if="!imageLoadFailed"

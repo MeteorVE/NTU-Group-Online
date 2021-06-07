@@ -24,7 +24,11 @@
           <el-input v-model="room.nickname" placeholder="請填入暱稱"></el-input>
         </el-form-item>
         <el-form-item label="房間分類" prop="category" :rules="notNullrule">
-          <el-select v-model="room.category" placeholder="choose category">
+          <el-select
+            v-model="room.category"
+            placeholder="choose category"
+            @change="renderUrl"
+          >
             <el-option
               v-for="(item, key) in categoryDict"
               :label="item"
@@ -91,14 +95,15 @@
         <el-form-item label="封面照片">
           <el-autocomplete
             class="inline-input"
-            v-model="room.image"
+            v-model="selectedImageCate"
             :fetch-suggestions="querySearch"
             placeholder="請輸入內容"
             @select="handleSelect"
           ></el-autocomplete>
           <el-input
-            v-model="room.image"
+            v-model="room.image_url"
             placeholder="可放可不放，建議上傳 imgur 並複製圖片網址(.jpg 或 .png 結尾)"
+            clearable
           ></el-input>
         </el-form-item>
         <el-form-item>
@@ -129,6 +134,11 @@ export default {
     }
     const imageList = [
       {
+        value: '自定義',
+        url: '',
+        category: '',
+      },
+      {
         value: '課程討論',
         url: 'https://i.imgur.com/GIiSOLM.jpg',
         category: 'course',
@@ -152,6 +162,11 @@ export default {
         value: '打 Apex',
         url: 'https://i.imgur.com/PkZu9rV.jpg',
         category: 'apex',
+      },
+      {
+        value: '玩 Switch 遊戲',
+        url: 'https://i.imgur.com/16C4zzd.png',
+        category: 'switch',
       },
       {
         value: '跑步',
@@ -188,6 +203,36 @@ export default {
         url: 'https://i.imgur.com/NBt3Xka.jpg',
         category: 'kfc',
       },
+      {
+        value: '看電影',
+        url: 'https://i.imgur.com/QzZKggo.png',
+        category: 'moive',
+      },
+      {
+        value: '演唱會',
+        url: 'https://i.imgur.com/NBt3Xka.jpg',
+        category: 'live',
+      },
+      {
+        value: '打桌球',
+        url: 'https://i.imgur.com/kluQV3e.jpg',
+        category: 'tabletennis',
+      },
+      {
+        value: '讀書',
+        url: 'https://i.imgur.com/jneYUkV.jpg',
+        category: 'study',
+      },
+      {
+        value: '讀書會',
+        url: 'https://i.imgur.com/rM3O9xh.png',
+        category: 'studyclub',
+      },
+      {
+        value: '看比賽',
+        url: 'https://i.imgur.com/Yya0Www.png',
+        category: 'race',
+      },
     ]
     const querySearch = (queryString, cb) => {
       //let imageValues = imageList.map((i) => ({ value: i.value }))
@@ -201,8 +246,6 @@ export default {
     }
     const createFilter = (queryString) => {
       return (imageValues) => {
-        console.log(imageValues)
-
         return (
           imageValues.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
           0
@@ -210,7 +253,16 @@ export default {
       }
     }
     const handleSelect = (item) => {
-      console.log(item)
+      this.room.image_url = item.url
+    }
+    const renderUrl = (selected) => {
+      let selectedCategory = this.imageList.find(
+        (el) => el.category == selected
+      )
+      if (selectedCategory) {
+        this.room.image_url = selectedCategory.url
+        this.selectedImageCate = selectedCategory.value
+      }
     }
     return {
       categoryDict,
@@ -219,11 +271,13 @@ export default {
       querySearch,
       createFilter,
       handleSelect,
+      renderUrl,
       loading: false,
+      selectedImageCate: '',
       notNullrule: { required: true, message: '不能為空', trigger: 'blur' },
       room: {
         title: '',
-        nickname: '我是房主',
+        nickname: '房主',
         capacity: 10,
         category: '',
         date1: new Date(),
@@ -232,7 +286,7 @@ export default {
         tag: [],
         type: 'public',
         description: '',
-        image: '',
+        image_url: '',
       },
     }
   },
