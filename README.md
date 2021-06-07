@@ -75,7 +75,8 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
   - 現在會了，但是是英文
 - [x] Homepage 暱稱不會自動載入預設的
   - 現在會了，但是要經過兩次的 /GET，it is so inefficient but I have done my best.
-- [ ] Homepage 按 Enter 會 jumpout 不是直接觸發 submit
+- [x] Homepage 按 Enter 會 jumpout 不是直接觸發 submit
+  - 偶然發生過一次而已，目前沒有出現此問題
 
 ### RoomShow (聊天室內部)
 
@@ -100,7 +101,8 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
 - [ ] notification 
 - [ ] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
 
-- [ ] 關閉房間沒做出來
+- [x] 關閉房間沒做出來
+  - 關掉 for_dev 就能了
 - [ ] 一些操作是否可以改成 403 ? 401 是 invalid token / 登入失敗在用的
 - [ ] Moderator 不能被 Admin 給 Remove ?
 - [ ] 如果 ws server 在啟動後使用者才加入房間，會無法正確讀取 member list

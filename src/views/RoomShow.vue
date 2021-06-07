@@ -593,15 +593,20 @@ export default {
         })
     },
     handleExitRoom() {
-      if (false & (this.user.access_level == 'admin')) {
-        return RoomService.deleteRoom(this.id).catch((err) => {
+      if (this.user.access_level == 'admin') {
+        RoomService.deleteRoom(this.id).catch((err) => {
           this.$message.error(err.data.error)
         })
       } else {
-        return RoomService.deleteLeaveRoom(this.id).catch((err) => {
+        RoomService.deleteLeaveRoom(this.id).catch((err) => {
           this.$message.error(err.data.error)
         })
       }
+
+      this.$router.push({
+        name: 'home',
+      })
+      return
     },
     handleInvitation() {
       RoomService.postRoomInvite(this.id, this.invitedUserId)
