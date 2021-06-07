@@ -7,7 +7,6 @@
         "
     /></el-aside>
     <el-main class="chatRoomContainer">
-      <!-- <ChatRoom :roomws="roomws" /> -->
       <ChatRoom
         :roomws="roomws"
         :messages="messages"
@@ -369,16 +368,16 @@ export default {
     }
   },
   async created() {
-    // if (this.$store.state.token && !this.$store.state.is_verify) {
-    //   this.$store.dispatch('getIsVerify').then(() => {
-    //     if (this.$store.state.is_verify == false) {
-    //       this.$router.push({
-    //         name: 'profile',
-    //       })
-    //       this.$message.error('未過 mail 認證 !')
-    //     }
-    //   })
-    // }
+    if (this.$store.state.token && !this.$store.state.is_verify) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        if (this.$store.state.is_verify == false) {
+          this.$router.push({
+            name: 'profile',
+          })
+          this.$message.error('未過 mail 認證 !')
+        }
+      })
+    }
 
     if (this.$store.state.token) {
       this.$store
@@ -442,7 +441,6 @@ export default {
               time: currentTime,
             }
             this.messages.push(newMessage)
-            // showtime.getHours()
             //--------------以上可以自由運用----------------------
             /* 這邊原本是要顯示訊息的code，但我不會Element UI跟Vue的高端寫法，只好交給前端去做
             console.log(this.$store.state.user_id)
