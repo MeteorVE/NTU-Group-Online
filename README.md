@@ -53,6 +53,7 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
   - 還有一個問題 : 一個人的創房間上限有沒有 error message ?
 
 - [ ] url 可以是空的，後端在 init 的時候可以不用預設，或是預設 ``''``
+  - issued
 
 ### Register
 - [ ] 如果創建失敗要跳出相對應訊息，例如某某某沒填。
@@ -92,8 +93,6 @@ Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱
 - [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
 - [ ] 每個操作都得 refresh Room Record --> Ws notfiy 'xxx-List'
   - priority 稍微一點點  等後端 (還有其他更多事情得先完成)
-- [ ] Warning 您參加過多房間
-  - 他會在 join_room 就出去
 - [ ] 房內前端得改學號
   - blockList 沒給，其他都改好了
 - [ ] invitation
