@@ -26,10 +26,11 @@
         <div>
           <h5>房間開放時間</h5>
           <p>
-            {{ room.create_time.slice(0, 10) }}
-            {{ room.create_time.slice(11, 19) }} ~<br />
-            {{ room.valid_time.slice(0, 10) }}
-            {{ !room.valid_time ? '未指定' : room.valid_time.slice(11, 19) }}
+            {{ !room.create_time ? '未指定' : room.create_time.slice(0, 10) }}
+            {{ !room.create_time ? '' : room.create_time.slice(11, 19) }}
+            ~<br />
+            {{ !room.valid_time ? '未指定' : room.valid_time.slice(0, 10) }}
+            {{ !room.valid_time ? '' : room.valid_time.slice(11, 19) }}
           </p>
         </div>
         <el-divider></el-divider>
