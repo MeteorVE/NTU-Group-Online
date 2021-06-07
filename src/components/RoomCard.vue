@@ -1,6 +1,16 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
-    <img :src="images[room.id % 4]" class="image" />
+    <img
+      :src="images[room.id % 4]"
+      class="image"
+      @error="imageLoadFailed = true"
+      v-if="!imageLoadFailed"
+    />
+    <el-skeleton v-if="imageLoadFailed">
+      <template #template>
+        <el-skeleton-item variant="image" style="height: 150px" />
+      </template>
+    </el-skeleton>
     <h4>{{ room.title }}</h4>
     <div>
       <p>分類 :</p>
@@ -34,6 +44,11 @@ export default {
   data() {
     return {
       images: [
+        'https://i.imgur.com/kN4J0UL.jpg',
+        '',
+        'https://i.imgur.com/17SSeJb.png',
+        'https://i.imgur.com/o2uS5WX.png',
+        'https://i.imgur.com/wc0HqRT.png',
         'https://i.imgur.com/qdIZSWc.jpg',
         'https://i.imgur.com/GOaM9dB.jpg',
         'https://i.imgur.com/G65qPbl.jpg',
@@ -41,6 +56,7 @@ export default {
       ],
       // dialogFormRoom: '',
       dialogFormVisible: false,
+      imageLoadFailed: false,
     }
   },
   methods: {

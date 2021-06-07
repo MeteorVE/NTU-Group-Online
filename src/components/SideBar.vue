@@ -11,15 +11,17 @@
     </el-menu-item>
   </el-menu>
   <el-menu v-else class="SideBar">
-    <el-menu-item
-      v-for="(item, index) in sideBarList"
-      :key="index"
-      :index="index.toString()"
-      v-on:click="applyFilter(item)"
-    >
-      <i class="el-icon-menu"></i>
-      <span>{{ item.text }}</span>
-    </el-menu-item>
+    <el-scrollbar>
+      <el-menu-item
+        v-for="(item, index) in sideBarList"
+        :key="index"
+        :index="index.toString()"
+        v-on:click="applyFilter(item)"
+      >
+        <i class="el-icon-menu"></i>
+        <span>{{ item.text }}</span>
+      </el-menu-item>
+    </el-scrollbar>
   </el-menu>
   <!-- <el-menu :default-active="$route.path" class="SideBar" router>
     <el-menu-item
@@ -36,7 +38,7 @@
 
 <script>
 export default {
-  props: ['sideBarList'],
+  props: ['sideBarList', 'urlMode'],
   // data: (url_mode = ture),
   methods: {
     applyFilter(item) {

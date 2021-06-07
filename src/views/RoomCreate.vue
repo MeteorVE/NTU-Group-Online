@@ -89,6 +89,13 @@
           </el-input>
         </el-form-item>
         <el-form-item label="封面照片">
+          <el-autocomplete
+            class="inline-input"
+            v-model="room.image"
+            :fetch-suggestions="querySearch"
+            placeholder="請輸入內容"
+            @select="handleSelect"
+          ></el-autocomplete>
           <el-input
             v-model="room.image"
             placeholder="可放可不放，建議上傳 imgur 並複製圖片網址(.jpg 或 .png 結尾)"
@@ -120,9 +127,47 @@ export default {
       private: '私人',
       lesson: '課程',
     }
+    const imageList = [
+      {
+        value: '課程討論',
+        url: 'https://i.imgur.com/GIiSOLM.jpg',
+        category: 'course',
+      },
+      {
+        value: '吃飯',
+        url: 'https://i.imgur.com/kN4J0UL.jpg',
+        category: 'eating',
+      },
+      {
+        value: '爬山',
+        url: 'https://i.imgur.com/17SSeJb.png',
+        category: 'hiking',
+      },
+      {
+        value: '打籃球',
+        url: 'https://i.imgur.com/o2uS5WX.png',
+        category: 'baseketball',
+      },
+      {
+        value: '打 Apex',
+        url: 'https://i.imgur.com/PkZu9rV.jpg',
+        category: 'apex',
+      },
+      {
+        value: '跑步',
+        url: 'https://i.imgur.com/wc0HqRT.png',
+        category: 'running',
+      },
+      {
+        value: '跑步',
+        url: 'https://i.imgur.com/wc0HqRT.png',
+        category: 'running',
+      },
+    ]
     return {
       categoryDict,
       roomTypeDict,
+      imageList,
       loading: false,
       notNullrule: { required: true, message: '不能為空', trigger: 'blur' },
       room: {

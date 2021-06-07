@@ -9,9 +9,9 @@
             category.map((c) => ({
               text: c,
               url: '',
-              urlMode: false,
             }))
           "
+          :urlMode="false"
       /></el-aside>
       <el-main id="roomCardContainer">
         <div
