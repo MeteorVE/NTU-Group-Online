@@ -78,7 +78,11 @@ export default {
     }
     const renamedRoom = this.renameKeys(room, keyMapping)
     renamedRoom['valid_time'] =
-      room.date1.toISOString().slice(0, 10) +
+      room.date1.getFullYear() +
+      '-' +
+      (room.date1.getMonth() + 1) +
+      '-' +
+      room.date1.getDate() +
       ' ' +
       room.date2.toString().slice(16, 24)
 
