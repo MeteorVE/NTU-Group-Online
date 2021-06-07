@@ -7,7 +7,6 @@
         class="bubbleWrapper"
         ref="messageRef"
       >
-        <!-- <template v-if="message.user === 'myself'"> -->
         <template v-if="message.user === myID">
           <div class="inlineContainer own">
             <img
@@ -140,7 +139,6 @@ export default {
   border: 1px solid #443f56;
 }
 .otherBubble {
-  /* min-width: 60px; */
   min-width: 20px;
   max-width: 700px;
   padding: 14px 18px;
