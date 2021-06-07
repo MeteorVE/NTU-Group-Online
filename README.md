@@ -3,9 +3,10 @@
 
 ## Notice
 
-Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
+Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱的頁面。
 範例 : 
-``http://localhost:8080/verify/mail/ansi4r-83a75d91506d3176baa3d66768b22121``
+``http://localhost:8080/verify-mail/MjU/anwhy8-c74b2a2e33d5e8e28355e2bfe3970ba3/``
+``http://localhost:8080/forgetpwd/MjQ/anv2cs-5c8dae1703cf292a05db291ddbe5b2e4/``
 
 
 
@@ -37,9 +38,9 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
 - [x] 如果在 Login 頁面登入失敗，進 401，然後會出現 this.$router undefine
   - 是 service.js 內的 import 未引入 router 導致
 - [x] Forgot pwd 的頁面測試 
+- [x] Register 頁面
 - [ ] 很多地方的 if then 可以改寫
 - [ ] UserPage
-- [ ] Register 頁面
 
 ### RoomCreate
 
@@ -50,6 +51,11 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
   - switch case
   - 目前使用遞迴展示 dictionary 解決，不確定後端會不會改中文
   - 還有一個問題 : 一個人的創房間上限有沒有 error message ?
+
+
+### Register
+- [ ] 如果創建失敗要跳出相對應訊息，例如某某某沒填。
+  - 目前使用遞迴展示 dictionary 解決，不確定後端會不會改中文
 
 
 ### Homepage
@@ -80,13 +86,11 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
 - [ ] Warning 您參加過多房間
   - 他會在 join_room 就出去
 - [ ] 房內前端得改學號
-  - 後端已給，直接拿欄位
-  - blockList 沒給
+  - blockList 沒給，其他都改好了
 - [ ] invitation
   - 理論上是 user page 要做
 - [ ] notification 
 - [ ] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
-- [ ] is_verify 的 function 又炸了，因為後端不給看
 
 
 1. 前端 chatting 時，假設 ws 的資訊會是 { msg, token } 給後端去紀錄，再同步給其他人

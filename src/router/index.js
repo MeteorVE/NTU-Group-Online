@@ -8,6 +8,7 @@ import LoginPage from '@/views/Login.vue'
 import UserPage from '@/views/UserPage.vue'
 import MailRedirect from '@/views/MailRedirect.vue'
 import CommonRedirect from '@/views/CommonRedirect.vue'
+import RegisterPage from '@/views/Register.vue'
 
 const routes = [
   {
@@ -37,6 +38,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginPage,
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: RegisterPage,
   },
   {
     path: '/forgetpwd/:userToken/:mailToken',

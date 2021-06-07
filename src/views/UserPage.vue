@@ -3,7 +3,7 @@
   people_limit -->
 
   <div>
-    <h2>{{ id }}</h2>
+    <h2>您的 User ID: {{ id }}</h2>
     <el-container class="create-form">
       <el-form ref="form" :model="room" label-width="80px">
         <h1>Create an Room</h1>

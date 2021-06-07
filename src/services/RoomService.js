@@ -177,4 +177,7 @@ export default {
       { password: _password }
     )
   },
+  postRegister(dict) {
+    return apiDjango.post('/api/user/register/', dict)
+  },
 }

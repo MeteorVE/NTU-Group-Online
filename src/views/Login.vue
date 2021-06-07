@@ -13,7 +13,7 @@
           <el-input
             v-model="model.email"
             placeholder="Email"
-            prefix-icon="fas fa-user"
+            prefix-icon="el-icon-user"
           ></el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -21,7 +21,7 @@
             v-model="model.password"
             placeholder="Password"
             type="password"
-            prefix-icon="fas fa-lock"
+            prefix-icon="el-icon-lock"
           ></el-input>
         </el-form-item>
         <el-form-item>

@@ -114,7 +114,7 @@ export default {
       this.loading = true
       await this.submitReset()
         .then((res) => {
-          this.$message.error('修改成功 !')
+          this.$message.success('修改成功 !')
           console.log(res)
           this.$router.push({
             name: 'login',
