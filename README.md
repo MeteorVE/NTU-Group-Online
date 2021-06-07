@@ -78,7 +78,7 @@ Mail 串接 : 使用 ``/verify/mail/`` 來當作觸發驗證信箱的頁面。
   - priority 稍微一點點  等後端 (還有其他更多事情得先完成)
 - [ ] Warning 您參加過多房間
   - 他會在 join_room 就出去
-- [ ]  房內前端得改學號
+- [ ] 房內前端得改學號
   - 後端已給，直接拿欄位
   - blockList 沒給
 - [ ] invitation
@@ -221,6 +221,11 @@ ex: ``apiDjango.post('/room', renamedRoom)`` --> ``apiDjango.post('/room/', rena
 <template v-slot:prop="childProps">
 </template>
 ```
+
+- 如果想要任意的透過滑鼠拉動 div 邊界然後改變他的大小
+  - https://stackoverflow.com/questions/43411103/resize-div-vertical-or-horizontal
+
+- 很有趣的 object 隨意托動 example : http://jsfiddle.net/singram/E29Af/
 
 ## Project setup
 
