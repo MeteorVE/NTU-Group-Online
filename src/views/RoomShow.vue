@@ -583,12 +583,9 @@ export default {
       return RoomService.getUserRooms()
     },
     handleEditRoom() {
-      console.log('handleEditRoom')
-      console.log('before:', this.dialogFormRoom)
-
       RoomService.putRoom(this.id, this.dialogFormRoom)
         .then((res) => {
-          console.log('putRoom Successful', res.data)
+          console.log('[Success] 成功修改房間，成果:', res.data)
           this.room = res.data
         })
         .catch((err) => {
@@ -623,8 +620,6 @@ export default {
       console.log(row.invited_id)
     },
     handleSetLevel(newLevel, userId) {
-      console.log(newLevel, userId)
-
       RoomService.putSetLevel(this.id, { [userId]: newLevel })
         .then(() => {
           console.log('suc')
@@ -632,6 +627,7 @@ export default {
         })
         .then((res) => {
           this.memberList = res.data
+          console.log('[Success]', userId, '的階級改成', newLevel)
           this.$message.success('修改階級成功 !')
         })
         .catch((err) => {
@@ -655,7 +651,7 @@ export default {
     handleUnblockOperation(row) {
       RoomService.deleteUnblockUser(this.id, row.blocked_user_id)
         .then(() => {
-          console.log('unblock successful')
+          console.log('[Success] 解除封鎖成功，對象:', row.blocked_user_id)
           this.blockList = this.blockList.filter(
             (m) => m.blocked_user_id != row.blocked_user_id
           )
@@ -688,11 +684,12 @@ export default {
           }
         })
         .then((res) => {
-          res.status && console.log(res.status)
-          this.$message({
-            type: 'success',
-            message: operationText + '成功',
-          })
+          if (res.status == 200) {
+            this.$message({
+              type: 'success',
+              message: operationText + '成功',
+            })
+          }
           this.memberList = this.memberList.filter(
             (member) => member.member_id != row.member_id
           )
@@ -713,14 +710,12 @@ export default {
           }
         })
 
-      // if (operation == 'remove') {
-      //   return
-      // }
-      // if (!this.reason) {
-      //   this.$message.error('請填寫原因再執行踢人或是封鎖。')
-      // }
-      console.log(id, row, operation)
-      //return RoomService.postBlockUser(this.id, row.member_id)
+      console.log(
+        '[Success]: 執行',
+        operation,
+        '操作成功，對象:',
+        row.member_id
+      )
     },
     addMessage(newMessage) {
       this.messages.push(newMessage)
