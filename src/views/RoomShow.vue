@@ -7,7 +7,12 @@
         "
     /></el-aside>
     <el-main class="chatRoomContainer">
-      <ChatRoom :roomws="roomws" />
+      <!-- <ChatRoom :roomws="roomws" /> -->
+      <ChatRoom
+        :roomws="roomws"
+        :messages="messages"
+        v-on:addMessage="addMessasge"
+      />
     </el-main>
     <el-aside class="roomInfo">
       <el-scrollbar>
@@ -360,19 +365,20 @@ export default {
       dialogFormRoom: {},
       memberFormVisible: false,
       roomws: {},
+      messages: [],
     }
   },
   async created() {
-    if (this.$store.state.token && !this.$store.state.is_verify) {
-      this.$store.dispatch('getIsVerify').then(() => {
-        if (this.$store.state.is_verify == false) {
-          this.$router.push({
-            name: 'profile',
-          })
-          this.$message.error('未過 mail 認證 !')
-        }
-      })
-    }
+    // if (this.$store.state.token && !this.$store.state.is_verify) {
+    //   this.$store.dispatch('getIsVerify').then(() => {
+    //     if (this.$store.state.is_verify == false) {
+    //       this.$router.push({
+    //         name: 'profile',
+    //       })
+    //       this.$message.error('未過 mail 認證 !')
+    //     }
+    //   })
+    // }
 
     if (this.$store.state.token) {
       this.$store
@@ -420,12 +426,23 @@ export default {
         //-------按照header判斷訊息種類---------
         switch (res.header) {
           case 'message': //-----正常傳訊息會是這個header-------
-            console.log(res.userID) //訊息的JSON中會有 1.傳的User的ID
-            console.log(res.roomID) // 2.從哪個room傳出來的,那個room的ID
-            console.log(res.nickname) // 3.那個user的nickname 目前還沒有 等等會寫
-            console.log(res.message) // 4.傳送的message
+            // console.log(res.userID) //訊息的JSON中會有 1.傳的User的ID
+            // console.log(res.roomID) // 2.從哪個room傳出來的,那個room的ID
+            // console.log(res.nickname) // 3.那個user的nickname 目前還沒有 等等會寫
+            // console.log(res.message) // 4.傳送的message
             showtime = new Date(res.time) //5.訊息的時間 用js就能Parse出來了
-            showtime.getHours()
+            var hour = showtime.getHours()
+            var minute = showtime.getMinutes()
+            hour = String(hour).padStart(2, '0')
+            minute = String(minute).padStart(2, '0')
+            var currentTime = `${hour}:${minute}`
+            var newMessage = {
+              user: res.userID,
+              text: res.message,
+              time: currentTime,
+            }
+            this.messages.push(newMessage)
+            // showtime.getHours()
             //--------------以上可以自由運用----------------------
             /* 這邊原本是要顯示訊息的code，但我不會Element UI跟Vue的高端寫法，只好交給前端去做
             console.log(this.$store.state.user_id)
@@ -705,6 +722,9 @@ export default {
       // }
       console.log(id, row, operation)
       //return RoomService.postBlockUser(this.id, row.member_id)
+    },
+    addMessage(newMessage) {
+      this.messages.push(newMessage)
     },
   },
   watch: {

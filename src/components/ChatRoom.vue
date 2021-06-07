@@ -7,7 +7,8 @@
         class="bubbleWrapper"
         ref="messageRef"
       >
-        <template v-if="message.user === 'myself'">
+        <!-- <template v-if="message.user === 'myself'"> -->
+        <template v-if="message.user === myID">
           <div class="inlineContainer own">
             <img
               class="inlineIcon"
@@ -42,57 +43,62 @@
 //import WsService from '@/services/WebsocketService.js'
 
 export default {
-  props: ['roomws'],
+  props: ['roomws', 'messages'],
+  computed: {
+    myID: function () {
+      return this.$store.state.user_id
+    },
+  },
   data() {
     return {
       message: '',
-      sendMessage: '',
-      messages: [
-        {
-          id: 1,
-          user: 'other',
-          text: '請問大家知道入境荷蘭前需要做PCR核酸檢測的事情嗎～～',
-          time: '08:41',
-        },
-        {
-          id: 2,
-          user: 'myself',
-          text: '我之前都不知道，剛剛看到「台灣人在荷蘭」FB有人在問',
-          time: '08:55',
-        },
-        {
-          id: 3,
-          user: 'other',
-          text:
-            '可以選擇要72小時前pcr+24小時快篩，或是24小時pcr，一個5000元，一個7000元。',
-          time: '10:13',
-        },
-        {
-          id: 4,
-          user: 'other',
-          text: '可是好像台灣的快篩沒辦法提供英文的，所以建議做24小時pcr',
-          time: '10:13',
-        },
-        {
-          id: 5,
-          user: 'myself',
-          text: '那我們要先預約嗎，確定幾號要飛的時候',
-          time: '11:07',
-        },
-        {
-          id: 6,
-          user: 'other',
-          text: '在桃園有一間是可以五個小時檢測結果就出來',
-          time: '11:11',
-        },
-        {
-          id: 7,
-          user: 'myself',
-          text:
-            '我找到衛服部的文件，可是有受理24hr只有這幾家？桃園的是在哪裏呀～',
-          time: '11:23',
-        },
-      ],
+      // sendMessage: '',
+      // messages: [
+      //   {
+      //     id: 1,
+      //     user: 'other',
+      //     text: '請問大家知道入境荷蘭前需要做PCR核酸檢測的事情嗎～～',
+      //     time: '08:41',
+      //   },
+      //   {
+      //     id: 2,
+      //     user: 'myself',
+      //     text: '我之前都不知道，剛剛看到「台灣人在荷蘭」FB有人在問',
+      //     time: '08:55',
+      //   },
+      //   {
+      //     id: 3,
+      //     user: 'other',
+      //     text:
+      //       '可以選擇要72小時前pcr+24小時快篩，或是24小時pcr，一個5000元，一個7000元。',
+      //     time: '10:13',
+      //   },
+      //   {
+      //     id: 4,
+      //     user: 'other',
+      //     text: '可是好像台灣的快篩沒辦法提供英文的，所以建議做24小時pcr',
+      //     time: '10:13',
+      //   },
+      //   {
+      //     id: 5,
+      //     user: 'myself',
+      //     text: '那我們要先預約嗎，確定幾號要飛的時候',
+      //     time: '11:07',
+      //   },
+      //   {
+      //     id: 6,
+      //     user: 'other',
+      //     text: '在桃園有一間是可以五個小時檢測結果就出來',
+      //     time: '11:11',
+      //   },
+      //   {
+      //     id: 7,
+      //     user: 'myself',
+      //     text:
+      //       '我找到衛服部的文件，可是有受理24hr只有這幾家？桃園的是在哪裏呀～',
+      //     time: '11:23',
+      //   },
+      // ],
       // roomws: {},
     }
   },
@@ -106,11 +112,13 @@ export default {
         minute = String(minute).padStart(2, '0')
         var currentTime = `${hour}:${minute}`
         var newMessage = {
-          user: 'myself',
+          // user: 'myself',
+          user: this.$store.state.user_id,
           text: this.message,
           time: currentTime,
         }
-        this.messages.push(newMessage)
+        this.$emit('addMessasge', newMessage)
+        // this.messages.push(newMessage)
         // 這裡是要傳送訊息到Websocket server的code
         let nowRoomID = parseInt(this.$route.params.id, 10)
         console.log(this.$store.state.user_id)
@@ -126,18 +134,32 @@ export default {
         this.message = ''
       }
     },
-    scrollToBottom() {
-      const el = this.$refs.messageRef
-      if (el && this.message === '') {
-        el.scrollIntoView(false, { behavior: 'smooth' })
-      }
+    // scrollToBottom() {
+    //   const el = this.$refs.messageRef
+    //   if (el && this.message === '') {
+    //     el.scrollIntoView(false, { behavior: 'smooth' })
+    //   }
+    // },
+  },
+  // updated() {
+  //   this.scrollToBottom()
+  // },
+  // mounted() {
+  //   this.scrollToBottom()
+  // },
+  watch: {
+    messages: {
+      immediate: true,
+      deep: true,
+      handler() {
+        this.$nextTick(function () {
+          const el = this.$refs.messageRef
+          if (el) {
+            el.scrollIntoView(false, { behavior: 'smooth' })
+          }
+        })
+      },
     },
-  },
-  updated() {
-    this.scrollToBottom()
-  },
-  mounted() {
-    this.scrollToBottom()
   },
 }
 </script>
@@ -180,7 +202,8 @@ export default {
   border: 1px solid #443f56;
 }
 .otherBubble {
-  min-width: 60px;
+  /* min-width: 60px; */
+  min-width: 20px;
   max-width: 700px;
   padding: 14px 18px;
   margin: 6px 8px;
