@@ -47,6 +47,7 @@ export default {
         'https://i.imgur.com/kN4J0UL.jpg',
         '',
         'https://i.imgur.com/17SSeJb.png',
+        'https://i.imgur.com/85zF3RK.jpg',
         'https://i.imgur.com/o2uS5WX.png',
         'https://i.imgur.com/wc0HqRT.png',
         'https://i.imgur.com/qdIZSWc.jpg',

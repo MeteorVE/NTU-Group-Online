@@ -159,15 +159,66 @@ export default {
         category: 'running',
       },
       {
-        value: '跑步',
-        url: 'https://i.imgur.com/wc0HqRT.png',
-        category: 'running',
+        value: '團購',
+        url: 'https://i.imgur.com/hcP3JA2.png',
+        category: 'group_buying',
+      },
+      {
+        value: '逛街',
+        url: 'https://i.imgur.com/85zF3RK.jpg',
+        category: 'shopping',
+      },
+      {
+        value: '打遊戲',
+        url: 'https://i.imgur.com/ex5uIMF.jpg',
+        category: 'game',
+      },
+      {
+        value: '買衣服',
+        url: 'https://i.imgur.com/UElotjt.jpg',
+        category: 'clothing',
+      },
+      {
+        value: '麥當勞',
+        url: 'https://i.imgur.com/Ll9w1eq.png',
+        category: 'mc',
+      },
+      {
+        value: '肯德基',
+        url: 'https://i.imgur.com/NBt3Xka.jpg',
+        category: 'kfc',
       },
     ]
+    const querySearch = (queryString, cb) => {
+      //let imageValues = imageList.map((i) => ({ value: i.value }))
+      var results = queryString
+        ? imageList.filter(createFilter(queryString))
+        : imageList
+      // 调用 callback 返回建议列表的数据
+      console.log('results:', results)
+
+      cb(results)
+    }
+    const createFilter = (queryString) => {
+      return (imageValues) => {
+        console.log(imageValues)
+
+        return (
+          imageValues.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        )
+      }
+    }
+    const handleSelect = (item) => {
+      console.log(item)
+    }
     return {
       categoryDict,
       roomTypeDict,
       imageList,
+      querySearch,
+      createFilter,
+      handleSelect,
       loading: false,
       notNullrule: { required: true, message: '不能為空', trigger: 'blur' },
       room: {
