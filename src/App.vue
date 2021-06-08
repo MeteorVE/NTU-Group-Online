@@ -111,9 +111,7 @@ export default {
         })
     },
     initWs: function (wsConn) {
-      console.log('emit')
-      //console.log(wsConn)
-      //console.log(this.hasInitWs)
+      // console.log('[emit] in App.vue', wsConn, this.hasInitWs)
       if (wsConn === true && this.hasInitWs === false) {
         this.hasInitWs = true
         //------------------websocket-----------------------------

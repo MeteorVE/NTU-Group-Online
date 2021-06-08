@@ -44,6 +44,7 @@ https://git.heroku.com/ntu-online-group.git
 - [x] Register 頁面
 - [ ] 很多地方的 if then 可以改寫
 - [ ] UserPage
+- [ ] cors of deploy
 
 ### RoomCreate
 
@@ -62,6 +63,8 @@ https://git.heroku.com/ntu-online-group.git
 - [ ] 如果創建失敗要跳出相對應訊息，例如某某某沒填。
   - 目前使用遞迴展示 dictionary 解決，不確定後端會不會改中文
 
+### Login Page
+- [ ] 排版
 
 ### Homepage
 
@@ -108,6 +111,8 @@ https://git.heroku.com/ntu-online-group.git
 - [ ] 一些操作是否可以改成 403 ? 401 是 invalid token / 登入失敗在用的
 - [ ] Moderator 不能被 Admin 給 Remove ?
 - [ ] 如果 ws server 在啟動後使用者才加入房間，會無法正確讀取 member list
+- [ ] chatroom nickbname
+
 
 引述自 https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Status
 > 403 Forbidden
