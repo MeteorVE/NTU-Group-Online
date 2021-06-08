@@ -9,6 +9,10 @@ import { VueMasonryPlugin } from 'vue-masonry/src/masonry-vue3.plugin'
 import mitt from 'mitt' // VueMasonryPlugin Dependencies
 
 import { createApp } from 'vue'
+//require('dotenv').config({ path: '../.env' })
+//console.log(require('dotenv').config({  path: '../.env' }))
+console.log(process.env.VUE_APP_BACKEND)
+
 
 // Way 1
 // const app = createApp(App)
