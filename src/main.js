@@ -12,6 +12,8 @@ import { createApp } from 'vue'
 //require('dotenv').config({ path: '../.env' })
 //console.log(require('dotenv').config({  path: '../.env' }))
 console.log(process.env.VUE_APP_BACKEND)
+console.log(process.env.VUE_APP_WS_SERVER)
+console.log(process.env.VUE_APP_TEST)
 
 
 // Way 1
