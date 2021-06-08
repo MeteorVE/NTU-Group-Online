@@ -84,6 +84,7 @@ export default {
   methods: {
     pu() {
       this.$store.commit('SET_TOKEN', this.ttoo)
+      console.log(this.ttoo)
     },
     forDev() {
       this.model.email = 'test1@test.com'
