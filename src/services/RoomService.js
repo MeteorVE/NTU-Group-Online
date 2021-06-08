@@ -1,14 +1,13 @@
 import axios from 'axios'
 import store from '@/store/index.js'
 import router from '@/router/index.js'
-require('dotenv').config()
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 
 const apiDjango = axios.create({
-  baseURL: process.env.BACKEND,
+  baseURL: process.env.VUE_APP_BACKEND,
   // baseURL: `http://localhost:8000`,
   withCredentials: false, // This is the default
   headers: {

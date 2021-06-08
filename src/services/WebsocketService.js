@@ -1,9 +1,8 @@
 import store from '@/store/index.js'
 import jwt_decode from 'jwt-decode'
-require('dotenv').config()
 
-// const WsPrefix = 'ws://127.0.0.1:8090'
-const WsPrefix = process.env.WS_SERVER
+//const WsPrefix = 'ws://127.0.0.1:8090'
+const WsPrefix = process.env.VUE_APP_WS_SERVER
 const NotifyWsServiceAddr = WsPrefix + '/wsServer/connection/user/'
 const RoomWsPrefix = WsPrefix + '/ws/room/'
 
