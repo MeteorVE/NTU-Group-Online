@@ -38,7 +38,7 @@
       </el-form>
     </el-card>
     <input type="text" v-model="ttoo">
-    <button @click="tt">pu</button>
+    <button @click="pu">pu</button>
   </div>
 </template>
 
@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     pu() {
-      this.$store.commit('SET_TOKEN', this.ttoo)
+      localStorage.setItem('token', this.ttoo)
       console.log(this.ttoo)
     },
     forDev() {
