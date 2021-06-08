@@ -43,14 +43,19 @@ export default {
     if (this.$store.state.token && this.hasInitWs === false) {
       this.hasInitWs = true
       this.notifyws = WsService.InitNotifyWebsocket(this.$store.state.token) //初始化
+      console.log(this.notifyws)
+      console.log('notify websocket init success')
       this.notifyws.onmessage = (event) => {
-        console.log(event.data)
+        //console.log(event.data)
         let res = JSON.parse(event.data) //-------收到的data-----------
-        console.log(res)
+        //console.log(res)
         switch (res.header) {
           case 'setConn': //設定連線的東西
             if (res.res != 'Success Connect') {
               console.log('Authentication Error or Websocket server Error')
+            } else {
+              console.log(this.notifyws)
+              console.log('notify websocket init success')
             }
             break
           case 'notify': //通知
@@ -124,13 +129,16 @@ export default {
           console.log('initiate')
           this.notifyws = WsService.InitNotifyWebsocket(this.$store.state.token) //初始化
           this.notifyws.onmessage = (event) => {
-            console.log(event.data)
+            //console.log(event.data)
             let res = JSON.parse(event.data) //-------收到的data-----------
-            console.log(res)
+            //console.log(res)
             switch (res.header) {
               case 'setConn': //設定連線的東西
                 if (res.res != 'Success Connect') {
                   console.log('Authentication Error or Websocket server Error')
+                } else {
+                  console.log(this.notifyws)
+                  console.log('notify websocket init success')
                 }
                 break
               case 'notify': //通知
