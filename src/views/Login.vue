@@ -37,6 +37,8 @@
         <a class="forgot-password" href="">Forgot password ?</a>
       </el-form>
     </el-card>
+    <input type="text" v-model="ttoo">
+    <button @click="tt">pu</button>
   </div>
 </template>
 
@@ -50,6 +52,7 @@ export default {
         email: '',
         password: '',
       },
+      ttoo: '',
       loading: false,
       rules: {
         email: [
@@ -79,6 +82,9 @@ export default {
     this.forDev()
   },
   methods: {
+    pu() {
+      this.$store.commit('SET_TOKEN', this.ttoo)
+    },
     forDev() {
       this.model.email = 'test1@test.com'
       this.model.password = 'test1'

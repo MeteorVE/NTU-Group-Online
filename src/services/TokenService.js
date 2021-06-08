@@ -7,7 +7,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 
 const apiClient = axios.create({
-  baseURL: process.env.BACKEND,
+  baseURL: `http://localhost:8000`,//process.env.BACKEND,
   // baseURL: `http://localhost:8000`,
   withCredentials: false, // This is the default
   headers: {
