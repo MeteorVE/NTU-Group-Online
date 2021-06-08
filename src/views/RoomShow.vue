@@ -410,9 +410,9 @@ export default {
       })
     }
     //---------------------websocket-------------------------------
-    if (this.$store.state.roomWebsocketConn[this.$route.params.id] == null) {
+    if (this.roomws[this.$route.params.id] == null) {
       console.log(
-        'this.$store.state.roomWebsocketConn[this.$route.params.id] == null'
+        'this.roomws[this.$route.params.id] == null'
       )
 
       this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
