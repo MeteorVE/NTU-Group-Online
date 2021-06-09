@@ -474,10 +474,13 @@ export default {
 
 
 
-              
+
             }
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
+            if (this.$route.fullPath != '/room/' + nowRoomID) {
+              this.roomws[nowRoomID].close()
+            }
             break
         }
       }
