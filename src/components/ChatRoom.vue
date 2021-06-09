@@ -70,7 +70,7 @@ export default {
         this.$emit('addMessasge', newMessage)
         // 這裡是要傳送訊息到Websocket server的code
         let nowRoomID = parseInt(this.$route.params.id, 10)
-        console.log(this.$store.state.user_id)
+        //console.log(this.$store.state.user_id)
         let msgObj = {
           header: 'message', // Message 的 header,正常message的header就叫message
           msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
