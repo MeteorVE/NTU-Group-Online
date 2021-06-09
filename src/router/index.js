@@ -9,7 +9,7 @@ import UserPage from '@/views/UserPage.vue'
 import MailRedirect from '@/views/MailRedirect.vue'
 import CommonRedirect from '@/views/CommonRedirect.vue'
 import RegisterPage from '@/views/Register.vue'
-import RoomList from '@/components/RoomList.vue'
+// import RoomList from '@/components/RoomList.vue'
 
 const routes = [
   {
@@ -68,11 +68,11 @@ const routes = [
     component: CommonRedirect,
     props: true,
   },
-  {
-    path: '/roomlist',
-    name: 'roomlist',
-    component: RoomList,
-  },
+  // {
+  //   path: '/roomlist',
+  //   name: 'roomlist',
+  //   component: RoomList,
+  // },
 ]
 
 const router = createRouter({

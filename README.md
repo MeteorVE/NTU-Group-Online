@@ -3,15 +3,18 @@
 
 ## Notice
 
-Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱的頁面。
-範例 : 
-``http://localhost:8080/verify-mail/MjU/anwhy8-c74b2a2e33d5e8e28355e2bfe3970ba3/``
-``http://localhost:8080/forgetpwd/MjQ/anv2cs-5c8dae1703cf292a05db291ddbe5b2e4/``
+- Mail 串接 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱的頁面。
+  - 範例 : 
+    - ``http://localhost:8080/verify-mail/MjU/anwhy8-c74b2a2e33d5e8e28355e2bfe3970ba3/``
+    - ``http://localhost:8080/forgetpwd/MjQ/anv2cs-5c8dae1703cf292a05db291ddbe5b2e4/``
 
-https://ntu-online-group.herokuapp.com/
-https://git.heroku.com/ntu-online-group.git
+- Depoly 結果 :　https://ntu-online-group.herokuapp.com/
+　Heroku Repo :  https://git.heroku.com/ntu-online-group.git
 
-// https://imgur.com/a/9LaTfzh
+- 一些圖庫 https://imgur.com/a/9LaTfzh
+
+- 本地端執行需要新增 ``.env`` 檔案。
+
 
 ## Todo
 
@@ -45,6 +48,18 @@ https://git.heroku.com/ntu-online-group.git
 - [ ] 很多地方的 if then 可以改寫
 - [ ] UserPage
 - [ ] cors of deploy
+
+### Navbar
+
+- [ ] 把 room active 修好
+- [ ] 可以在 Navbar 看到自己 ID 或學號 (歡迎 XXX)
+
+### Userpage
+
+- [ ] 新增 mail not verify 引導
+- [ ] 邀請介面
+
+
 
 ### RoomCreate
 

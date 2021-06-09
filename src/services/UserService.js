@@ -3,16 +3,6 @@ import store from '@/store/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-
-// const apiClient = axios.create({
-//   baseURL: `http://localhost:3000`,
-//   withCredentials: false, // This is the default
-//   headers: {
-//     Accept: 'application/json',
-//     'Content-Type': 'application/json',
-//   },
-// })
 
 const apiDjango = axios.create({
   baseURL: `http://localhost:8000`,

@@ -20,10 +20,6 @@
           <i class="el-icon-bell"></i>
         </el-menu-item>
 
-        <el-menu-item class="room" route="/roomlist" index="6">
-          <i class="el-icon-s-home"></i>
-        </el-menu-item>
-
         <el-menu-item route="/about" index="/about"> About </el-menu-item>
         <el-menu-item v-if="!isAuth" route="/login" index="/login">
           Login
