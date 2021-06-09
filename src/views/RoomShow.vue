@@ -410,18 +410,17 @@ export default {
       })
     }
     //---------------------websocket-------------------------------
-    if (this.roomws[this.$route.params.id] == null) {
+    if (this.roomws[parseInt(this.$route.params.id, 10)] == null) {
       console.log('this.roomws[this.$route.params.id] == null')
-
-      this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
+      let nowRoomID = parseInt(this.$route.params.id, 10)
+      this.roomws[nowRoomID] = WsService.InitRoomWebsocket(
         this.$store.state.token,
         this.$route.params.id
       ) //初始化
-      let nowRoomID = this.$route.params.id //取得目前的Room ID
       console.log(this.roomws[nowRoomID])
 
       this.roomws[nowRoomID].onmessage = (event) => {
-        console.log(event.data)
+        //console.log(event.data)
         let res = JSON.parse(event.data) //訊息的data
         let showtime = null
         //-------按照header判斷訊息種類---------
@@ -467,13 +466,15 @@ export default {
                 message: 'Close', //文字訊息
                 token: this.$store.state.token, //Request 都必需附上token
               }
-              this.roomws[parseInt(this.$route.params.id, 10)].send(
-                JSON.stringify(msgObj)
-              )
-              this.roomws[parseInt(this.$route.params.id, 10)].close()
-              this.roomws[parseInt(this.$route.params.id, 10)] = null
+              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+              this.roomws[nowRoomID].close()
+              this.roomws[nowRoomID] = null
               //------------------------------------------
               //Then Close Room Handle or Trigger
+
+
+
+              
             }
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
