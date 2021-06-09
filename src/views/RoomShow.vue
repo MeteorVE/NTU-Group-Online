@@ -92,7 +92,7 @@
             cancelButtonText="取消"
             icon="el-icon-info"
             iconColor="red"
-            title="確定離開 ? 離開後將不會是成員。若您是房主會直接刪除房間。"
+            title="確定離開 ? 離開後將不會是成員。若您是'房主'會直接刪除房間。"
             @confirm="handleExitRoom"
           >
             <template #reference>
@@ -168,7 +168,12 @@
             </el-form-item>
             <el-form-item
               label="操作"
-              v-if="isAdmin && user.member_id != props.row.member_id"
+              v-if="
+                isAdmin &&
+                user.member_id != props.row.member_id &&
+                props.row.member_id !=
+                  memberList.find((m) => m.access_level == 'admin').member_id
+              "
             >
               <el-button
                 size="mini"
@@ -202,14 +207,19 @@
             </el-form-item>
             <el-form-item
               label="更改階級成:"
-              v-if="isAdmin && user.member_id != props.row.member_id"
+              v-if="
+                isAdmin &&
+                user.member_id != props.row.member_id &&
+                props.row.member_id !=
+                  memberList.find((m) => m.access_level == 'admin').member_id
+              "
             >
               <el-select
                 v-model="tmp"
                 @change="handleSetLevel($event, props.row.member_id)"
               >
                 <el-option
-                  v-for="(val, key) in levelDict"
+                  v-for="(val, key) in { manager: '房管', user: '普通用戶' }"
                   :key="key"
                   :label="val"
                   :value="key"
@@ -235,7 +245,7 @@
                   (m) => m.member_id == props.row.block_manager_id
                 )[0].nickname +
                 '(' +
-                props.row.block_manager_id +
+                props.row.manager_username +
                 ')'
               }}</span>
             </el-form-item>
@@ -256,7 +266,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="blocked_user_id" label="學號"> </el-table-column>
+      <el-table-column prop="user_username" label="學號"> </el-table-column>
       <el-table-column prop="reason" label="原因"></el-table-column>
     </el-table>
     <h3>邀請列表</h3>
@@ -411,9 +421,7 @@ export default {
     }
     //---------------------websocket-------------------------------
     if (this.roomws[this.$route.params.id] == null) {
-      console.log(
-        'this.roomws[this.$route.params.id] == null'
-      )
+      console.log('this.roomws[this.$route.params.id] == null')
 
       this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
         this.$store.state.token,
@@ -423,9 +431,9 @@ export default {
       console.log(this.roomws[nowRoomID])
 
       this.roomws[nowRoomID].onmessage = (event) => {
-        console.log(event.data)
         let res = JSON.parse(event.data) //訊息的data
         let showtime = null
+        console.log('[Websocket event.data]:', event.data)
         //-------按照header判斷訊息種類---------
         switch (res.header) {
           case 'message': //-----正常傳訊息會是這個header-------
@@ -456,6 +464,55 @@ export default {
             */
             break
           case 'update':
+            if (res.message.includes('member_list')) {
+              this.getMemberList()
+                .then((res) => {
+                  this.memberList = res.data
+                  this.host = res.data.filter(
+                    (user) => user.access_level == 'admin'
+                  )[0].nickname
+                  if (!res.data.filter((m) => m.member_id)) {
+                    console.log('you are not in room QQ')
+                  }
+                })
+                .catch((err) => {
+                  console.log(err.data)
+                })
+            }
+            if (res.message.includes('block_list')) {
+              this.getBlockList()
+                .then((res) => {
+                  this.blockList = res.data
+                  console.log('blockList:', res.data)
+                })
+                .catch((err) => {
+                  console.log(err.data)
+                })
+            }
+            if (res.message.includes('invite_list')) {
+              this.getInvitationList()
+                .then((res) => {
+                  this.invitationList = res.data
+                  console.log('invitationList', res.data)
+                })
+                .catch((err) => {
+                  console.log(err.data)
+                })
+            }
+            if (res.message.includes('profile')) {
+              this.getRoomObj()
+                .then((res) => {
+                  this.room = res
+                  this.dialogFormRoom = { ...res }
+                  console.log(res)
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+            }
+            if (res.message.includes('delete_room')) {
+              console.log('EVERYONE BYE BYE')
+            }
             console.log(res.roomID) //送到的room ID
             console.log(res.message) //我們要update廣播的message
             // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
@@ -627,7 +684,6 @@ export default {
     handleSetLevel(newLevel, userId) {
       RoomService.putSetLevel(this.id, { [userId]: newLevel })
         .then(() => {
-          console.log('suc')
           return this.getMemberList()
         })
         .then((res) => {
@@ -647,7 +703,7 @@ export default {
     handleTransferAdmin(row) {
       RoomService.putTransferAdmin(this.id, row.member_id)
         .then(() => {
-          return this.getBlockList()
+          console.log('已轉移房主')
         })
         .catch((err) => {
           console.log(err)
@@ -700,10 +756,13 @@ export default {
           )
           if (operation == 'block') {
             return this.getBlockList()
+              .then((res) => {
+                this.blockList = res.data
+              })
+              .catch((err) => {
+                console.log(err.data)
+              })
           }
-        })
-        .then((res) => {
-          this.blockList = res.data
         })
         .catch((err) => {
           console.log('[In RoomShow]', err)
@@ -732,8 +791,9 @@ export default {
       console.log('[watch] memberList changed:', _memberList)
     },
     user: function (_user) {
+      console.log('[watch] user changed:', _user)
       this.isAdmin =
-        _user.access_level == 'admin' || _user.access_level == 'moderator'
+        _user.access_level == 'admin' || _user.access_level == 'manager'
           ? true
           : false
     },
