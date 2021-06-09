@@ -128,6 +128,7 @@
 - [ ] 如果 ws server 在啟動後使用者才加入房間，會無法正確讀取 member list
 - [ ] chatroom nickbname
 
+handleTransferAdmin
 
 引述自 https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Status
 > 403 Forbidden
