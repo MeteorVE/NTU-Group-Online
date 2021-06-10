@@ -7,8 +7,8 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 
 const apiClient = axios.create({
-  baseURL: `https://ntu-online-group-api.herokuapp.com:8000`,
-  // baseURL: `https://ntu-online-group-api.herokuapp.com/`,
+  //baseURL: `https://ntu-online-group-api.herokuapp.com:8000`,
+  baseURL: process.env.VUE_APP_BACKEND,
   withCredentials: false, // This is the default
   headers: {
     Accept: 'application/json',

@@ -324,6 +324,25 @@
       /></span>
     </div>
   </el-dialog>
+  <el-dialog
+    title="提示"
+    v-model="removeDialog.visible"
+    width="30%"
+    :before-close="handleClose"
+  >
+    <el-result
+      icon="warning"
+      :title="removeDialog.title"
+      :subTitle="removeDialog.subTitle"
+    >
+      <template #extra>
+        <el-button type="primary" size="medium">返回</el-button>
+      </template>
+    </el-result>
+    <template #footer>
+      <span class="dialog-footer"> </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
@@ -377,6 +396,7 @@ export default {
       memberFormVisible: false,
       roomws: {},
       messages: [],
+      removeDialog: { visible: false, title: '', subTitle: '' },
     }
   },
   async created() {
@@ -405,6 +425,14 @@ export default {
             return this.init_list()
           } else {
             this.$message.error('你怎麼進來的 = =')
+            this.removeDialog.title = '您將被導向首頁'
+            this.removeDialog.subTitle = '原因: 房間不存在/您無權限訪問'
+            this.removeDialog.visible = true
+            setTimeout(() => {
+              this.$router.push({
+                name: 'home',
+              })
+            }, 2000)
             return Promise.reject('user not in room !')
           }
         })
@@ -436,7 +464,12 @@ export default {
         let res = JSON.parse(event.data) //訊息的data
         let showtime = null
         console.log('[Websocket event.data]:', event.data)
+        // console.log(res.roomID) //送到的room ID
+        // console.log(res.message) //我們要update廣播的message
+        // console.log(res.time) //送出這個訊息的時間
+
         //-------按照header判斷訊息種類---------
+        // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
         switch (res.header) {
           case 'message': //-----正常傳訊息會是這個header-------
             // console.log(res.userID, res.roomID, res.nickname, res.message)
@@ -467,6 +500,8 @@ export default {
             break
           case 'remove':
             if (res.message === 'Removed') {
+              console.log('ws case : remove')
+
               let msgObj = {
                 header: 'controlMessage', // Message 的 header,正常message的header就叫message
                 msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
@@ -476,10 +511,17 @@ export default {
                 token: this.$store.state.token, //Request 都必需附上token
               }
               this.roomws[nowRoomID].send(JSON.stringify(msgObj))
-              this.roomws[nowRoomID].close()
-              this.roomws[nowRoomID] = null
+
               //------------------------------------------
               //Then Close Room Handle or Trigger
+              this.removeDialog.title = '您將被導向首頁'
+              this.removeDialog.subTitle = '原因: 您被移出成員列表。'
+              this.removeDialog.visible = true
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'home',
+                })
+              }, 3000)
             }
             break
           case 'update':
@@ -529,14 +571,9 @@ export default {
                   console.log(err)
                 })
             }
-            if (res.message.includes('delete_room')) {
-              console.log('EVERYONE BYE BYE')
-            }
-            console.log(res.roomID) //送到的room ID
-            console.log(res.message) //我們要update廣播的message
-            // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
-            console.log(res.time) //送出這個訊息的時間
+
             if (res.message === 'delete_room') {
+              // = if (res.message.includes('delete_room'))
               let msgObj = {
                 header: 'controlMessage', // Message 的 header,正常message的header就叫message
                 msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
@@ -546,10 +583,15 @@ export default {
                 token: this.$store.state.token, //Request 都必需附上token
               }
               this.roomws[nowRoomID].send(JSON.stringify(msgObj))
-              this.roomws[nowRoomID].close()
-              this.roomws[nowRoomID] = null
-              //------------------------------------------
-              //Then Close Room Handle or Trigger
+              //----------------Then Close Room Handle or Trigger --------------------------
+              this.removeDialog.title = '您將被導向首頁'
+              this.removeDialog.subTitle = '原因: 房主關閉了房間。'
+              this.removeDialog.visible = true
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'home',
+                })
+              }, 3000)
             }
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
