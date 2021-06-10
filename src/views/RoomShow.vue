@@ -8,10 +8,7 @@
         :urlMode="true"
     /></el-aside>
     <el-main class="chatRoomContainer">
-      <ChatRoom
-        :roomws="roomws"
-        :messages="messages"
-      />
+      <ChatRoom :roomws="roomws" :messages="messages" />
     </el-main>
     <el-aside class="roomInfo">
       <el-scrollbar>
@@ -113,10 +110,10 @@
           placeholder="選擇房間分類"
         >
           <el-option
-            v-for="(item, key) in categoryDict"
-            :label="item"
-            :key="item"
-            :value="key"
+            v-for="category in categoryDict"
+            :label="category.category"
+            :key="category.value"
+            :value="category.value"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -593,6 +590,14 @@ export default {
                 })
               }, 3000)
             }
+            this.getRoomRecord()
+              .then((res) => {
+                this.roomRecord = res.data
+              })
+              .catch((err) => {
+                console.log(err.data)
+              })
+            // end of case "update"
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
             if (this.$route.fullPath != '/room/' + nowRoomID) {
