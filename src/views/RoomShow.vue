@@ -476,8 +476,6 @@ export default {
                 token: this.$store.state.token, //Request 都必需附上token
               }
               this.roomws[nowRoomID].send(JSON.stringify(msgObj))
-              this.roomws[nowRoomID].close()
-              this.roomws[nowRoomID] = null
               //------------------------------------------
               //Then Close Room Handle or Trigger
             }
@@ -546,8 +544,6 @@ export default {
                 token: this.$store.state.token, //Request 都必需附上token
               }
               this.roomws[nowRoomID].send(JSON.stringify(msgObj))
-              this.roomws[nowRoomID].close()
-              this.roomws[nowRoomID] = null
               //------------------------------------------
               //Then Close Room Handle or Trigger
             }
