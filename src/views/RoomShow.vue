@@ -11,7 +11,6 @@
       <ChatRoom
         :roomws="roomws"
         :messages="messages"
-        v-on:addMessage="addMessage"
       />
     </el-main>
     <el-aside class="roomInfo">
@@ -92,7 +91,7 @@
             cancelButtonText="取消"
             icon="el-icon-info"
             iconColor="red"
-            title="確定離開 ? 離開後將不會是成員。若您是房主會直接刪除房間。"
+            title="確定離開 ? 離開後將不會是成員。若您是'房主'會直接刪除房間。"
             @confirm="handleExitRoom"
           >
             <template #reference>
@@ -168,7 +167,12 @@
             </el-form-item>
             <el-form-item
               label="操作"
-              v-if="isAdmin && user.member_id != props.row.member_id"
+              v-if="
+                isAdmin &&
+                user.member_id != props.row.member_id &&
+                props.row.member_id !=
+                  memberList.find((m) => m.access_level == 'admin').member_id
+              "
             >
               <el-button
                 size="mini"
@@ -202,14 +206,19 @@
             </el-form-item>
             <el-form-item
               label="更改階級成:"
-              v-if="isAdmin && user.member_id != props.row.member_id"
+              v-if="
+                isAdmin &&
+                user.member_id != props.row.member_id &&
+                props.row.member_id !=
+                  memberList.find((m) => m.access_level == 'admin').member_id
+              "
             >
               <el-select
                 v-model="tmp"
                 @change="handleSetLevel($event, props.row.member_id)"
               >
                 <el-option
-                  v-for="(val, key) in levelDict"
+                  v-for="(val, key) in { manager: '房管', user: '普通用戶' }"
                   :key="key"
                   :label="val"
                   :value="key"
@@ -235,7 +244,7 @@
                   (m) => m.member_id == props.row.block_manager_id
                 )[0].nickname +
                 '(' +
-                props.row.block_manager_id +
+                props.row.manager_username +
                 ')'
               }}</span>
             </el-form-item>
@@ -256,7 +265,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="blocked_user_id" label="學號"> </el-table-column>
+      <el-table-column prop="user_username" label="學號"> </el-table-column>
       <el-table-column prop="reason" label="原因"></el-table-column>
     </el-table>
     <h3>邀請列表</h3>
@@ -314,6 +323,25 @@
       /></span>
     </div>
   </el-dialog>
+  <el-dialog
+    title="提示"
+    v-model="removeDialog.visible"
+    width="30%"
+    :before-close="handleClose"
+  >
+    <el-result
+      icon="warning"
+      :title="removeDialog.title"
+      :subTitle="removeDialog.subTitle"
+    >
+      <template #extra>
+        <el-button type="primary" size="medium">返回</el-button>
+      </template>
+    </el-result>
+    <template #footer>
+      <span class="dialog-footer"> </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
@@ -367,6 +395,7 @@ export default {
       memberFormVisible: false,
       roomws: {},
       messages: [],
+      removeDialog: { visible: false, title: '', subTitle: '' },
     }
   },
   async created() {
@@ -395,6 +424,14 @@ export default {
             return this.init_list()
           } else {
             this.$message.error('你怎麼進來的 = =')
+            this.removeDialog.title = '您將被導向首頁'
+            this.removeDialog.subTitle = '原因: 房間不存在/您無權限訪問'
+            this.removeDialog.visible = true
+            setTimeout(() => {
+              this.$router.push({
+                name: 'home',
+              })
+            }, 2000)
             return Promise.reject('user not in room !')
           }
         })
@@ -410,21 +447,28 @@ export default {
       })
     }
     //---------------------websocket-------------------------------
-    if (this.roomws[this.$route.params.id] == null) {
-      console.log('this.roomws[this.$route.params.id] == null')
 
-      this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
+    if (this.roomws[parseInt(this.$route.params.id, 10)] == null) {
+      console.log('this.roomws[this.$route.params.id] == null')
+      let nowRoomID = parseInt(this.$route.params.id, 10)
+      this.roomws[nowRoomID] = WsService.InitRoomWebsocket(
         this.$store.state.token,
         this.$route.params.id
       ) //初始化
-      let nowRoomID = this.$route.params.id //取得目前的Room ID
       console.log(this.roomws[nowRoomID])
 
       this.roomws[nowRoomID].onmessage = (event) => {
-        console.log(event.data)
+        //console.log(event.data)
+
         let res = JSON.parse(event.data) //訊息的data
         let showtime = null
+        console.log('[Websocket event.data]:', event.data)
+        // console.log(res.roomID) //送到的room ID
+        // console.log(res.message) //我們要update廣播的message
+        // console.log(res.time) //送出這個訊息的時間
+
         //-------按照header判斷訊息種類---------
+        // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
         switch (res.header) {
           case 'message': //-----正常傳訊息會是這個header-------
             // console.log(res.userID, res.roomID, res.nickname, res.message)
@@ -454,13 +498,106 @@ export default {
             }
             */
             break
+          case 'remove':
+            if (res.message === 'Removed') {
+              console.log('ws case : remove')
+
+              let msgObj = {
+                header: 'controlMessage', // Message 的 header,正常message的header就叫message
+                msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
+                userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
+                roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
+                message: 'Close', //文字訊息
+                token: this.$store.state.token, //Request 都必需附上token
+              }
+              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+
+              //------------------------------------------
+              //Then Close Room Handle or Trigger
+              this.removeDialog.title = '您將被導向首頁'
+              this.removeDialog.subTitle = '原因: 您被移出成員列表。'
+              this.removeDialog.visible = true
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'home',
+                })
+              }, 3000)
+            }
+            break
           case 'update':
-            console.log(res.roomID) //送到的room ID
-            console.log(res.message) //我們要update廣播的message
-            // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
-            console.log(res.time) //送出這個訊息的時間
+            if (res.message.includes('member_list')) {
+              this.getMemberList()
+                .then((res) => {
+                  this.memberList = res.data
+                  this.host = res.data.filter(
+                    (user) => user.access_level == 'admin'
+                  )[0].nickname
+                  if (!res.data.filter((m) => m.member_id)) {
+                    console.log('you are not in room QQ')
+                  }
+                })
+                .catch((err) => {
+                  console.log(err.data)
+                })
+            }
+            if (res.message.includes('block_list')) {
+              this.getBlockList()
+                .then((res) => {
+                  this.blockList = res.data
+                  console.log('blockList:', res.data)
+                })
+                .catch((err) => {
+                  console.log(err.data)
+                })
+            }
+            if (res.message.includes('invite_list')) {
+              this.getInvitationList()
+                .then((res) => {
+                  this.invitationList = res.data
+                  console.log('invitationList', res.data)
+                })
+                .catch((err) => {
+                  console.log(err.data)
+                })
+            }
+            if (res.message.includes('profile')) {
+              this.getRoomObj()
+                .then((res) => {
+                  this.room = res
+                  this.dialogFormRoom = { ...res }
+                  console.log(res)
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+            }
+
+            if (res.message === 'delete_room') {
+              // = if (res.message.includes('delete_room'))
+              let msgObj = {
+                header: 'controlMessage', // Message 的 header,正常message的header就叫message
+                msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
+                userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
+                roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
+                message: 'Close', //文字訊息
+                token: this.$store.state.token, //Request 都必需附上token
+              }
+              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+              //----------------Then Close Room Handle or Trigger --------------------------
+              this.removeDialog.title = '您將被導向首頁'
+              this.removeDialog.subTitle = '原因: 房主關閉了房間。'
+              this.removeDialog.visible = true
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'home',
+                })
+              }, 3000)
+            }
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
+            if (this.$route.fullPath != '/room/' + nowRoomID) {
+              this.roomws[nowRoomID].close()
+            }
             break
         }
       }
@@ -626,7 +763,6 @@ export default {
     handleSetLevel(newLevel, userId) {
       RoomService.putSetLevel(this.id, { [userId]: newLevel })
         .then(() => {
-          console.log('suc')
           return this.getMemberList()
         })
         .then((res) => {
@@ -646,7 +782,7 @@ export default {
     handleTransferAdmin(row) {
       RoomService.putTransferAdmin(this.id, row.member_id)
         .then(() => {
-          return this.getBlockList()
+          console.log('已轉移房主')
         })
         .catch((err) => {
           console.log(err)
@@ -699,10 +835,13 @@ export default {
           )
           if (operation == 'block') {
             return this.getBlockList()
+              .then((res) => {
+                this.blockList = res.data
+              })
+              .catch((err) => {
+                console.log(err.data)
+              })
           }
-        })
-        .then((res) => {
-          this.blockList = res.data
         })
         .catch((err) => {
           console.log('[In RoomShow]', err)
@@ -731,8 +870,9 @@ export default {
       console.log('[watch] memberList changed:', _memberList)
     },
     user: function (_user) {
+      console.log('[watch] user changed:', _user)
       this.isAdmin =
-        _user.access_level == 'admin' || _user.access_level == 'moderator'
+        _user.access_level == 'admin' || _user.access_level == 'manager'
           ? true
           : false
     },

@@ -114,20 +114,21 @@
 - [ ] 如果我在房間內，navbar 會 active 在很奇怪的位置
 - [ ] 每個操作都得 refresh Room Record --> Ws notfiy 'xxx-List'
   - priority 稍微一點點  等後端 (還有其他更多事情得先完成)
-- [ ] 房內前端得改學號
+- [x] 房內前端得改學號
   - blockList 沒給，其他都改好了
 - [ ] invitation
   - 理論上是 user page 要做
 - [ ] notification 
-- [ ] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
+- [x] 非法 access 房間時，blockList, memberList, roomRecord 都能被看到
 
 - [x] 關閉房間沒做出來
   - 關掉 for_dev 就能了
-- [ ] 一些操作是否可以改成 403 ? 401 是 invalid token / 登入失敗在用的
-- [ ] Moderator 不能被 Admin 給 Remove ?
+- [x] 一些操作是否可以改成 403 ? 401 是 invalid token / 登入失敗在用的
+- [x] Moderator 不能被 Admin 給 Remove ?
 - [ ] 如果 ws server 在啟動後使用者才加入房間，會無法正確讀取 member list
 - [ ] chatroom nickbname
 
+handleTransferAdmin
 
 引述自 https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Status
 > 403 Forbidden
