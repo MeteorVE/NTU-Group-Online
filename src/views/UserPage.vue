@@ -2,11 +2,13 @@
   <!-- <RoomList /> -->
   <div class="userpage">
     <el-tabs :tab-position="tabPosition">
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;關於我&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane
+        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;關於我&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+      >
         <el-container>
           <el-main>
             <div class="profile">
-              <div style="text-align:left;" class="password_title">
+              <div style="text-align: left" class="password_title">
                 <h1><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ user.nickname }}</h1>
               </div>
 
@@ -23,14 +25,18 @@
                         font-size: 12px;
                         color: gray;
                       "
-                    >暱稱</h3>
+                    >
+                      暱稱
+                    </h3>
                     <h2
                       style="
                         margin-left: -20px;
                         margin-top: -5px;
                         font-size: 20px;
                       "
-                    ><br />{{ user.nickname }}</h2>
+                    >
+                      <br />{{ user.nickname }}
+                    </h2>
                   </el-row>
 
                   <el-row>
@@ -42,14 +48,18 @@
                         font-size: 12px;
                         color: gray;
                       "
-                    >信箱</h3>
+                    >
+                      信箱
+                    </h3>
                     <h2
                       style="
                         margin-left: -20px;
                         margin-top: -5px;
                         font-size: 20px;
                       "
-                    ><br />{{ user.email }}</h2>
+                    >
+                      <br />{{ user.email }}
+                    </h2>
                   </el-row>
 
                   <el-row>
@@ -61,7 +71,9 @@
                         font-size: 12px;
                         color: gray;
                       "
-                    >姓名</h3>
+                    >
+                      姓名
+                    </h3>
                     <h2
                       style="
                         margin-left: -15px;
@@ -71,38 +83,49 @@
                     >
                       <br />{{ user.lastName }},<el-button
                         class="btn"
-                        @click="clickLastName">編輯</el-button>
-                        {{ user.firstName }}<el-button class="btn" @click="clickFirstName">編輯</el-button>
+                        @click="clickLastName"
+                        >編輯</el-button
+                      >
+                      {{ user.firstName
+                      }}<el-button class="btn" @click="clickFirstName"
+                        >編輯</el-button
+                      >
                     </h2>
 
                     <el-alert
                       v-show="checkLastName"
                       type="info"
                       @close="cancelEditLastName"
-                      >
+                    >
                       <input
-                      v-if="checkLastName"
-                      type="text"
-                      v-model="lastName"
-                      prefix-icon="fas fa-lock"
-                      @keyup.enter="saveLastName"
-                      ref="newlastname"/>
-                      <el-button v-show="checkLastName" @click="saveLastName">儲存</el-button>
+                        v-if="checkLastName"
+                        type="text"
+                        v-model="lastName"
+                        prefix-icon="fas fa-lock"
+                        @keyup.enter="saveLastName"
+                        ref="newlastname"
+                      />
+                      <el-button v-show="checkLastName" @click="saveLastName"
+                        >儲存</el-button
+                      >
                     </el-alert>
 
                     <el-alert
                       v-show="checkFirstName"
                       type="info"
                       @close="cancelEditFirstName"
-                      >
+                    >
                       <input
-                      v-if="checkFirstName"
-                      type="text"
-                      v-model="firstName"
-                      prefix-icon="fas fa-lock"
-                      @keyup.enter="saveFirstName"
-                      ref="newfirstname"/>
-                      <el-button v-show="checkFirstName" @click="saveFirstName">儲存</el-button>
+                        v-if="checkFirstName"
+                        type="text"
+                        v-model="firstName"
+                        prefix-icon="fas fa-lock"
+                        @keyup.enter="saveFirstName"
+                        ref="newfirstname"
+                      />
+                      <el-button v-show="checkFirstName" @click="saveFirstName"
+                        >儲存</el-button
+                      >
                     </el-alert>
 
                     <!-- <input
@@ -130,14 +153,18 @@
                         font-size: 12px;
                         color: gray;
                       "
-                    >科系</h3>
+                    >
+                      科系
+                    </h3>
                     <h2
                       style="
                         margin-left: -15px;
                         margin-top: -5px;
                         font-size: 20px;
                       "
-                    ><br />{{ user.department }}</h2>
+                    >
+                      <br />{{ user.department }}
+                    </h2>
                   </el-row>
                 </div>
               </div>
@@ -146,7 +173,9 @@
         </el-container>
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改密碼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane
+        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改密碼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+      >
         <div class="resetPWD">
           <el-card class="reset-card">
             <h2>變更密碼</h2>
@@ -171,7 +200,8 @@
                   type="password"
                   prefix-icon="fas fa-lock"
                   ref="oldPassword"
-                  @keyup.enter="sumitChangePassword"/>
+                  @keyup.enter="sumitChangePassword"
+                />
               </el-form-item>
 
               <el-form-item prop="newPassword1" label="請輸入新密碼">
@@ -188,7 +218,8 @@
                   type="password"
                   prefix-icon="fas fa-lock"
                   ref="newPassword1"
-                  @keyup.enter="sumitChangePassword"/>
+                  @keyup.enter="sumitChangePassword"
+                />
               </el-form-item>
 
               <el-form-item prop="newPassword2" label="再輸入一次">
@@ -205,7 +236,8 @@
                   type="password"
                   prefix-icon="fas fa-lock"
                   ref="newPassword2"
-                  @keyup.enter="sumitChangePassword"/>
+                  @keyup.enter="sumitChangePassword"
+                />
               </el-form-item>
 
               <el-form-item>
@@ -217,40 +249,69 @@
                   block
                   >確定送出</el-button
                 > -->
-                <el-button type="info" round @click="sumitChangePassword">確認送出</el-button>
+                <el-button type="info" round @click="sumitChangePassword"
+                  >確認送出</el-button
+                >
               </el-form-item>
             </el-form>
           </el-card>
         </div>
-        
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane
+        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+      >
         <RoomList />
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;房主管理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane
+        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;房主管理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+      >
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入房記錄&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"></el-tab-pane>
+      <el-tab-pane
+        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邀請中的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+      >
+        <!-- <InviteRoomList /> -->
+        <el-container>
+          <router-view />
 
+          <el-main id="roomCardContainer" v-if="rooms.length > 0">
+            <div
+              v-masonry="roomCardContainer"
+              item-selector=".item"
+              column-width=".item"
+            >
+              <div
+                v-masonry-tile
+                class="item"
+                v-for="(room, index) in rooms"
+                v-bind:key="index"
+              >
+                <RoomListCard :room="room" />
+              </div>
+            </div>
+          </el-main>
+        </el-container>
+      </el-tab-pane>
     </el-tabs>
- 
-
-
   </div>
-
-
 </template>
 
 <script>
 import UserService from '@/services/UserService.js'
 import RoomList from '@/components/RoomList.vue'
-
+import RoomListCard from '@/components/RoomListCard.vue'
+import RoomService from '@/services/RoomService.js'
+// import InviteRoomList from '@/components/InviteRoomList.vue'
+import { mapGetters } from 'vuex'
+import { ElMessage } from 'element-plus'
 export default {
   props: ['userToken', 'mailToken'],
   components: {
     RoomList,
+    RoomListCard,
+    // InviteRoomList,
   },
   data() {
     var validatePass2 = (rule, value, callback) => {
@@ -266,9 +327,9 @@ export default {
       checkFirstName: false,
       user: {
         id: 0,
-        nickname: '',
-        email: '',
-        department: '',
+        nickname: 'test',
+        email: 'test',
+        department: 'test',
         lastName: '',
         firstName: '',
       },
@@ -279,7 +340,7 @@ export default {
       },
       loading: false,
       rules: {
-        oldPassword:[
+        oldPassword: [
           {
             required: true,
             message: '此為必填欄位',
@@ -290,7 +351,6 @@ export default {
             message: '密碼需至少4個字',
             trigger: 'blur',
           },
-
         ],
         newPassword1: [
           {
@@ -305,8 +365,7 @@ export default {
           },
         ],
         newPassword2: [
-          { required: true, message: '此為必填欄位',
-          trigger: 'blur' },
+          { required: true, message: '此為必填欄位', trigger: 'blur' },
           {
             min: 4,
             message: '密碼需至少4個字',
@@ -315,30 +374,72 @@ export default {
           { validator: validatePass2, trigger: 'blur' },
         ],
       },
+      rooms: [],
+      id: 0,
+      invitationList: [],
+      invitationRooms: [],
     }
   },
   async created() {
+    if (this.$store.state.token && !this.$store.state.is_verify) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        if (this.$store.state.is_verify == false) {
+          this.$router.push({
+            name: 'profile',
+          })
+          this.$message.error('未過 mail 認證 !')
+        }
+      })
+    }
     if (this.$store.state.token) {
       this.$store
         .dispatch('refreshToken')
+        .then((resRefresh) => {
+          console.log('f1', resRefresh)
+          console.log('test1', this.user.email)
+          console.log('test2', this.user.nickname)
+          console.log('test3', this.user.department)
+          console.log('test4', this.user.lastName)
+          console.log('test5', this.user.firstName)
+          return this.getUserId()
+        })
         .then((res) => {
-          console.log("f1", res)
-          return UserService.getUserId()
-        }).then((res) => {
-          console.log("f2", res)
+          console.log('f2', res)
           this.user.id = res.data.id
-          console.log("f3", this.user.id)
-          return this.ser_fun()
-        }).then((res) => {
-          console.log("4444", res)
+          console.log('f3', this.user.id)
+          // return this.ser_fun()
+          // }).then((res) => {
+          // console.log("4444", res)
           return UserService.getUser(this.user.id)
-        }).then((res) => {
-          console.log("f4", res.data)
+        })
+        .then((res) => {
+          console.log('f4', res.data)
           this.user.email = res.data.email
-          this.user.nickname = res.data.email
+          this.user.nickname = res.data.nickname
           this.user.department = res.data.department
           this.user.lastName = res.data.last_name
           this.user.firstName = res.data.first_name
+        })
+        .then(() => {
+          UserService.getInvitationList()
+            .then((response) => {
+              this.invitationList = response.data
+              console.log('invitationList:', this.invitationList)
+              return RoomService.getRooms() // WTF
+            })
+            .then((res) => {
+              this.rooms = res.data // roomList
+              console.log('[debug] rooms:', this.rooms)
+              for (let rid of this.invitationList.map((i) => i.room_id)) {
+                console.log('[debug] roomId:', rid)
+                this.invitationRooms.push(this.rooms.find((r) => r.id == rid))
+              }
+              console.log('invitationList11:', this.invitationRooms)
+              this.rooms = this.invitationRooms
+            })
+            .catch((err) => {
+              console.log(err)
+            })
         })
         .catch((err) => {
           if (
@@ -353,6 +454,7 @@ export default {
         })
     } else {
       console.log('plz login !')
+      ElMessage.error('請登入 !')
       this.$router.push({
         name: 'login',
       })
@@ -367,9 +469,13 @@ export default {
     },
     saveLastName() {
       this.checkLastName = false
-      this.user.lastName=this.$refs.newlastname.value
+      this.user.lastName = this.$refs.newlastname.value
       console.log('666', this.$refs.newlastname.value)
-      UserService.putUserEdit(this.user.id, this.$refs.newlastname.value, this.user.firstName)
+      UserService.putUserEdit(
+        this.user.id,
+        this.$refs.newlastname.value,
+        this.user.firstName
+      )
     },
     clickFirstName() {
       this.checkFirstName = true
@@ -379,30 +485,47 @@ export default {
     },
     saveFirstName() {
       this.checkFirstName = false
-      this.user.firstName=this.$refs.newfirstname.value
+      this.user.firstName = this.$refs.newfirstname.value
       console.log('777', this.$refs.newfirstname.value)
-      UserService.putUserEdit(this.user.id, this.user.lastName, this.$refs.newfirstname.value)
+      UserService.putUserEdit(
+        this.user.id,
+        this.user.lastName,
+        this.$refs.newfirstname.value
+      )
     },
     sumitChangePassword() {
-      console.log("111")
-      if (this.$refs.oldPassword.value == "" | this.$refs.newPassword1.value == "" | this.$refs.newPassword2.value == "") {
-        console.log("wrong1")
+      console.log('nnnnnnnn')
+      if (
+        (this.$refs.oldPassword.value == '') |
+        (this.$refs.newPassword1.value == '') |
+        (this.$refs.newPassword2.value == '')
+      ) {
+        console.log('wrong1')
         this.noInputPassword()
         this.passwordModel.oldPassword = ''
         this.passwordModel.newPassword1 = ''
         this.passwordModel.newPassword2 = ''
-      } else if (this.$refs.newPassword1.value != this.$refs.newPassword2.value) {
-        console.log("wrong2")
+      } else if (
+        this.$refs.newPassword1.value != this.$refs.newPassword2.value
+      ) {
+        console.log('wrong2')
         this.notEqualNewPassword()
         this.passwordModel.oldPassword = ''
         this.passwordModel.newPassword1 = ''
         this.passwordModel.newPassword2 = ''
       } else {
-        UserService.putChangePassword(this.user.id, this.$refs.oldPassword.value, this.$refs.newPassword1.value, this.$refs.newPassword2.value)
-        console.log("222", this.user.id)
-        console.log("333", this.$refs.oldPassword.value)
-        console.log("444", this.$refs.newPassword1.value)
-        console.log("555", this.$refs.newPassword2.value)
+        UserService.putChangePassword(
+          this.user.id,
+          this.$refs.oldPassword.value,
+          this.$refs.newPassword1.value,
+          this.$refs.newPassword2.value
+        )
+        this.$store
+        console.log('111')
+        console.log('222', this.user.id)
+        console.log('333', this.$refs.oldPassword.value)
+        console.log('444', this.$refs.newPassword1.value)
+        console.log('555', this.$refs.newPassword2.value)
         this.finishChangePassword()
         this.passwordModel.oldPassword = ''
         this.passwordModel.newPassword1 = ''
@@ -413,30 +536,34 @@ export default {
       this.$message({
         message: '兩次密碼不一致',
         center: true,
-        type: "warning",
-      });
+        type: 'warning',
+      })
     },
     noInputPassword() {
       this.$message({
         message: '輸入不能為空白',
         center: true,
-        type: "warning",
-      });
+        type: 'warning',
+      })
     },
     finishChangePassword() {
       this.$message({
         message: '修改成功',
         center: true,
-        type: "success",
-      });
+        type: 'success',
+      })
     },
     ser_fun() {
       this
-    }, 
+    },
+    getUserId() {
+      return UserService.getUserId()
+    },
+  },
+  computed: {
+    ...mapGetters(['isAuth']),
   },
 }
-
-
 </script>
 
 <style>
@@ -445,46 +572,36 @@ export default {
   width: 1000px;
   margin-left: 20px;
 }
-
 .profile .imgid {
   top: 160px;
   left: 620px;
 }
-
 .profile .imgbut {
   top: 180px;
   left: 620px;
 }
-
 .profile .info {
 }
-
 .profile .info .infotext {
   text-align: left;
   margin-left: 20px;
 }
-
 .el-row {
   margin-bottom: 20px;
 }
-
 .password {
   background-color: rgb(238, 233, 227);
   width: 1000px;
 }
-
 .password .password_title {
   top: 50px;
 }
-
 .password .info {
 }
-
 .password .info .infotext {
   text-align: left;
   margin-top: 10px;
 }
-
 .resetPWD {
   /* flex: 1; */
   display: flex;
@@ -493,7 +610,6 @@ export default {
   /* background-image: url('https://www.ntu.edu.tw/12scence/01b1.jpg'); */
   /* background-size: cover; */
 }
-
 .resetPWD:before {
   /* background-image: url('https://www.ntu.edu.tw/12scence/01b1.jpg'); */
   width: 100%;
@@ -509,26 +625,21 @@ export default {
   display: block;
   filter: blur(7px);
 }
-
 .reset-card {
   background: rgba(255, 255, 255, 0.39);
   border: none;
   color: #ffffff;
 }
-
 .reset-form .el-input input {
   background: rgba(255, 255, 255, 0.2);
 }
-
 .reset-form {
   width: 290px;
 }
-
 .reset-button {
   width: 100%;
   margin-top: 40px;
 }
-
 .resetPWD .el-input__prefix {
   background: rgb(238, 237, 234);
   left: 0;
@@ -537,5 +648,7 @@ export default {
   top: 1px;
   border-radius: 3px;
 }
-
+.item {
+  width: 100%;
+}
 </style>

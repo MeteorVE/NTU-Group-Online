@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store/index.js'
+import router from '@/router/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -33,7 +34,7 @@ apiDjango.interceptors.response.use(
         case 401:
           console.log('登入無效')
           store.dispatch('logout')
-          this.$router.push('/')
+          router.push('/')
           break
         case 404:
           console.log('找不到該頁面')
@@ -92,5 +93,10 @@ export default {
 
   readUserNotification(notificationId) {
     return apiDjango.put('/api/user/read_notification/' + notificationId + '/')
+  },
+
+  getInvitationList() {
+    console.log('123456789')
+    return apiDjango.get('/invitation/')
   },
 }
