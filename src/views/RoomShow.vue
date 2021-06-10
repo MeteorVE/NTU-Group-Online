@@ -452,6 +452,29 @@ export default {
             }
             */
             break
+          case 'remove':
+            if (res.message === 'Removed') {
+              let msgObj = {
+                header: 'controlMessage', // Message 的 header,正常message的header就叫message
+                msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
+                userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
+                roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
+                message: 'Close', //文字訊息
+                token: this.$store.state.token, //Request 都必需附上token
+              }
+              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+              this.roomws[nowRoomID].close()
+              this.roomws[nowRoomID] = null
+              //------------------------------------------
+              //Then Close Room Handle or Trigger
+
+
+
+
+
+              
+            }
+            break
           case 'update':
             console.log(res.roomID) //送到的room ID
             console.log(res.message) //我們要update廣播的message
