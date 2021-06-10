@@ -9,7 +9,7 @@
     <div class="info">
       <div style="text-align:left; margin-left:40px;">
         <p>crate time：{{ room.create_time.slice(0, 10) }} {{ room.create_time.slice(11, 19) }} </p>
-        <p>valid time：{{ room.valid_time }}</p>
+        <p>valid time：{{ room.valid_time.slice(0, 10) }}  {{ room.valid_time.slice(11, 19) }}</p>
         <p>room type：{{ room.room_type }}</p>
         <p>room category：{{ room.room_category }}</p>
         <p>people limit:{{ room.people_limit }}</p>
@@ -34,6 +34,7 @@ export default {
         'https://i.imgur.com/kN4J0UL.jpg',
         '',
         'https://i.imgur.com/17SSeJb.png',
+        'https://i.imgur.com/85zF3RK.jpg',
         'https://i.imgur.com/o2uS5WX.png',
         'https://i.imgur.com/wc0HqRT.png',
         'https://i.imgur.com/qdIZSWc.jpg',

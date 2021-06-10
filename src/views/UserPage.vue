@@ -2,7 +2,7 @@
   <!-- <RoomList /> -->
   <div class="userpage">
     <el-tabs :tab-position="tabPosition">
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;關於我&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;關於我&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
         <el-container>
           <el-main>
             <div class="profile">
@@ -146,7 +146,7 @@
         </el-container>
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改密碼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改密碼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
         <div class="resetPWD">
           <el-card class="reset-card">
             <h2>變更密碼</h2>
@@ -225,14 +225,36 @@
         
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
         <RoomList />
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;房主管理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;房主管理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
       </el-tab-pane>
 
-      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入房記錄&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"></el-tab-pane>
+      <el-tab-pane label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邀請中的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+        <!-- <InviteRoomList /> -->
+        <el-container>
+          <router-view />
+
+          <el-main id="roomCardContainer" v-if="rooms.length > 0">
+            <div
+              v-masonry="roomCardContainer"
+              item-selector=".item"
+              column-width=".item"
+            >
+              <div
+                v-masonry-tile
+                class="item"
+                v-for="(room, index) in rooms"
+                v-bind:key="index"
+              >
+                <RoomListCard :room="room" />
+              </div>
+            </div>
+          </el-main>
+        </el-container>
+      </el-tab-pane>
 
     </el-tabs>
  
@@ -246,11 +268,18 @@
 <script>
 import UserService from '@/services/UserService.js'
 import RoomList from '@/components/RoomList.vue'
+import RoomListCard from '@/components/RoomListCard.vue'
+import RoomService from '@/services/RoomService.js'
+// import InviteRoomList from '@/components/InviteRoomList.vue'
+import { mapGetters } from 'vuex'
+import { ElMessage } from 'element-plus'
 
 export default {
   props: ['userToken', 'mailToken'],
   components: {
     RoomList,
+    RoomListCard,
+    // InviteRoomList,
   },
   data() {
     var validatePass2 = (rule, value, callback) => {
@@ -266,9 +295,9 @@ export default {
       checkFirstName: false,
       user: {
         id: 0,
-        nickname: '',
-        email: '',
-        department: '',
+        nickname: 'test',
+        email: 'test',
+        department: 'test',
         lastName: '',
         firstName: '',
       },
@@ -315,30 +344,72 @@ export default {
           { validator: validatePass2, trigger: 'blur' },
         ],
       },
+      rooms: [],
+      id: 0,
+      invitationList: [],
+      invitationRooms: [],
     }
   },
   async created() {
+    if (this.$store.state.token && !this.$store.state.is_verify) {
+      this.$store.dispatch('getIsVerify').then(() => {
+        if (this.$store.state.is_verify == false) {
+          this.$router.push({
+            name: 'profile',
+          })
+          this.$message.error('未過 mail 認證 !')
+        }
+      })
+    }
+
     if (this.$store.state.token) {
       this.$store
         .dispatch('refreshToken')
-        .then((res) => {
-          console.log("f1", res)
-          return UserService.getUserId()
+        .then((resRefresh) => {
+          console.log("f1", resRefresh)
+          console.log("test1", this.user.email)
+          console.log("test2", this.user.nickname)
+          console.log("test3", this.user.department)
+          console.log("test4", this.user.lastName)
+          console.log("test5", this.user.firstName)
+          return this.getUserId()
         }).then((res) => {
           console.log("f2", res)
           this.user.id = res.data.id
           console.log("f3", this.user.id)
-          return this.ser_fun()
-        }).then((res) => {
-          console.log("4444", res)
+          // return this.ser_fun()
+        // }).then((res) => {
+          // console.log("4444", res)
           return UserService.getUser(this.user.id)
         }).then((res) => {
           console.log("f4", res.data)
           this.user.email = res.data.email
-          this.user.nickname = res.data.email
+          this.user.nickname = res.data.nickname
           this.user.department = res.data.department
           this.user.lastName = res.data.last_name
           this.user.firstName = res.data.first_name
+        }).then(() => {
+          UserService.getInvitationList()            
+            .then((response) => {
+              this.invitationList = response.data
+
+              console.log("invitationList:",this.invitationList);
+              return RoomService.getRooms() // WTF
+            })
+            .then((res)=>{
+              this.rooms = res.data // roomList
+              console.log("[debug] rooms:", this.rooms)
+
+              for(let rid of this.invitationList.map(i=>i.room_id)){
+                console.log("[debug] roomId:", rid)
+                this.invitationRooms.push( this.rooms.find( r => r.id == rid ) )
+              }
+              console.log("invitationList11:", this.invitationRooms);
+              this.rooms = this.invitationRooms
+            })
+            .catch(err=>{
+              console.log(err);
+            })
         })
         .catch((err) => {
           if (
@@ -353,6 +424,7 @@ export default {
         })
     } else {
       console.log('plz login !')
+      ElMessage.error('請登入 !')
       this.$router.push({
         name: 'login',
       })
@@ -382,9 +454,10 @@ export default {
       this.user.firstName=this.$refs.newfirstname.value
       console.log('777', this.$refs.newfirstname.value)
       UserService.putUserEdit(this.user.id, this.user.lastName, this.$refs.newfirstname.value)
-    },
+    },    
+
     sumitChangePassword() {
-      console.log("111")
+      console.log("nnnnnnnn")
       if (this.$refs.oldPassword.value == "" | this.$refs.newPassword1.value == "" | this.$refs.newPassword2.value == "") {
         console.log("wrong1")
         this.noInputPassword()
@@ -399,6 +472,8 @@ export default {
         this.passwordModel.newPassword2 = ''
       } else {
         UserService.putChangePassword(this.user.id, this.$refs.oldPassword.value, this.$refs.newPassword1.value, this.$refs.newPassword2.value)
+        this.$store
+        console.log("111")
         console.log("222", this.user.id)
         console.log("333", this.$refs.oldPassword.value)
         console.log("444", this.$refs.newPassword1.value)
@@ -409,6 +484,10 @@ export default {
         this.passwordModel.newPassword2 = ''
       }
     },
+
+
+
+
     notEqualNewPassword() {
       this.$message({
         message: '兩次密碼不一致',
@@ -432,7 +511,13 @@ export default {
     },
     ser_fun() {
       this
-    }, 
+    },
+    getUserId() {
+      return UserService.getUserId()
+    }
+  },
+  computed: {
+    ...mapGetters(['isAuth']),
   },
 }
 
@@ -536,6 +621,10 @@ export default {
   left: 1px;
   top: 1px;
   border-radius: 3px;
+}
+
+.item {
+  width: 100%;
 }
 
 </style>

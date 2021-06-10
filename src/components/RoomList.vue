@@ -55,6 +55,7 @@ export default {
             )
         })
         .then(() => {
+          console.log("112112112112")
           UserService.getUserRoom()
             .then((response) => {
               this.rooms = response.data
