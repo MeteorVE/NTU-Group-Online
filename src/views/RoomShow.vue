@@ -480,12 +480,6 @@ export default {
               this.roomws[nowRoomID] = null
               //------------------------------------------
               //Then Close Room Handle or Trigger
-
-
-
-
-
-              
             }
             break
           case 'update':
@@ -556,10 +550,6 @@ export default {
               this.roomws[nowRoomID] = null
               //------------------------------------------
               //Then Close Room Handle or Trigger
-
-
-
-
             }
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
