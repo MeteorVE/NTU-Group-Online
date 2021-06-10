@@ -420,17 +420,19 @@ export default {
       })
     }
     //---------------------websocket-------------------------------
-    if (this.roomws[this.$route.params.id] == null) {
-      console.log('this.roomws[this.$route.params.id] == null')
 
-      this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
+    if (this.roomws[parseInt(this.$route.params.id, 10)] == null) {
+      console.log('this.roomws[this.$route.params.id] == null')
+      let nowRoomID = parseInt(this.$route.params.id, 10)
+      this.roomws[nowRoomID] = WsService.InitRoomWebsocket(
         this.$store.state.token,
         this.$route.params.id
       ) //初始化
-      let nowRoomID = this.$route.params.id //取得目前的Room ID
       console.log(this.roomws[nowRoomID])
 
       this.roomws[nowRoomID].onmessage = (event) => {
+        //console.log(event.data)
+
         let res = JSON.parse(event.data) //訊息的data
         let showtime = null
         console.log('[Websocket event.data]:', event.data)
@@ -462,6 +464,29 @@ export default {
               })
             }
             */
+            break
+          case 'remove':
+            if (res.message === 'Removed') {
+              let msgObj = {
+                header: 'controlMessage', // Message 的 header,正常message的header就叫message
+                msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
+                userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
+                roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
+                message: 'Close', //文字訊息
+                token: this.$store.state.token, //Request 都必需附上token
+              }
+              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+              this.roomws[nowRoomID].close()
+              this.roomws[nowRoomID] = null
+              //------------------------------------------
+              //Then Close Room Handle or Trigger
+
+
+
+
+
+              
+            }
             break
           case 'update':
             if (res.message.includes('member_list')) {
@@ -517,8 +542,30 @@ export default {
             console.log(res.message) //我們要update廣播的message
             // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
             console.log(res.time) //送出這個訊息的時間
+            if (res.message === 'delete_room') {
+              let msgObj = {
+                header: 'controlMessage', // Message 的 header,正常message的header就叫message
+                msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
+                userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
+                roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
+                message: 'Close', //文字訊息
+                token: this.$store.state.token, //Request 都必需附上token
+              }
+              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+              this.roomws[nowRoomID].close()
+              this.roomws[nowRoomID] = null
+              //------------------------------------------
+              //Then Close Room Handle or Trigger
+
+
+
+
+            }
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
+            if (this.$route.fullPath != '/room/' + nowRoomID) {
+              this.roomws[nowRoomID].close()
+            }
             break
         }
       }
