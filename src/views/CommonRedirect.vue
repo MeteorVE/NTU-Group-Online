@@ -1,6 +1,10 @@
 <template>
   <div class="cr-container">
-    <div class="mars"></div>
+    <div class="mars">
+      <div align="center">
+        <a class="btn-back" href="/">Back to home page</a>
+      </div>
+    </div>
     <img
       v-if="type == '404'"
       src="https://assets.codepen.io/1538474/404.svg"
@@ -11,9 +15,6 @@
     <p class="subtitle">
       {{ description }}
     </p>
-    <div align="center">
-      <a class="btn-back" href="/">Back to home page</a>
-    </div>
     <img
       src="https://assets.codepen.io/1538474/astronaut.svg"
       class="astronaut"
@@ -92,7 +93,7 @@ export default {
   background-image: url(https://assets.codepen.io/1538474/star.svg),
     linear-gradient(to bottom, #05007a, #4d007d);
 
-  height: 100%;
+  height: 80vh;
   margin: 0;
   background-attachment: fixed;
   overflow: hidden;
@@ -156,6 +157,8 @@ export default {
   font-family: 'Nunito', sans-serif;
   text-decoration: none;
   border-radius: 5px;
+  position: relative;
+  bottom: 30px;
 }
 .btn-back:hover {
   background: white;

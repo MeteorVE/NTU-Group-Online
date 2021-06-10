@@ -411,9 +411,7 @@ export default {
     }
     //---------------------websocket-------------------------------
     if (this.roomws[this.$route.params.id] == null) {
-      console.log(
-        'this.roomws[this.$route.params.id] == null'
-      )
+      console.log('this.roomws[this.$route.params.id] == null')
 
       this.roomws[this.$route.params.id] = WsService.InitRoomWebsocket(
         this.$store.state.token,
@@ -438,6 +436,7 @@ export default {
             var currentTime = `${hour}:${minute}`
             var newMessage = {
               user: res.userID,
+              nickname: res.nickname,
               text: res.message,
               time: currentTime,
             }
