@@ -122,6 +122,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  height: 88vh;
   /* background-image: url('https://www.ntu.edu.tw/12scence/01b1.jpg'); */
   /* background-size: cover; */
 }

@@ -1,14 +1,16 @@
 <template>
   <el-menu :default-active="$route.path" class="SideBar" router v-if="urlMode">
-    <el-menu-item
-      v-for="(item, index) in sideBarList"
-      :key="index"
-      :index="item.url"
-      :route="item.url"
-    >
-      <i class="el-icon-menu"></i>
-      <span>{{ item.text }}</span>
-    </el-menu-item>
+    <el-scrollbar>
+      <el-menu-item
+        v-for="(item, index) in sideBarList"
+        :key="index"
+        :index="item.url"
+        :route="item.url"
+      >
+        <i class="el-icon-menu"></i>
+        <span>{{ item.text }}</span>
+      </el-menu-item>
+    </el-scrollbar>
   </el-menu>
   <el-menu v-else class="SideBar">
     <el-scrollbar>

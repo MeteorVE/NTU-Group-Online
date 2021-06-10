@@ -13,19 +13,33 @@
               class="inlineIcon"
               src="https://www.pinclipart.com/picdir/middle/205-2059398_blinkk-en-mac-app-store-ninja-icon-transparent.png"
             />
-            <div class="ownBubble own">{{ message.text }}</div>
+            <div class="textContainer">
+              <div>
+                <span class="own">{{ message.time }}</span>
+              </div>
+              <div class="middleContainer">
+                <p class="username">{{ message.nickname }}</p>
+                <div class="ownBubble own">{{ message.text }}</div>
+              </div>
+            </div>
           </div>
-          <span class="own">{{ message.time }}</span>
         </template>
         <template v-else>
-          <div class="inlineContainer">
+          <div class="inlineContainer other">
             <img
               class="inlineIcon"
               src="https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png"
             />
-            <div class="otherBubble other">{{ message.text }}</div>
+            <div class="textContainer">
+              <div>
+                <p class="username">{{ message.nickname }}</p>
+                <div class="otherBubble other">{{ message.text }}</div>
+              </div>
+              <div>
+                <span class="other">{{ message.time }}</span>
+              </div>
+            </div>
           </div>
-          <span class="other">{{ message.time }}</span>
         </template>
       </div>
     </div>
@@ -40,6 +54,8 @@
 
 <script>
 //import WsService from '@/services/WebsocketService.js'
+// import UserService from '@/services/UserService.js'
+
 export default {
   props: ['roomws', 'messages'],
   computed: {
@@ -56,18 +72,18 @@ export default {
   methods: {
     addMessage(e) {
       if (e.key === 'Enter' && this.message) {
-        var today = new Date()
-        var hour = today.getHours()
-        var minute = today.getMinutes()
-        hour = String(hour).padStart(2, '0')
-        minute = String(minute).padStart(2, '0')
-        var currentTime = `${hour}:${minute}`
-        var newMessage = {
-          user: this.$store.state.user_id,
-          text: this.message,
-          time: currentTime,
-        }
-        this.$emit('addMessasge', newMessage)
+        // var today = new Date()
+        // var hour = today.getHours()
+        // var minute = today.getMinutes()
+        // hour = String(hour).padStart(2, '0')
+        // minute = String(minute).padStart(2, '0')
+        // var currentTime = `${hour}:${minute}`
+        // var newMessage = {
+        //   user: this.$store.state.user_id,
+        //   text: this.message,
+        //   time: currentTime,
+        // }
+        // this.$emit('addMessasge', newMessage)
         // 這裡是要傳送訊息到Websocket server的code
         let nowRoomID = parseInt(this.$route.params.id, 10)
         //console.log(this.$store.state.user_id)
@@ -83,6 +99,13 @@ export default {
         this.message = ''
       }
     },
+    // getUsername(userId) {
+    //   let username = ''
+    //   UserService.getUser(userId).then((res) => {
+    //     username = res.data.last_name + res.data.first_name
+    //   })
+    //   return username
+    // },
   },
   watch: {
     messages: {
@@ -120,29 +143,39 @@ export default {
   font-size: 14px;
 }
 .inlineContainer {
-  display: inline-flex;
+  display: flex;
 }
 .inlineContainer.own {
   flex-direction: row-reverse;
+}
+.inlineContainer.other {
+  align-items: center;
 }
 .inlineIcon {
   width: 20px;
   object-fit: contain;
 }
+.textContainer {
+  display: flex;
+  align-items: flex-end;
+}
+.middleContainer {
+  text-align: right;
+}
 .ownBubble {
-  min-width: 20px;
+  min-width: 12px;
   max-width: 700px;
-  padding: 14px 18px;
-  margin: 6px 8px;
+  padding: 6px 18px;
+  margin: 0 8px;
   background-color: #5b5377;
   border-radius: 16px 16px 0 16px;
   border: 1px solid #443f56;
 }
 .otherBubble {
-  min-width: 20px;
+  min-width: 12px;
   max-width: 700px;
-  padding: 14px 18px;
-  margin: 6px 8px;
+  padding: 6px 18px;
+  margin: 0 8px;
   background-color: #6c8ea4;
   border-radius: 16px 16px 16px 0;
   border: 1px solid #54788e;
@@ -156,6 +189,12 @@ export default {
 span.own,
 span.other {
   font-size: 12px;
+  color: grey;
+}
+.username {
+  font-size: 12px;
+  display: inline-block;
+  margin: 3px 8px;
   color: grey;
 }
 </style>

@@ -11,7 +11,6 @@
       <ChatRoom
         :roomws="roomws"
         :messages="messages"
-        v-on:addMessage="addMessage"
       />
     </el-main>
     <el-aside class="roomInfo">
@@ -481,6 +480,7 @@ export default {
             var currentTime = `${hour}:${minute}`
             var newMessage = {
               user: res.userID,
+              nickname: res.nickname,
               text: res.message,
               time: currentTime,
             }
