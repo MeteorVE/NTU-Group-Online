@@ -68,6 +68,15 @@ export default {
     return apiDjango.get('/user_room/')
   },
 
+  getUserAdminRoom() {
+    console.log("ddddddddddd")
+    return apiDjango.get('/user_admin_room/')
+  },
+
+  getInvitationList() {
+    return apiDjango.get('/invitation/')
+  },
+
   putUserEdit(userId, newLastName, newFirstName) {
     return apiDjango.put('/api/user/' + userId + '/', {
       last_name: newLastName,
@@ -93,10 +102,5 @@ export default {
 
   readUserNotification(notificationId) {
     return apiDjango.put('/api/user/read_notification/' + notificationId + '/')
-  },
-
-  getInvitationList() {
-    console.log('123456789')
-    return apiDjango.get('/invitation/')
   },
 }

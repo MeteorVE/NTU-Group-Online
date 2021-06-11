@@ -3,7 +3,7 @@
   <div class="userpage">
     <el-tabs :tab-position="tabPosition">
       <el-tab-pane
-        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;關於我&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        label="關於我"
       >
         <el-container>
           <el-main>
@@ -174,7 +174,7 @@
       </el-tab-pane>
 
       <el-tab-pane
-        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改密碼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        label="更改密碼"
       >
         <div class="resetPWD">
           <el-card class="reset-card">
@@ -259,37 +259,42 @@
       </el-tab-pane>
 
       <el-tab-pane
-        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        label="我的房間"
       >
         <RoomList />
       </el-tab-pane>
 
       <el-tab-pane
-        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;房主管理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        label="房主管理"
       >
+        <el-container>
+          <router-view />
+          <el-main id="roomCardContainer" v-if="admin_rooms.length > 0">
+            <div
+              v-masonry-tile
+              class="item"
+              v-for="(room, index) in admin_rooms"
+              v-bind:key="index"
+            >
+              <RoomListCard :room="room" />
+            </div>
+          </el-main>
+        </el-container>
       </el-tab-pane>
 
       <el-tab-pane
-        label="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邀請中的房間&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        label="邀請中的房間"
       >
-        <!-- <InviteRoomList /> -->
         <el-container>
           <router-view />
-
-          <el-main id="roomCardContainer" v-if="rooms.length > 0">
+          <el-main id="roomCardContainer" v-if="invited_rooms.length > 0">
             <div
-              v-masonry="roomCardContainer"
-              item-selector=".item"
-              column-width=".item"
+              v-masonry-tile
+              class="item"
+              v-for="(room, index) in invited_rooms"
+              v-bind:key="index"
             >
-              <div
-                v-masonry-tile
-                class="item"
-                v-for="(room, index) in rooms"
-                v-bind:key="index"
-              >
-                <RoomListCard :room="room" />
-              </div>
+              <RoomListCard :room="room" />
             </div>
           </el-main>
         </el-container>
@@ -303,7 +308,6 @@ import UserService from '@/services/UserService.js'
 import RoomList from '@/components/RoomList.vue'
 import RoomListCard from '@/components/RoomListCard.vue'
 import RoomService from '@/services/RoomService.js'
-// import InviteRoomList from '@/components/InviteRoomList.vue'
 import { mapGetters } from 'vuex'
 import { ElMessage } from 'element-plus'
 export default {
@@ -311,7 +315,6 @@ export default {
   components: {
     RoomList,
     RoomListCard,
-    // InviteRoomList,
   },
   data() {
     var validatePass2 = (rule, value, callback) => {
@@ -374,7 +377,8 @@ export default {
           { validator: validatePass2, trigger: 'blur' },
         ],
       },
-      rooms: [],
+      invited_rooms: [],
+      admin_rooms: [],
       id: 0,
       invitationList: [],
       invitationRooms: [],
@@ -401,7 +405,7 @@ export default {
           console.log('test3', this.user.department)
           console.log('test4', this.user.lastName)
           console.log('test5', this.user.firstName)
-          return this.getUserId()
+          return UserService.getUserId()
         })
         .then((res) => {
           console.log('f2', res)
@@ -420,26 +424,51 @@ export default {
           this.user.lastName = res.data.last_name
           this.user.firstName = res.data.first_name
         })
+        // .then(() => {
+        //   UserService.getInvitationList()
+        //   .then((response) => {
+        //     this.invitationList = response.data
+        //     console.log('invitationList:', this.invitationList)
+        //     return RoomService.getRooms() // WTF
+        //   })
+        //   .then((res) => {
+        //     this.rooms = res.data // roomList
+        //     console.log('[debug] rooms:', this.rooms)
+        //     for (let rid of this.invitationList.map((i) => i.room_id)) {
+        //       console.log('[debug] roomId:', rid)
+        //       this.invitationRooms.push(this.rooms.find((r) => r.id == rid))
+        //     }
+        //     console.log('invitationList11:', this.invitationRooms)
+        //     this.rooms = this.invitationRooms
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //   })
+        // })
+
         .then(() => {
-          UserService.getInvitationList()
-            .then((response) => {
-              this.invitationList = response.data
-              console.log('invitationList:', this.invitationList)
-              return RoomService.getRooms() // WTF
-            })
-            .then((res) => {
-              this.rooms = res.data // roomList
-              console.log('[debug] rooms:', this.rooms)
-              for (let rid of this.invitationList.map((i) => i.room_id)) {
-                console.log('[debug] roomId:', rid)
-                this.invitationRooms.push(this.rooms.find((r) => r.id == rid))
-              }
-              console.log('invitationList11:', this.invitationRooms)
-              this.rooms = this.invitationRooms
-            })
-            .catch((err) => {
-              console.log(err)
-            })
+          return UserService.getInvitationList()
+        })
+        .then((response) => {
+          this.invitationList = response.data
+          console.log('invitationList:', this.invitationList)
+          return RoomService.getRooms() // WTF
+        })
+        .then((res) => {
+          this.invited_rooms = res.data // roomList
+          console.log('[debug] invited_rooms:', this.invited_rooms)
+          for (let rid of this.invitationList.map((i) => i.room_id)) {
+            console.log('[debug] roomId:', rid)
+            this.invitationRooms.push(this.invited_rooms.find((r) => r.id == rid))
+          }
+          console.log('invitationList11:', this.invitationRooms)
+          this.invited_rooms = this.invitationRooms
+        
+          console.log("kkkkkkkkkkk")
+          return UserService.getUserAdminRoom()
+        })
+        .then((response) => {
+          this.admin_rooms = response.data
         })
         .catch((err) => {
           if (
@@ -555,9 +584,6 @@ export default {
     },
     ser_fun() {
       this
-    },
-    getUserId() {
-      return UserService.getUserId()
     },
   },
   computed: {
