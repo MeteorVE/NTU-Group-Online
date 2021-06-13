@@ -229,16 +229,6 @@ export default {
       formLabelWidth: '120px',
       roomTypeDict: [],
       sideBarList: [],
-      category: [
-        '吃飯',
-        '團購',
-        '遊戲',
-        '聊天',
-        '共乘',
-        '交易',
-        '分組',
-        '出遊',
-      ],
       user: { nickname: '' },
     }
   },
@@ -246,10 +236,12 @@ export default {
     ...mapGetters(['isAuth']),
     filteredRooms: function () {
       if (this.$store.state.filter) {
-        // console.log(this.$store.state.filter)
+        let category = this.imageList.find(
+          (element) => element.category === this.$store.state.filter
+        )
         return this.rooms.filter(
           (room) =>
-            room.room_category.includes(this.$store.state.filter) ||
+            room.room_category.includes(category.value) ||
             room.introduction.includes(this.$store.state.filter) ||
             room.title.includes(this.$store.state.filter)
         )
@@ -406,8 +398,15 @@ export default {
 }
 </script>
 <style scoped>
-.item {
-  width: 25%;
+@media (max-width: 767px) {
+  .item {
+    width: 50%;
+  }
+}
+@media (min-width: 767px) {
+  .item {
+    width: 25%;
+  }
 }
 .el-form-item > label {
   line-height: 2px;
