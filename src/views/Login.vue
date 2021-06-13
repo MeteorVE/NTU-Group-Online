@@ -76,7 +76,7 @@ export default {
     }
   },
   created() {
-    this.forDev()
+    //this.forDev()
   },
   methods: {
     forDev() {
