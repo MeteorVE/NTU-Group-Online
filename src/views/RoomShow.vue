@@ -361,6 +361,7 @@ export default {
       user: {
         access_level: 'user',
       },
+      nowID: -1,
       memberList: [],
       invitationList: [],
       blockList: [],
@@ -390,7 +391,7 @@ export default {
       ],
       dialogFormRoom: {},
       memberFormVisible: false,
-      roomws: {},
+      roomws: null,
       messages: [],
       removeDialog: { visible: false, title: '', subTitle: '' },
     }
@@ -445,17 +446,15 @@ export default {
     }
     //---------------------websocket-------------------------------
 
-    if (this.roomws[parseInt(this.$route.params.id, 10)] == null) {
-      console.log('Room ' + parseInt(this.$route.params.id, 10) + ' Ws init')
-      this.roomws[
-        parseInt(this.$route.params.id, 10)
-      ] = WsService.InitRoomWebsocket(
+    if (this.roomws == null) {
+      console.log('Room '+ parseInt(this.$route.params.id, 10) +' Ws init')
+      this.roomws = WsService.InitRoomWebsocket(
         this.$store.state.token,
-        parseInt(this.$route.params.id, 10)
+        parseInt(this.$route.params.id, 10),
       ) //初始化
       console.log(this.roomws[parseInt(this.$route.params.id, 10)])
 
-      this.roomws[parseInt(this.$route.params.id, 10)].onmessage = (event) => {
+      this.roomws.onmessage = (event) => {
         //console.log(event.data)
 
         let res = JSON.parse(event.data) //訊息的data
@@ -509,9 +508,7 @@ export default {
                 message: 'Close', //文字訊息
                 token: this.$store.state.token, //Request 都必需附上token
               }
-              this.roomws[parseInt(this.$route.params.id, 10)].send(
-                JSON.stringify(msgObj)
-              )
+              this.roomws.send(JSON.stringify(msgObj))
               //------------------------------------------
               //Then Close Room Handle or Trigger
               this.removeDialog.title = '您將被導向首頁'
@@ -582,9 +579,7 @@ export default {
                 message: 'Close', //文字訊息
                 token: this.$store.state.token, //Request 都必需附上token
               }
-              this.roomws[parseInt(this.$route.params.id, 10)].send(
-                JSON.stringify(msgObj)
-              )
+              this.roomws.send(JSON.stringify(msgObj))
               //----------------Then Close Room Handle or Trigger --------------------------
               this.removeDialog.title = '您將被導向首頁'
               this.removeDialog.subTitle = '原因: 房主關閉了房間。'
@@ -607,15 +602,10 @@ export default {
           case 'ping': //也是確認websocket還有沒有活著的部份
             console.log(parseInt(this.$route.params.id, 10))
             console.log(this.$route.fullPath)
-            if (
-              this.$route.fullPath !=
-                '/room/' + parseInt(this.$route.params.id, 10) + '/' ||
-              this.$route.fullPath !=
-                '/room/' + parseInt(this.$route.params.id, 10)
-            ) {
+            /*if (this.$route.fullPath != '/room/' + parseInt(this.$route.params.id, 10)+'/' || this.$route.fullPath != '/room/' + parseInt(this.$route.params.id, 10)) {
               console.log('Close room websocket by param')
               this.roomws[parseInt(this.$route.params.id, 10)].close()
-            }
+            }*/
             break
         }
       }
@@ -893,186 +883,6 @@ export default {
         _user.access_level == 'admin' || _user.access_level == 'manager'
           ? true
           : false
-    },
-    'this.$route.params.id': function (id) {
-      console.log('Change route params: ' + id)
-      if (this.roomws[parseInt(this.$route.params.id, 10)] == null || this.roomws[parseInt(this.$route.params.id, 10)] == undefined) {
-        console.log('Room ' + parseInt(this.$route.params.id, 10) + ' Ws init')
-        this.roomws[
-          parseInt(this.$route.params.id, 10)
-        ] = WsService.InitRoomWebsocket(
-          this.$store.state.token,
-          parseInt(this.$route.params.id, 10)
-        ) //初始化
-        console.log(this.roomws[parseInt(this.$route.params.id, 10)])
-
-        this.roomws[parseInt(this.$route.params.id, 10)].onmessage = (
-          event
-        ) => {
-          //console.log(event.data)
-
-          let res = JSON.parse(event.data) //訊息的data
-          let showtime = null
-          console.log('Now Room: ' + parseInt(this.$route.params.id, 10))
-          console.log('[Websocket event.data]:', event.data)
-          // console.log(res.roomID) //送到的room ID
-          // console.log(res.message) //我們要update廣播的message
-          // console.log(res.time) //送出這個訊息的時間
-
-          //-------按照header判斷訊息種類---------
-          // message = [ 'memberList', 'invitationList', 'blockList', 'RoomProfile' ...  ]
-          switch (res.header) {
-            case 'message': //-----正常傳訊息會是這個header-------
-              // console.log(res.userID, res.roomID, res.nickname, res.message)
-              showtime = new Date(res.time) //5.訊息的時間 用js就能Parse出來了
-              var hour = showtime.getHours()
-              var minute = showtime.getMinutes()
-              hour = String(hour).padStart(2, '0')
-              minute = String(minute).padStart(2, '0')
-              var currentTime = `${hour}:${minute}`
-              var newMessage = {
-                user: res.userID,
-                nickname: res.nickname,
-                text: res.message,
-                time: currentTime,
-              }
-              this.messages.push(newMessage)
-              //--------------以上可以自由運用----------------------
-              /* 這邊原本是要顯示訊息的code，但我不會Element UI跟Vue的高端寫法，只好交給前端去做
-            console.log(this.$store.state.user_id)
-            if (res.userId != this.$store.state.user_id) {
-              this.messages.push({
-                id: res.userID,
-                user: res.username,
-                time: String(showtime.getHours()) + String(showtime.getMinutes()),
-                text: res.message,
-              })
-            }
-            */
-              break
-            case 'remove':
-              if (res.message === 'Removed') {
-                console.log('ws case : remove')
-
-                let msgObj = {
-                  header: 'controlMessage', // Message 的 header,正常message的header就叫message
-                  msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
-                  userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
-                  roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
-                  message: 'Close', //文字訊息
-                  token: this.$store.state.token, //Request 都必需附上token
-                }
-                this.roomws[parseInt(this.$route.params.id, 10)].send(
-                  JSON.stringify(msgObj)
-                )
-                //------------------------------------------
-                //Then Close Room Handle or Trigger
-                this.removeDialog.title = '您將被導向首頁'
-                this.removeDialog.subTitle = '原因: 您被移出成員列表。'
-                this.removeDialog.visible = true
-                setTimeout(() => {
-                  this.$router.push({
-                    name: 'home',
-                  })
-                }, 3000)
-              }
-              break
-            case 'update':
-              if (res.message.includes('member_list')) {
-                this.getMemberList()
-                  .then((res) => {
-                    this.memberList = res.data
-                    this.host = res.data.filter(
-                      (user) => user.access_level == 'admin'
-                    )[0].nickname
-                    if (!res.data.filter((m) => m.member_id)) {
-                      console.log('you are not in room QQ')
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err.data)
-                  })
-              }
-              if (res.message.includes('block_list')) {
-                this.getBlockList()
-                  .then((res) => {
-                    this.blockList = res.data
-                    console.log('blockList:', res.data)
-                  })
-                  .catch((err) => {
-                    console.log(err.data)
-                  })
-              }
-              if (res.message.includes('invite_list')) {
-                this.getInvitationList()
-                  .then((res) => {
-                    this.invitationList = res.data
-                    console.log('invitationList', res.data)
-                  })
-                  .catch((err) => {
-                    console.log(err.data)
-                  })
-              }
-              if (res.message.includes('profile')) {
-                this.getRoomObj()
-                  .then((res) => {
-                    this.room = res
-                    this.dialogFormRoom = { ...res }
-                    console.log(res)
-                  })
-                  .catch((err) => {
-                    console.log(err)
-                  })
-              }
-
-              if (res.message === 'delete_room') {
-                // = if (res.message.includes('delete_room'))
-                let msgObj = {
-                  header: 'controlMessage', // Message 的 header,正常message的header就叫message
-                  msg_type: 'text', // Message 的 type,因為當初本來有考慮要送圖片 但現在沒有,所以type是text
-                  userID: this.$store.state.user_id, //送這個message的user ID, 一開始就有存在store裡面
-                  roomID: parseInt(this.$route.params.id, 10), // 目前的roomID,用route參數的ID來判斷
-                  message: 'Close', //文字訊息
-                  token: this.$store.state.token, //Request 都必需附上token
-                }
-                this.roomws[parseInt(this.$route.params.id, 10)].send(
-                  JSON.stringify(msgObj)
-                )
-                //----------------Then Close Room Handle or Trigger --------------------------
-                this.removeDialog.title = '您將被導向首頁'
-                this.removeDialog.subTitle = '原因: 房主關閉了房間。'
-                this.removeDialog.visible = true
-                setTimeout(() => {
-                  this.$router.push({
-                    name: 'home',
-                  })
-                }, 3000)
-              }
-              this.getRoomRecord()
-                .then((res) => {
-                  this.roomRecord = res.data
-                })
-                .catch((err) => {
-                  console.log(err.data)
-                })
-              // end of case "update"
-              break
-            case 'ping': //也是確認websocket還有沒有活著的部份
-              console.log(parseInt(this.$route.params.id, 10))
-              console.log(this.$route.fullPath)
-              if (
-                this.$route.fullPath !=
-                  '/room/' + parseInt(this.$route.params.id, 10) + '/' ||
-                this.$route.fullPath !=
-                  '/room/' + parseInt(this.$route.params.id, 10)
-              ) {
-                console.log('Close room websocket by param')
-                this.roomws[parseInt(this.$route.params.id, 10)].close()
-              }
-              break
-          }
-        }
-      }
     },
   },
 }

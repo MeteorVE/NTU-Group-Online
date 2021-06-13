@@ -94,7 +94,7 @@ export default {
           message: this.message, //文字訊息
           token: this.$store.state.token, //Request 都必需附上token
         }
-        this.roomws[parseInt(this.$route.params.id, 10)].send(JSON.stringify(msgObj))
+        this.roomws.send(JSON.stringify(msgObj))
         this.message = ''
       }
     },
