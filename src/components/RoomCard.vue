@@ -12,14 +12,14 @@
       </template>
     </el-skeleton>
     <h4>{{ room.title }}</h4>
-    <div>
+    <div class="roomCategory">
       <p>分類 :</p>
       <el-tag type="success">{{ getCategoryName() }}</el-tag>
       <el-tag type="info">{{
         typeDict[room.room_type] ? typeDict[room.room_type] : room.room_type
       }}</el-tag>
     </div>
-    <div>
+    <div class="roomContent">
       <p>人數限制 : {{ room.people_limit }}</p>
       <p>簡介 : {{ introduction }}</p>
       <div style="text-align: center">
@@ -111,6 +111,12 @@ export default {
 }
 .el-card h4 {
   margin: 10px;
+}
+.roomContent {
+  margin-left: 4px;
+}
+.roomCategory {
+  margin-left: 8px;
 }
 /* .rooms-container {
   position: relative;
