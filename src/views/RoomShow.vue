@@ -446,19 +446,19 @@ export default {
     //---------------------websocket-------------------------------
 
     if (this.roomws[parseInt(this.$route.params.id, 10)] == null) {
-      console.log('this.roomws[this.$route.params.id] == null')
-      let nowRoomID = parseInt(this.$route.params.id, 10)
-      this.roomws[nowRoomID] = WsService.InitRoomWebsocket(
+      console.log('Room '+ parseInt(this.$route.params.id, 10) +' Ws init')
+      this.roomws[parseInt(this.$route.params.id, 10)] = WsService.InitRoomWebsocket(
         this.$store.state.token,
-        this.$route.params.id
+        parseInt(this.$route.params.id, 10),
       ) //初始化
-      console.log(this.roomws[nowRoomID])
+      console.log(this.roomws[parseInt(this.$route.params.id, 10)])
 
-      this.roomws[nowRoomID].onmessage = (event) => {
+      this.roomws[parseInt(this.$route.params.id, 10)].onmessage = (event) => {
         //console.log(event.data)
 
         let res = JSON.parse(event.data) //訊息的data
         let showtime = null
+        console.log('Now Room: ' + parseInt(this.$route.params.id, 10))
         console.log('[Websocket event.data]:', event.data)
         // console.log(res.roomID) //送到的room ID
         // console.log(res.message) //我們要update廣播的message
@@ -507,8 +507,7 @@ export default {
                 message: 'Close', //文字訊息
                 token: this.$store.state.token, //Request 都必需附上token
               }
-              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
-
+              this.roomws[parseInt(this.$route.params.id, 10)].send(JSON.stringify(msgObj))
               //------------------------------------------
               //Then Close Room Handle or Trigger
               this.removeDialog.title = '您將被導向首頁'
@@ -579,7 +578,7 @@ export default {
                 message: 'Close', //文字訊息
                 token: this.$store.state.token, //Request 都必需附上token
               }
-              this.roomws[nowRoomID].send(JSON.stringify(msgObj))
+              this.roomws[parseInt(this.$route.params.id, 10)].send(JSON.stringify(msgObj))
               //----------------Then Close Room Handle or Trigger --------------------------
               this.removeDialog.title = '您將被導向首頁'
               this.removeDialog.subTitle = '原因: 房主關閉了房間。'
@@ -600,8 +599,10 @@ export default {
             // end of case "update"
             break
           case 'ping': //也是確認websocket還有沒有活著的部份
-            if (this.$route.fullPath != '/room/' + nowRoomID) {
-              this.roomws[nowRoomID].close()
+            console.log(parseInt(this.$route.params.id, 10))
+            console.log(this.$route.fullPath)
+            if (this.$route.fullPath != '/room/' + parseInt(this.$route.params.id, 10)) {
+              this.roomws[parseInt(this.$route.params.id, 10)].close()
             }
             break
         }
