@@ -31,9 +31,9 @@
           >
             <el-option
               v-for="category in imageList"
-              :label="category.value"
-              :key="category.category"
-              :value="category.category"
+              :label="category.category"
+              :key="category.value"
+              :value="category.value"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -126,7 +126,6 @@ import { mapGetters } from 'vuex'
 export default {
   components: null,
   data() {
-    const categoryDict = { course: '課程討論', find_group: '尋求組隊' }
     const roomTypeDict = {
       public: '公開',
       private: '私人',
@@ -256,16 +255,13 @@ export default {
       this.room.image_url = item.url
     }
     const renderUrl = (selected) => {
-      let selectedCategory = this.imageList.find(
-        (el) => el.category == selected
-      )
+      let selectedCategory = this.imageList.find((el) => el.value == selected)
       if (selectedCategory) {
         this.room.image_url = selectedCategory.url
-        this.selectedImageCate = selectedCategory.value
+        this.selectedImageCate = selectedCategory.category
       }
     }
     return {
-      categoryDict,
       roomTypeDict,
       imageList,
       querySearch,
@@ -307,6 +303,14 @@ export default {
         }
       })
     }
+    RoomService.getRoomCategory()
+      .then((res) => {
+        this.imageList = res.data
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   },
   methods: {
     hardcreateRoom() {
@@ -355,19 +359,6 @@ export default {
           name: 'login',
         })
       }
-
-      // this.$store
-      //   .dispatch('createEvent', this.event)
-      //   .then(() => {
-      //     this.$router.push({
-      //       name: 'event-show',
-      //       params: { id: this.event.id },
-      //     })
-      //     this.event = this.createFreshEventObject()
-      //   })
-      //   .catch(() => {
-      //     console.log('There was a problem creating your event')
-      //   })
     },
     createRoom() {
       if (this.$store.state.token) {

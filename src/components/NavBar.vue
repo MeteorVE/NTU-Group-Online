@@ -16,7 +16,7 @@
         <el-menu-item class="plus" route="/room/create" index="/room/create">
           <i class="el-icon-plus"></i>
         </el-menu-item>
-        <el-menu-item class="bell" index="5">
+        <el-menu-item class="bell" @click="showNotification">
           <i class="el-icon-bell"></i>
         </el-menu-item>
 
@@ -90,6 +90,9 @@ export default {
         this.searchInput = ''
       }
     },
+    showNotification() {
+      this.$emit('showNotification')
+    },
   },
 }
 </script>
@@ -122,6 +125,9 @@ a {
   justify-content: flex-end;
 }
 .search {
-  color: white !important;
+  color: #909399 !important;
+}
+.bell {
+  color: #909399 !important;
 }
 </style>

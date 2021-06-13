@@ -298,7 +298,8 @@ export default {
           RoomService.getRoomCategory()
             .then((res) => {
               console.log('[Warning]: 目前有成功拿到資料但是沒有寫入', res.data)
-              this.sideBarList = this.imageList.map((o) => o.value)
+              this.imageList = res.data
+              this.sideBarList = this.imageList.map((o) => o.category)
               // this.sideBarList = Object.values(res.data)
             })
             .catch((err) => {
@@ -385,6 +386,8 @@ export default {
       }
     },
     updateFilter(category) {
+      console.log('filter :', category)
+
       this.filter = category
     },
     updateClickedRoom(dic) {

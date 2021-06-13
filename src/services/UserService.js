@@ -1,11 +1,13 @@
 import axios from 'axios'
 import store from '@/store/index.js'
+import router from '@/router/index.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 const apiDjango = axios.create({
-  baseURL: `http://localhost:8000`,
+  baseURL: process.env.VUE_APP_BACKEND,
+  // baseURL: `http://localhost:8000`,
   withCredentials: false, // This is the default
   headers: {
     Accept: 'application/json',
@@ -32,7 +34,7 @@ apiDjango.interceptors.response.use(
         case 401:
           console.log('登入無效')
           store.dispatch('logout')
-          this.$router.push('/')
+          router.push('/')
           break
         case 404:
           console.log('找不到該頁面')
@@ -50,33 +52,55 @@ apiDjango.interceptors.response.use(
       console.log('連接到服務器失敗')
     }
     return Promise.reject(err.response)
-  })
-
-  export default {  
-    getUserId() {
-    return apiDjango.get('/api/user/get_id/')
-    },
-
-    getUser(userId) {
-    return apiDjango.get('/api/user/' + userId + '/')
-    },
-
-    getUserRoom() {
-      return apiDjango.get('/user_room/')
-    },
-
-    putUserEdit(userId, newLastName, newFirstName) {
-      return apiDjango.put('/api/user/' + userId + '/', {
-        last_name: newLastName,
-        first_name: newFirstName,
-      },)
-    },
-
-    putChangePassword(userId, oldPassword, newPassword1, newPassword2) {
-      return apiDjango.put('/api/user/' + userId + '/change_password/', {
-        old_password: oldPassword,
-        password: newPassword1,
-        password2: newPassword2,
-      },)
-    },
   }
+)
+
+export default {
+  getUserId() {
+    return apiDjango.get('/api/user/get_id/')
+  },
+
+  getUser(userId) {
+    return apiDjango.get('/api/user/' + userId + '/')
+  },
+
+  getUserRoom() {
+    return apiDjango.get('/user_room/')
+  },
+
+  getUserAdminRoom() {
+    console.log("ddddddddddd")
+    return apiDjango.get('/user_admin_room/')
+  },
+
+  getInvitationList() {
+    return apiDjango.get('/invitation/')
+  },
+
+  putUserEdit(userId, newLastName, newFirstName) {
+    return apiDjango.put('/api/user/' + userId + '/', {
+      last_name: newLastName,
+      first_name: newFirstName,
+    })
+  },
+
+  putChangePassword(userId, oldPassword, newPassword1, newPassword2) {
+    return apiDjango.put('/api/user/' + userId + '/change_password/', {
+      old_password: oldPassword,
+      password: newPassword1,
+      password2: newPassword2,
+    })
+  },
+
+  getUserNotification() {
+    return apiDjango.get('/api/user/notification/')
+  },
+
+  deleteUserNotification(notificationId) {
+    return apiDjango.delete('/api/user/notification/' + notificationId + '/')
+  },
+
+  readUserNotification(notificationId) {
+    return apiDjango.put('/api/user/read_notification/' + notificationId + '/')
+  },
+}

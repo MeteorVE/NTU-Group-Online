@@ -73,11 +73,11 @@ export default {
     },
     getCategoryName() {
       let result = this.imageList.find(
-        (o) => o.category == this.room.room_category
+        (o) => o.value == this.room.room_category
       )
 
       if (result) {
-        return result.value
+        return result.category
       } else {
         return this.room.room_category
       }
