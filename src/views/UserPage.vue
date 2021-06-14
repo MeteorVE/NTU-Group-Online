@@ -273,6 +273,13 @@
               <RoomListCard :room="room" />
             </div>
           </el-main>
+          <el-alert
+              title="您沒加入任何房間"
+              type="info"
+              description="歡迎主動加入有興趣的房間"
+              center
+              show-icon>
+            </el-alert>
         </el-container>
         <!-- <RoomList /> -->
       </el-tab-pane>
@@ -292,6 +299,13 @@
               <RoomListCard :room="room" />
             </div>
           </el-main>
+          <el-alert
+              title="您沒創建任何房間"
+              type="info"
+              description="歡迎主動創建房間"
+              center
+              show-icon>
+            </el-alert>
         </el-container>
       </el-tab-pane>
 
@@ -309,6 +323,15 @@
             >
               <RoomListCard :room="room" :invited_rooms_btn="invited_rooms_btn" :user_nickname="user.nickname" :invit_id="invitationList[index].id"/>
             </div>
+          </el-main>
+          <el-main id="roomCardContainer" v-else>
+            <el-alert
+              title="您沒任何受邀的通知"
+              type="info"
+              description="歡迎主動加入有興趣的房間"
+              center
+              show-icon>
+            </el-alert>
           </el-main>
         </el-container>
       </el-tab-pane>
