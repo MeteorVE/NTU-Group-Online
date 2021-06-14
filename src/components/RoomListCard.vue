@@ -9,13 +9,14 @@
         <p>
           <!-- crate time：{{ room.create_time.slice(0, 10) }}
           {{ room.create_time.slice(11, 19) }} -->
-          crate time：{{ room.create_time.slice(0, 10) }} {{ room.create_time.slice(11, 19) }}
-          
+          crate time：{{ room.create_time.slice(0, 10) }}
+          {{ room.create_time.slice(11, 19) }}
         </p>
         <p>
           <!-- valid time：{{ room.valid_time.slice(0, 10) }}
           {{ room.valid_time.slice(11, 19) }} -->
-          valid time：{{ room.valid_time.slice(0, 10) }} {{ room.valid_time.slice(11, 19) }}
+          valid time：{{ room.valid_time.slice(0, 10) }}
+          {{ room.valid_time.slice(11, 19) }}
         </p>
         <p>room type：{{ room.room_type }}</p>
         <p>room category：{{ room.room_category }}</p>
@@ -24,9 +25,21 @@
           introduction：
           <el-button type="text" @click="moreIntro">more</el-button>
 
-          <el-button type="success" class="roomcardbtn1" @click="acceptinvite" v-show="invited_rooms_btn">接受邀請</el-button>
+          <el-button
+            type="success"
+            class="roomcardbtn1"
+            @click="acceptinvite"
+            v-show="invited_rooms_btn"
+            >接受邀請</el-button
+          >
           <!-- <el-button type="success" class="roomcardbtn2" @click="emitParent">接受邀請並進入</el-button> -->
-          <el-button type="danger" class="roomcardbtn3" @click="rejectinvite" v-show="invited_rooms_btn">拒絕邀請</el-button>
+          <el-button
+            type="danger"
+            class="roomcardbtn3"
+            @click="rejectinvite"
+            v-show="invited_rooms_btn"
+            >拒絕邀請</el-button
+          >
         </p>
       </div>
     </div>
@@ -66,12 +79,12 @@ export default {
 
   methods: {
     emitParent() {
-      console.log("111111"),
-      this.$emit('update', {
-        dialogFormRoom: this.room,
-        dialogFormVisible: true,
-        clickedRoomId: this.room.id,
-      })
+      console.log('111111'),
+        this.$emit('update', {
+          dialogFormRoom: this.room,
+          dialogFormVisible: true,
+          clickedRoomId: this.room.id,
+        })
     },
 
     getMemberList() {
@@ -86,15 +99,14 @@ export default {
     },
 
     acceptinvite() {
-
-      console.log("uuuuuuuuu", this.user_nickname)
-      console.log("uuuuuuuuu", this.invit_id)
-      console.log("accept")
+      console.log('uuuuuuuuu', this.user_nickname)
+      console.log('uuuuuuuuu', this.invit_id)
+      console.log('accept')
       UserService.postAcceptInvite(this.invit_id, this.user_nickname)
     },
 
     rejectinvite() {
-      console.log("reject")
+      console.log('reject')
       UserService.deleteRejectInvite(this.invit_id)
       // return UserService.deleteRejectInvite(this.room.id)
     },
@@ -108,8 +120,6 @@ export default {
       },
     },
   },
-
-  
 }
 </script>
 

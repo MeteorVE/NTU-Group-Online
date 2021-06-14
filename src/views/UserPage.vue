@@ -2,9 +2,7 @@
   <!-- <RoomList /> -->
   <div class="userpage">
     <el-tabs :tab-position="tabPosition">
-      <el-tab-pane
-        label="關於我"
-      >
+      <el-tab-pane label="關於我">
         <el-container>
           <el-main>
             <div class="profile">
@@ -173,9 +171,7 @@
         </el-container>
       </el-tab-pane>
 
-      <el-tab-pane
-        label="更改密碼"
-      >
+      <el-tab-pane label="更改密碼">
         <div class="resetPWD">
           <el-card class="reset-card">
             <h2>變更密碼</h2>
@@ -258,9 +254,7 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane
-        label="我的房間"
-      >
+      <el-tab-pane label="我的房間">
         <el-container>
           <!-- <router-view /> -->
           <el-main id="roomCardContainer" v-if="my_rooms.length > 0">
@@ -274,19 +268,18 @@
             </div>
           </el-main>
           <el-alert
-              title="您沒加入任何房間"
-              type="info"
-              description="歡迎主動加入有興趣的房間"
-              center
-              show-icon>
-            </el-alert>
+            title="您沒加入任何房間"
+            type="info"
+            description="歡迎主動加入有興趣的房間"
+            center
+            show-icon
+          >
+          </el-alert>
         </el-container>
         <!-- <RoomList /> -->
       </el-tab-pane>
 
-      <el-tab-pane
-        label="房主管理"
-      >
+      <el-tab-pane label="房主管理">
         <el-container>
           <router-view />
           <el-main id="roomCardContainer" v-if="admin_rooms.length > 0">
@@ -300,18 +293,17 @@
             </div>
           </el-main>
           <el-alert
-              title="您沒創建任何房間"
-              type="info"
-              description="歡迎主動創建房間"
-              center
-              show-icon>
-            </el-alert>
+            title="您沒創建任何房間"
+            type="info"
+            description="歡迎主動創建房間"
+            center
+            show-icon
+          >
+          </el-alert>
         </el-container>
       </el-tab-pane>
 
-      <el-tab-pane
-        label="邀請中的房間"
-      >
+      <el-tab-pane label="邀請中的房間">
         <el-container>
           <router-view />
           <el-main id="roomCardContainer" v-if="invited_rooms.length > 0">
@@ -321,7 +313,12 @@
               v-for="(room, index) in invited_rooms"
               v-bind:key="index"
             >
-              <RoomListCard :room="room" :invited_rooms_btn="invited_rooms_btn" :user_nickname="user.nickname" :invit_id="invitationList[index].id"/>
+              <RoomListCard
+                :room="room"
+                :invited_rooms_btn="invited_rooms_btn"
+                :user_nickname="user.nickname"
+                :invit_id="invitationList[index].id"
+              />
             </div>
           </el-main>
           <el-main id="roomCardContainer" v-else>
@@ -330,7 +327,8 @@
               type="info"
               description="歡迎主動加入有興趣的房間"
               center
-              show-icon>
+              show-icon
+            >
             </el-alert>
           </el-main>
         </el-container>
@@ -468,7 +466,7 @@ export default {
         .then((response) => {
           this.invitationList = response.data
           console.log('invitationList222:', this.invitationList)
-          
+
           return RoomService.getRooms() // WTF
         })
         .then((res) => {
@@ -476,35 +474,36 @@ export default {
           console.log('[debug] invited_rooms:', this.invited_rooms)
           for (let rid of this.invitationList.map((i) => i.room_id)) {
             console.log('[debug] roomIdbbb:', rid)
-            this.invitationRooms.push(this.invited_rooms.find((r) => r.id == rid))
+            this.invitationRooms.push(
+              this.invited_rooms.find((r) => r.id == rid)
+            )
           }
-          
+
           console.log('invitationList11:', this.invitationRooms)
           this.invited_rooms = this.invitationRooms
           return UserService.getUserAdminRoom()
         })
         .then((response) => {
           this.admin_rooms = response.data
-          console.log("kkkkkkkkkkk", this.admin_rooms)
+          console.log('kkkkkkkkkkk', this.admin_rooms)
           return UserService.getUserRoom()
         })
         .then((response) => {
-          console.log("zzzzzzzzz", response.data)
+          console.log('zzzzzzzzz', response.data)
           this.my_rooms = response.data
-          console.log("zzzzzzzzz", this.my_rooms)
-
+          console.log('zzzzzzzzz', this.my_rooms)
         })
-        // .catch((err) => {
-        //   if (
-        //     'code' in err.response.data &&
-        //     err.response.data['code'] == 'token_not_valid'
-        //   ) {
-        //     this.$store.dispatch('resetToken')
-        //     this.$router.push({
-        //       name: 'login',
-        //     })
-        //   }
-        // })
+      // .catch((err) => {
+      //   if (
+      //     'code' in err.response.data &&
+      //     err.response.data['code'] == 'token_not_valid'
+      //   ) {
+      //     this.$store.dispatch('resetToken')
+      //     this.$router.push({
+      //       name: 'login',
+      //     })
+      //   }
+      // })
     } else {
       console.log('plz login !')
       ElMessage.error('請登入 !')

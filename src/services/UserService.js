@@ -93,8 +93,6 @@ export default {
   },
 
   postAcceptInvite(inviteId, userNickname) {
-    console.log("1234", inviteId)
-    console.log("5678", userNickname)
     return apiDjango.post('/accept_invite/' + inviteId + '/', {
       nickname: userNickname,
     })
