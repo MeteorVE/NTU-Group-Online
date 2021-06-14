@@ -83,11 +83,11 @@ export default {
 
   methods: {
     emitParent() {
-        this.$emit('update', {
-          dialogFormRoom: this.room,
-          dialogFormVisible: true,
-          clickedRoomId: this.room.id,
-        })
+      this.$emit('update', {
+        dialogFormRoom: this.room,
+        dialogFormVisible: true,
+        clickedRoomId: this.room.id,
+      })
     },
 
     getMemberList() {
@@ -103,9 +103,6 @@ export default {
 
     acceptinvite() {
       UserService.postAcceptInvite(this.invit_id, this.user_nickname)
-        this.$router.push({
-          name: 'invite',
-        })
         .then(() => {
           return UserService.getInvitationList()
         })
@@ -121,9 +118,6 @@ export default {
 
     rejectinvite() {
       UserService.deleteRejectInvite(this.invit_id)
-      this.$router.push({
-        name: 'invite',
-      })
     },
   },
 
