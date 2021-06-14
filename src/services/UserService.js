@@ -69,7 +69,6 @@ export default {
   },
 
   getUserAdminRoom() {
-    console.log("ddddddddddd")
     return apiDjango.get('/user_admin_room/')
   },
 

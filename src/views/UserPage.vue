@@ -180,7 +180,6 @@
               :model="passwordModel"
               :rules="rules"
               ref="form"
-              @submit.prevent="submit"
             >
               <el-form-item prop="oldPassword" label="請輸入舊密碼">
                 <!-- <el-input
@@ -435,13 +434,7 @@ export default {
     if (this.$store.state.token) {
       this.$store
         .dispatch('refreshToken')
-        .then((resRefresh) => {
-          console.log('f1', resRefresh)
-          console.log('test1', this.user.email)
-          console.log('test2', this.user.nickname)
-          console.log('test3', this.user.department)
-          console.log('test4', this.user.lastName)
-          console.log('test5', this.user.firstName)
+        .then(() => {
           return UserService.getUserId()
         })
         .then((res) => {
@@ -485,13 +478,10 @@ export default {
         })
         .then((response) => {
           this.admin_rooms = response.data
-          console.log('kkkkkkkkkkk', this.admin_rooms)
           return UserService.getUserRoom()
         })
         .then((response) => {
-          console.log('zzzzzzzzz', response.data)
           this.my_rooms = response.data
-          console.log('zzzzzzzzz', this.my_rooms)
         })
       // .catch((err) => {
       //   if (

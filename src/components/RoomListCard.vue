@@ -9,14 +9,18 @@
         <p>
           <!-- crate time：{{ room.create_time.slice(0, 10) }}
           {{ room.create_time.slice(11, 19) }} -->
-          crate time：{{ room.create_time.slice(0, 10) }}
-          {{ room.create_time.slice(11, 19) }}
+          crate time：{{
+            !room.create_time ? '未指定' : room.create_time.slice(0, 10)
+          }}
+          {{ !room.create_time ? '' : room.create_time.slice(11, 19) }}
         </p>
         <p>
           <!-- valid time：{{ room.valid_time.slice(0, 10) }}
           {{ room.valid_time.slice(11, 19) }} -->
-          valid time：{{ room.valid_time.slice(0, 10) }}
-          {{ room.valid_time.slice(11, 19) }}
+          valid time：{{
+            !room.valid_time ? '未指定' : room.valid_time.slice(0, 10)
+          }}
+          {{ !room.valid_time ? '' : room.valid_time.slice(11, 19) }}
         </p>
         <p>room type：{{ room.room_type }}</p>
         <p>room category：{{ room.room_category }}</p>
@@ -53,9 +57,9 @@ import RoomService from '@/services/RoomService.js'
 export default {
   props: {
     room: Object,
-    invited_rooms_btn: Object,
-    user_nickname: Object,
-    invit_id: Object,
+    invited_rooms_btn: Boolean,
+    user_nickname: String,
+    invit_id: Number,
   },
   data() {
     return {
@@ -99,10 +103,21 @@ export default {
     },
 
     acceptinvite() {
-      console.log('uuuuuuuuu', this.user_nickname)
-      console.log('uuuuuuuuu', this.invit_id)
-      console.log('accept')
       UserService.postAcceptInvite(this.invit_id, this.user_nickname)
+        .then(() => {
+          console.log('accept')
+          return UserService.getInvitationList()
+        })
+        .then((res) => {
+          console.log('invitation list:', res.data)
+
+          this.$emit('update', {
+            rooms: res.data,
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     rejectinvite() {

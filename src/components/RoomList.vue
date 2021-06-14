@@ -1,4 +1,4 @@
-<template v-:fixed>
+<template>
   <div class="userpage">
     <el-container>
       <router-view />
@@ -10,7 +10,7 @@
           v-for="(room, index) in rooms"
           v-bind:key="index"
         >
-          <RoomListCard :room="room" />
+          <RoomListCard :room="room" @update="updateRooms" />
         </div>
       </el-main>
     </el-container>
@@ -73,34 +73,15 @@ export default {
       this.rooms = response.data
       console.log('aaaaaaaaa', response.data)
     })
+  },
+  methods: {
+    updateRooms(dic) {
+      console.log('update 觸發')
 
-    // .catch((error) => {
-    //   console.log(
-    //     '[Home.vue] error: created(), RoomService.getRooms():',
-    //     '\n理論上這邊不會再有錯誤了，注意一下\n',
-    //     error.response
-    //   )
-    // })
+      console.log(dic)
 
-    // .catch((err) => {
-    //   console.log(
-    //     '[Home.vue.created.catch], token exist but:',
-    //     '\nstatus code: ',
-    //     err.response.status,
-    //     '\nerror message: ',
-    //     JSON.stringify(err.response.data)
-    //   )
-    //   if (
-    //     'code' in err.response.data &&
-    //     err.response.data['code'] == 'token_not_valid'
-    //   ) {
-    //     console.log('[Home.vue.created.catch] delete token')
-    //     this.$store.dispatch('resetToken')
-    //   }
-    //   this.$router.push({
-    //     name: 'login',
-    //   })
-    // })
+      this.rooms = dic['rooms']
+    },
   },
 }
 </script>
