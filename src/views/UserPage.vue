@@ -266,14 +266,16 @@
               <RoomListCard :room="room" />
             </div>
           </el-main>
-          <el-alert
-            title="您沒加入任何房間"
-            type="info"
-            description="歡迎主動加入有興趣的房間"
-            center
-            show-icon
-          >
-          </el-alert>
+          <el-main id="roomCardContainer" v-else>
+            <el-alert
+              title="您沒加入任何房間"
+              type="info"
+              description="歡迎主動加入有興趣的房間"
+              center
+              show-icon
+            >
+            </el-alert>
+          </el-main>
         </el-container>
         <!-- <RoomList /> -->
       </el-tab-pane>
@@ -291,14 +293,16 @@
               <RoomListCard :room="room" />
             </div>
           </el-main>
-          <el-alert
-            title="您沒創建任何房間"
-            type="info"
-            description="歡迎主動創建房間"
-            center
-            show-icon
-          >
-          </el-alert>
+          <el-main id="roomCardContainer" v-else>
+            <el-alert
+              title="您沒創建任何房間"
+              type="info"
+              description="歡迎主動創建房間"
+              center
+              show-icon
+            >
+            </el-alert>
+          </el-main>
         </el-container>
       </el-tab-pane>
 
@@ -438,16 +442,14 @@ export default {
           return UserService.getUserId()
         })
         .then((res) => {
-          console.log('f2', res)
+
           this.user.id = res.data.id
-          console.log('f3', this.user.id)
           // return this.ser_fun()
           // }).then((res) => {
-          // console.log("4444", res)
+
           return UserService.getUser(this.user.id)
         })
         .then((res) => {
-          console.log('f4', res.data)
           this.user.email = res.data.email
           this.user.nickname = res.data.nickname
           this.user.department = res.data.department
@@ -458,21 +460,15 @@ export default {
         })
         .then((response) => {
           this.invitationList = response.data
-          console.log('invitationList222:', this.invitationList)
-
-          return RoomService.getRooms() // WTF
+          return RoomService.getRooms()
         })
         .then((res) => {
-          this.invited_rooms = res.data // roomList
-          console.log('[debug] invited_rooms:', this.invited_rooms)
+          this.invited_rooms = res.data
           for (let rid of this.invitationList.map((i) => i.room_id)) {
-            console.log('[debug] roomIdbbb:', rid)
             this.invitationRooms.push(
               this.invited_rooms.find((r) => r.id == rid)
             )
           }
-
-          console.log('invitationList11:', this.invitationRooms)
           this.invited_rooms = this.invitationRooms
           return UserService.getUserAdminRoom()
         })
@@ -512,7 +508,6 @@ export default {
     saveLastName() {
       this.checkLastName = false
       this.user.lastName = this.$refs.newlastname.value
-      console.log('666', this.$refs.newlastname.value)
       UserService.putUserEdit(
         this.user.id,
         this.$refs.newlastname.value,
@@ -528,7 +523,6 @@ export default {
     saveFirstName() {
       this.checkFirstName = false
       this.user.firstName = this.$refs.newfirstname.value
-      console.log('777', this.$refs.newfirstname.value)
       UserService.putUserEdit(
         this.user.id,
         this.user.lastName,
@@ -536,13 +530,11 @@ export default {
       )
     },
     sumitChangePassword() {
-      console.log('nnnnnnnn')
       if (
         (this.$refs.oldPassword.value == '') |
         (this.$refs.newPassword1.value == '') |
         (this.$refs.newPassword2.value == '')
       ) {
-        console.log('wrong1')
         this.noInputPassword()
         this.passwordModel.oldPassword = ''
         this.passwordModel.newPassword1 = ''
@@ -550,7 +542,6 @@ export default {
       } else if (
         this.$refs.newPassword1.value != this.$refs.newPassword2.value
       ) {
-        console.log('wrong2')
         this.notEqualNewPassword()
         this.passwordModel.oldPassword = ''
         this.passwordModel.newPassword1 = ''
@@ -563,11 +554,6 @@ export default {
           this.$refs.newPassword2.value
         )
         this.$store
-        console.log('111')
-        console.log('222', this.user.id)
-        console.log('333', this.$refs.oldPassword.value)
-        console.log('444', this.$refs.newPassword1.value)
-        console.log('555', this.$refs.newPassword2.value)
         this.finishChangePassword()
         this.passwordModel.oldPassword = ''
         this.passwordModel.newPassword1 = ''
