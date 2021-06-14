@@ -7,12 +7,15 @@
     <div class="info">
       <div style="text-align: left; margin-left: 40px">
         <p>
-          crate time：{{ room.create_time.slice(0, 10) }}
-          {{ room.create_time.slice(11, 19) }}
+          <!-- crate time：{{ room.create_time.slice(0, 10) }}
+          {{ room.create_time.slice(11, 19) }} -->
+          crate time：{{ room.create_time.slice(0, 10) }} {{ room.create_time.slice(11, 19) }}
+          
         </p>
         <p>
-          valid time：{{ room.valid_time.slice(0, 10) }}
-          {{ room.valid_time.slice(11, 19) }}
+          <!-- valid time：{{ room.valid_time.slice(0, 10) }}
+          {{ room.valid_time.slice(11, 19) }} -->
+          valid time：{{ room.valid_time.slice(0, 10) }} {{ room.valid_time.slice(11, 19) }}
         </p>
         <p>room type：{{ room.room_type }}</p>
         <p>room category：{{ room.room_category }}</p>
@@ -20,6 +23,10 @@
         <p>
           introduction：
           <el-button type="text" @click="moreIntro">more</el-button>
+
+          <el-button type="success" class="roomcardbtn1" @click="acceptinvite" v-show="invited_rooms_btn">接受邀請</el-button>
+          <!-- <el-button type="success" class="roomcardbtn2" @click="emitParent">接受邀請並進入</el-button> -->
+          <el-button type="danger" class="roomcardbtn3" @click="rejectinvite" v-show="invited_rooms_btn">拒絕邀請</el-button>
         </p>
       </div>
     </div>
@@ -27,12 +34,15 @@
 </template>
 
 <script>
-// import UserService from '@/services/UserService.js'
+import UserService from '@/services/UserService.js'
 import RoomService from '@/services/RoomService.js'
 
 export default {
   props: {
     room: Object,
+    invited_rooms_btn: Object,
+    user_nickname: Object,
+    invit_id: Object,
   },
   data() {
     return {
@@ -50,10 +60,20 @@ export default {
       ],
 
       host: '',
+      dialogFormVisible: false,
     }
   },
 
   methods: {
+    emitParent() {
+      console.log("111111"),
+      this.$emit('update', {
+        dialogFormRoom: this.room,
+        dialogFormVisible: true,
+        clickedRoomId: this.room.id,
+      })
+    },
+
     getMemberList() {
       return RoomService.getRoomMemberList(this.id)
     },
@@ -64,7 +84,32 @@ export default {
       })
       // this.room.introduction
     },
+
+    acceptinvite() {
+
+      console.log("uuuuuuuuu", this.user_nickname)
+      console.log("uuuuuuuuu", this.invit_id)
+      console.log("accept")
+      UserService.postAcceptInvite(this.invit_id, this.user_nickname)
+    },
+
+    rejectinvite() {
+      console.log("reject")
+      UserService.deleteRejectInvite(this.invit_id)
+      // return UserService.deleteRejectInvite(this.room.id)
+    },
   },
+
+  watch: {
+    dialogFormRoom: {
+      handler(val) {
+        this.$emit('update', { dialogFormRoom: val, dialogFormVisible: true })
+        this.dialogFormRoom = ''
+      },
+    },
+  },
+
+  
 }
 </script>
 
@@ -87,5 +132,23 @@ export default {
 .card {
   height: 250px;
   background-color: rgb(185, 182, 177);
+}
+
+.info .roomcardbtn1 {
+  /* text-align: right; */
+  margin-left: 300px;
+  /* margin-right: 10px; */
+}
+
+.info .roomcardbtn2 {
+  /* text-align: right; */
+  margin-left: 50px;
+  /* margin-left: 50px; */
+}
+
+.info .roomcardbtn3 {
+  /* text-align: right; */
+  margin-left: 50px;
+  /* margin-right: 50px; */
 }
 </style>
