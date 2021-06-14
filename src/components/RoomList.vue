@@ -34,44 +34,8 @@ export default {
   },
 
   async created() {
-    // if (this.$store.state.token) {
-    //   this.$store
-    //     .dispatch('refreshToken')
-    //     .then((resRefresh) => {
-    //       console.log('f1', resRefresh)
-    //       console.log('test1', this.user.email)
-    //       console.log('test2', this.user.nickname)
-    //       console.log('test3', this.user.department)
-    //       console.log('test4', this.user.lastName)
-    //       console.log('test5', this.user.firstName)
-    //       return UserService.getUserRoom()
-    //     })
-    //     .then((response) => {
-    //       this.rooms = response.data
-    //       console.log("aaaaaaaaa", response.data)
-    //     })
-    //     .catch((err) => {
-    //       if (
-    //         'code' in err.response.data &&
-    //         err.response.data['code'] == 'token_not_valid'
-    //       ) {
-    //         this.$store.dispatch('resetToken')
-    //         this.$router.push({
-    //           name: 'login',
-    //         })
-    //       }
-    //     })
-    // } else {
-    //   console.log('plz login !')
-    //   ElMessage.error('請登入 !')
-    //   this.$router.push({
-    //     name: 'login',
-    //   })
-    // }
-
     UserService.getUserRoom().then((response) => {
       this.rooms = response.data
-      console.log('aaaaaaaaa', response.data)
     })
   },
   methods: {
