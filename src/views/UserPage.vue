@@ -261,7 +261,27 @@
       <el-tab-pane
         label="我的房間"
       >
-        <RoomList />
+        <el-container>
+          <!-- <router-view /> -->
+          <el-main id="roomCardContainer" v-if="my_rooms.length > 0">
+            <div
+              v-masonry-tile
+              class="item"
+              v-for="(room, index) in my_rooms"
+              v-bind:key="index"
+            >
+              <RoomListCard :room="room" />
+            </div>
+          </el-main>
+          <el-alert
+              title="您沒加入任何房間"
+              type="info"
+              description="歡迎主動加入有興趣的房間"
+              center
+              show-icon>
+            </el-alert>
+        </el-container>
+        <!-- <RoomList /> -->
       </el-tab-pane>
 
       <el-tab-pane
@@ -279,6 +299,13 @@
               <RoomListCard :room="room" />
             </div>
           </el-main>
+          <el-alert
+              title="您沒創建任何房間"
+              type="info"
+              description="歡迎主動創建房間"
+              center
+              show-icon>
+            </el-alert>
         </el-container>
       </el-tab-pane>
 
@@ -294,8 +321,17 @@
               v-for="(room, index) in invited_rooms"
               v-bind:key="index"
             >
-              <RoomListCard :room="room" />
+              <RoomListCard :room="room" :invited_rooms_btn="invited_rooms_btn" :user_nickname="user.nickname" :invit_id="invitationList[index].id"/>
             </div>
+          </el-main>
+          <el-main id="roomCardContainer" v-else>
+            <el-alert
+              title="您沒任何受邀的通知"
+              type="info"
+              description="歡迎主動加入有興趣的房間"
+              center
+              show-icon>
+            </el-alert>
           </el-main>
         </el-container>
       </el-tab-pane>
@@ -305,7 +341,7 @@
 
 <script>
 import UserService from '@/services/UserService.js'
-import RoomList from '@/components/RoomList.vue'
+// import RoomList from '@/components/RoomList.vue'
 import RoomListCard from '@/components/RoomListCard.vue'
 import RoomService from '@/services/RoomService.js'
 import { mapGetters } from 'vuex'
@@ -313,7 +349,7 @@ import { ElMessage } from 'element-plus'
 export default {
   props: ['userToken', 'mailToken'],
   components: {
-    RoomList,
+    // RoomList,
     RoomListCard,
   },
   data() {
@@ -330,9 +366,9 @@ export default {
       checkFirstName: false,
       user: {
         id: 0,
-        nickname: 'test',
-        email: 'test',
-        department: 'test',
+        nickname: '',
+        email: '',
+        department: '',
         lastName: '',
         firstName: '',
       },
@@ -378,13 +414,16 @@ export default {
         ],
       },
       invited_rooms: [],
+      invited_rooms_btn: true,
       admin_rooms: [],
+      admin_rooms_btn: false,
+      my_rooms: [],
       id: 0,
       invitationList: [],
       invitationRooms: [],
     }
   },
-  async created() {
+  created() {
     if (this.$store.state.token && !this.$store.state.is_verify) {
       this.$store.dispatch('getIsVerify').then(() => {
         if (this.$store.state.is_verify == false) {
@@ -423,64 +462,49 @@ export default {
           this.user.department = res.data.department
           this.user.lastName = res.data.last_name
           this.user.firstName = res.data.first_name
-        })
-        // .then(() => {
-        //   UserService.getInvitationList()
-        //   .then((response) => {
-        //     this.invitationList = response.data
-        //     console.log('invitationList:', this.invitationList)
-        //     return RoomService.getRooms() // WTF
-        //   })
-        //   .then((res) => {
-        //     this.rooms = res.data // roomList
-        //     console.log('[debug] rooms:', this.rooms)
-        //     for (let rid of this.invitationList.map((i) => i.room_id)) {
-        //       console.log('[debug] roomId:', rid)
-        //       this.invitationRooms.push(this.rooms.find((r) => r.id == rid))
-        //     }
-        //     console.log('invitationList11:', this.invitationRooms)
-        //     this.rooms = this.invitationRooms
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //   })
-        // })
-
-        .then(() => {
+          // return UserService.getUserRoom()
           return UserService.getInvitationList()
         })
         .then((response) => {
           this.invitationList = response.data
-          console.log('invitationList:', this.invitationList)
+          console.log('invitationList222:', this.invitationList)
+          
           return RoomService.getRooms() // WTF
         })
         .then((res) => {
           this.invited_rooms = res.data // roomList
           console.log('[debug] invited_rooms:', this.invited_rooms)
           for (let rid of this.invitationList.map((i) => i.room_id)) {
-            console.log('[debug] roomId:', rid)
+            console.log('[debug] roomIdbbb:', rid)
             this.invitationRooms.push(this.invited_rooms.find((r) => r.id == rid))
           }
+          
           console.log('invitationList11:', this.invitationRooms)
           this.invited_rooms = this.invitationRooms
-        
-          console.log("kkkkkkkkkkk")
           return UserService.getUserAdminRoom()
         })
         .then((response) => {
           this.admin_rooms = response.data
+          console.log("kkkkkkkkkkk", this.admin_rooms)
+          return UserService.getUserRoom()
         })
-        .catch((err) => {
-          if (
-            'code' in err.response.data &&
-            err.response.data['code'] == 'token_not_valid'
-          ) {
-            this.$store.dispatch('resetToken')
-            this.$router.push({
-              name: 'login',
-            })
-          }
+        .then((response) => {
+          console.log("zzzzzzzzz", response.data)
+          this.my_rooms = response.data
+          console.log("zzzzzzzzz", this.my_rooms)
+
         })
+        // .catch((err) => {
+        //   if (
+        //     'code' in err.response.data &&
+        //     err.response.data['code'] == 'token_not_valid'
+        //   ) {
+        //     this.$store.dispatch('resetToken')
+        //     this.$router.push({
+        //       name: 'login',
+        //     })
+        //   }
+        // })
     } else {
       console.log('plz login !')
       ElMessage.error('請登入 !')

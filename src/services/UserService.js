@@ -92,15 +92,16 @@ export default {
     })
   },
 
-  getUserNotification() {
-    return apiDjango.get('/api/user/notification/')
+  postAcceptInvite(inviteId, userNickname) {
+    console.log("1234", inviteId)
+    console.log("5678", userNickname)
+    return apiDjango.post('/accept_invite/' + inviteId + '/', {
+      nickname: userNickname,
+    })
   },
 
-  deleteUserNotification(notificationId) {
-    return apiDjango.delete('/api/user/notification/' + notificationId + '/')
-  },
+  deleteRejectInvite(inviteId) {
 
-  readUserNotification(notificationId) {
-    return apiDjango.put('/api/user/read_notification/' + notificationId + '/')
+    return apiDjango.delete('/reject_invite/' + inviteId + '/')
   },
 }
