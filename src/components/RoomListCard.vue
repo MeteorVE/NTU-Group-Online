@@ -79,7 +79,6 @@ export default {
 
   methods: {
     emitParent() {
-      console.log('111111'),
         this.$emit('update', {
           dialogFormRoom: this.room,
           dialogFormVisible: true,
@@ -99,14 +98,10 @@ export default {
     },
 
     acceptinvite() {
-      console.log('uuuuuuuuu', this.user_nickname)
-      console.log('uuuuuuuuu', this.invit_id)
-      console.log('accept')
       UserService.postAcceptInvite(this.invit_id, this.user_nickname)
     },
 
     rejectinvite() {
-      console.log('reject')
       UserService.deleteRejectInvite(this.invit_id)
       // return UserService.deleteRejectInvite(this.room.id)
     },
