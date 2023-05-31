@@ -4,6 +4,8 @@
 ## Demo
 
 影片 Demo。(有做補禎轉換，所以可能有些地方會模糊掉)
+直接點擊圖片就會跳轉了
+或是造訪 http://www.youtube.com/watch?v=_uxVV6u9fK4
 
 [![](https://i.imgur.com/HxtL4M1.jpg)
 ](http://www.youtube.com/watch?v=_uxVV6u9fK4 "DEMO")
