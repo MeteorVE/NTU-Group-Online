@@ -29,9 +29,10 @@
 
 ![](https://i.imgur.com/HGOH77K.png)
 
-- Depoly 結果 :　https://ntu-online-group.herokuapp.com/
+- Depoly 結果 :　~~https://ntu-online-group.herokuapp.com/~~ 
   - 因為 Heroku 的機制，直接點進去可能無法看到畫面。
   - 另外，此平台需要有 NTU 的 Mail 才能進行註冊，首頁也必須要登入才能看到。
+  - 2023 更新: 因為製作後端的同學已撤掉其服務，目前前端收不到資料，無法訪問
 - 本地端執行需要新增 ``.env`` 檔案。
 - 後端想寄 Mail 驗證，串接部分 : 使用 ``/verify-mail/`` ``forgetpwd`` 來當作觸發驗證信箱的頁面。
   - 範例 : 
@@ -41,6 +42,7 @@
 - Dependence: 
   - [Backend Server : cty001996 / se_project](https://github.com/cty001996/se_project)
   - [Websocket Server : a6976933 / SE5-Backend-Websocket](https://github.com/a6976933/SE5-Backend-Websocket)
+    - 亦感謝 a6976933 同學幫忙撰寫前端 websocket 部分程式碼
 
 ## Project setup
 
